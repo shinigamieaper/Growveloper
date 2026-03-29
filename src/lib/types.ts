@@ -249,7 +249,7 @@ export interface CaseStudyCardData {
   situation: string;
   resultHeadline: string;
   techStack: string[];
-  techStackLogos?: Record<string, string>;
+  techStackLogos?: { name: string; logo?: string }[];
   featured?: boolean;
 }
 
@@ -400,18 +400,6 @@ export interface FeaturedAutomationsSection {
   items: AutomationCardData[];
   viewAllLabel: string;
   viewAllUrl: string;
-}
-
-/* --- Industry Page --- */
-export interface IndustryServiceCard {
-  title: string;
-  description: string;
-  link: string;
-}
-
-export interface IndustryOutcomeStat {
-  label: string;
-  value: string;
 }
 
 /* --- Popup Config --- */

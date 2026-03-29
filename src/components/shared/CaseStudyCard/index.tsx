@@ -109,7 +109,7 @@ export function CaseStudyCard({ data, colorIndex = 0, className, ...props }: Cas
 
   /* ─── Tech icon renderer ─── */
   const renderTechIcon = (tech: string) => {
-    const logoUrl = data.techStackLogos?.[tech];
+    const logoUrl = data.techStackLogos?.find((t) => t.name === tech)?.logo;
     if (logoUrl) {
       return (
         <Image
