@@ -1,15 +1,110 @@
 import type { Metadata } from "next";
-import { generalSans, gambetta } from "./fonts";
+import Script from "next/script";
+import { generalSans, gambetta, jetbrainsMono } from "./fonts";
+import { Navigation } from "@/components/shared/Navigation";
+import { Footer } from "@/components/shared/Footer";
+import { LayoutGridOverlay } from "@/components/layout/LayoutGridOverlay";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
+import type { NavigationData, FooterData } from "@/lib/types";
 import "./globals.css";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+/* ─── Placeholder data (Rule 3 — structure first, Sanity wiring later) ─── */
+const PLACEHOLDER_NAV: NavigationData = {
+  serviceLinks: [
+    { label: "Web Development", url: "/services/development" },
+    { label: "Growth Marketing", url: "/services/marketing" },
+    { label: "AI & Automation", url: "/services/ai" },
+    { label: "Growth Audit", url: "/audit", highlighted: true },
+  ],
+  industryLinks: [
+    { label: "SaaS", url: "/industries/saas" },
+    { label: "B2B Lead Gen", url: "/industries/b2b" },
+    { label: "AI & Tech Startups", url: "/industries/ai-tech" },
+    { label: "FinTech", url: "/industries/fintech" },
+  ],
+  staticLinks: [
+    { label: "Work", url: "/work" },
+    { label: "The Lab", url: "/lab" },
+    { label: "Resources", url: "/resources" },
+    { label: "The Brains", url: "/about" },
+  ],
+  ctaLabel: "Book a Consultation",
+  ctaUrl: "/start",
+};
+
+const PLACEHOLDER_FOOTER: FooterData = {
+  navLinks: [
+    { label: "Services", url: "/services/development" },
+    { label: "Work", url: "/work" },
+    { label: "The Lab", url: "/lab" },
+    { label: "Resources", url: "/resources" },
+    { label: "The Brains", url: "/about" },
+  ],
+  socialLinks: [
+    { platform: "linkedin", url: "#" },
+    { platform: "x", url: "#" },
+    { platform: "youtube", url: "#" },
+    { platform: "tiktok", url: "#" },
+  ],
+  legalLinks: [
+    { label: "Privacy Policy", url: "/privacy" },
+    { label: "Terms of Service", url: "/terms" },
+  ],
+  ctaLabel: "Book a Consultation",
+  ctaUrl: "/start",
+  copyrightText: "\u00a9 2025 Growveloper. All rights reserved.",
+};
 
 export const metadata: Metadata = {
-  title: "GROWVELOPER — Technical Growth Engine",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
+  title: {
+    default: "GROWVELOPER — Technical Growth Engine",
+    template: "%s | GROWVELOPER",
+  },
   description:
     "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "GROWVELOPER",
+    title: "GROWVELOPER — Technical Growth Engine",
+    description:
+      "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
+    images: [
+      {
+        url: "/images/og/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "GROWVELOPER — Technical Growth Engine",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GROWVELOPER — Technical Growth Engine",
+    description:
+      "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
+    images: ["/images/og/og-default.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: [
+      {
+        url: "/images/logo/logo-icon-light.png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/images/logo/logo-icon-dark.png",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+    apple: "/images/logo/logo-icon-light.png",
+  },
 };
 
 const THEME_INIT_SCRIPT = `
@@ -26,14 +121,47 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body
-        className={`${generalSans.variable} ${gambetta.variable} antialiased`}
+        suppressHydrationWarning
+        className={`${generalSans.variable} ${gambetta.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {children}
+        {/* Global navigation — CMS data wired after Sanity schemas are built */}
+        <Navigation data={PLACEHOLDER_NAV} />
+
+        {/* Fixed grid background overlay — subtle texture across entire site */}
+        <LayoutGridOverlay />
+
+        {/* Main content area — relative z-10 sits above the fixed grid */}
+        <main id="main-content" className="relative z-10">
+          {children}
+        </main>
+
+        {/* Global footer — CMS data wired after Sanity schemas are built */}
+        <Footer data={PLACEHOLDER_FOOTER} />
+
+        {/* Floating scroll-to-top button */}
+        <ScrollToTop />
+
+        {/* Google Tag Manager — loads after page is interactive */}
+        {process.env.NEXT_PUBLIC_GTM_ID && (
+          <Script
+            id="gtm"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GTM_ID}');
+              `,
+            }}
+          />
+        )}
       </body>
     </html>
   );

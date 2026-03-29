@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(xargs grep:*)",
+      "WebSearch",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(find /c/Users/facom/CascadeProjects/growveloper/src -name *video* -o -name *modal*)",
+      "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")",
+      "Bash(find /c/Users/facom/CascadeProjects/growveloper/src -name LoadMore*)",
+      "Bash(find /c/Users/facom/CascadeProjects/growveloper/src/components -name *hero* -o -name *Hero*)",
+      "Bash(find /c/Users/facom/CascadeProjects/growveloper/src/lib/constants -type f -name *.ts -o -name *.tsx)",
+      "Bash(find /c/Users/facom/CascadeProjects/growveloper/src/app/resources -type f -name *.tsx)",
+      "Bash(grep -r \"resources.*confirmed\\\\|resources.*success\" /c/Users/facom/CascadeProjects/growveloper/src --include=*.tsx --include=*.ts)",
+      "Bash(xargs ls:*)",
+      "Bash(ls -la c:/Users/facom/CascadeProjects/growveloper/src/app/work/[slug]/)"
+    ]
+  }
+}

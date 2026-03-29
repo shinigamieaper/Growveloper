@@ -23,3 +23,12 @@ export const gambetta = localFont({
   variable: "--font-gambetta",
   display: "swap",
 });
+
+export const jetbrainsMono = localFont({
+  src: [
+    { path: "../../public/fonts/JetBrainsMono/JetBrainsMono-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/JetBrainsMono/JetBrainsMono-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});

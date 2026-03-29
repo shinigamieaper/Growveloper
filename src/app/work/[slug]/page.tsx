@@ -1,19 +1,285 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowLeft, Check } from "lucide-react";
+import {
+  GlassSection,
+  CTABanner,
+  SectionHeader,
+  ScrollFadeUp,
+  StatsBand,
+} from "@/components";
+import { HomeTestimonials } from "@/components/home/Testimonials";
+import { CaseStudiesSection } from "@/components/home/CaseStudies";
+import {
+  ALL_CASE_STUDIES,
+  getCaseStudyBySlug,
+  getRelatedCaseStudies,
+} from "@/lib/data/caseStudies";
+import type { CTABannerData, TestimonialData, StatsBandItem } from "@/lib/types";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+/* ─── Static params ─── */
+export function generateStaticParams() {
+  return ALL_CASE_STUDIES.map((cs) => ({ slug: cs.slug }));
+}
+
+/* ─── Metadata ─── */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
+  const cs = getCaseStudyBySlug(slug);
+  if (!cs) return { title: "Case Study Not Found — GROWVELOPER" };
   return {
-    title: `${slug} — Case Study — GROWVELOPER`,
-    description: "A detailed case study.",
+    title: `${cs.title} — Case Study — GROWVELOPER`,
+    description: cs.situation,
   };
 }
 
-export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
+const CTA_SECTION: CTABannerData = {
+  headline: "Ready to become the next case study?",
+  highlightedWord: "next case study",
+  ctaLabel: "Start a project",
+  ctaDestination: "/start",
+};
+
+/* ─── Page ─── */
+export default async function CaseStudyPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
+  const cs = getCaseStudyBySlug(slug);
+  if (!cs) notFound();
+
+  const related = getRelatedCaseStudies(slug, 3);
+
+  /* Map metrics to StatsBandItem shape */
+  const statItems: StatsBandItem[] = cs.metrics.map((m) => ({
+    value: parseFloat(m.value.replace(/[^0-9.]/g, "")) || 0,
+    prefix: m.value.match(/^[£$€]/) ? m.value[0] : undefined,
+    suffix: m.value.match(/[%xk+]/) ? m.value.replace(/[^%xk+]/g, "") : undefined,
+    label: m.label,
+  }));
+
+  /* Testimonial as TestimonialData array */
+  const testimonials: TestimonialData[] = cs.testimonial
+    ? [{ ...cs.testimonial, rating: 5 }]
+    : [];
 
   return (
-    <main className="min-h-screen bg-bg-primary text-text-primary" data-slug={slug}>
-      {/* Stage 7 — Individual case study sections */}
-    </main>
+    <>
+      {/* 01 — Hero */}
+      <section className="pt-32 pb-0 md:pt-40">
+        <div className="mx-auto max-w-6xl px-6">
+          <ScrollFadeUp>
+            {/* Back nav */}
+            <Link
+              href="/work"
+              className="mb-8 inline-flex items-center gap-1.5 text-sm text-text-tertiary transition-colors hover:text-brand-mid"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+              All case studies
+            </Link>
+
+            {/* Tags */}
+            <div className="mb-5 flex flex-wrap gap-2">
+              <span className="rounded-full border border-glass-border bg-bg-secondary px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-brand-mid">
+                {cs.clientIndustry}
+              </span>
+              {cs.tags?.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-glass-border bg-bg-secondary px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-text-tertiary"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            <h1 className="heading-font mb-4 text-3xl font-bold tracking-tight text-text-primary md:text-4xl lg:text-5xl">
+              {cs.title}
+            </h1>
+            <p className="max-w-2xl text-lg leading-relaxed text-brand-mid font-medium">
+              {cs.resultHeadline}
+            </p>
+          </ScrollFadeUp>
+        </div>
+      </section>
+
+      {/* 02 — Hero Image */}
+      {cs.heroImage && (
+        <section className="py-10 md:py-14">
+          <div className="mx-auto max-w-6xl px-6">
+            <ScrollFadeUp delay={0.1}>
+              <div className="relative aspect-[21/9] overflow-hidden rounded-2xl border border-glass-border">
+                <Image
+                  src={cs.heroImage}
+                  alt={cs.title}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1280px) 100vw, 1280px"
+                />
+              </div>
+            </ScrollFadeUp>
+          </div>
+        </section>
+      )}
+
+      {/* 03 — Metrics Strip */}
+      {statItems.length > 0 && (
+        <StatsBand items={statItems} />
+      )}
+
+      {/* 04 — The Situation */}
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-6">
+          <SectionHeader
+            headline="The situation"
+            highlightedWord="situation"
+            alignment="left"
+            label={null}
+            description={null}
+          />
+          <ScrollFadeUp delay={0.1}>
+            <p className="text-base leading-relaxed text-text-secondary md:text-lg">
+              {cs.situationDetail}
+            </p>
+          </ScrollFadeUp>
+        </div>
+      </section>
+
+      {/* 05 — The Approach (glass) */}
+      <GlassSection>
+        <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
+          <SectionHeader
+            headline="The approach"
+            highlightedWord="approach"
+            alignment="left"
+            label={null}
+            description={null}
+          />
+          <ScrollFadeUp delay={0.1}>
+            <p className="text-base leading-relaxed text-text-secondary md:text-lg">
+              {cs.approach}
+            </p>
+          </ScrollFadeUp>
+        </div>
+      </GlassSection>
+
+      {/* 06 — The Build */}
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-6">
+          <SectionHeader
+            headline="The build"
+            highlightedWord="build"
+            alignment="left"
+            label={null}
+            description={null}
+          />
+          <ScrollFadeUp delay={0.1}>
+            <p className="text-base leading-relaxed text-text-secondary md:text-lg">
+              {cs.buildDetail}
+            </p>
+          </ScrollFadeUp>
+
+          {/* Tech Stack */}
+          {cs.techStack.length > 0 && (
+            <ScrollFadeUp delay={0.2}>
+              <div className="mt-8 flex flex-wrap gap-2">
+                {cs.techStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded-full border border-glass-border bg-bg-secondary px-3 py-1.5 font-mono text-xs font-medium text-text-secondary"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </ScrollFadeUp>
+          )}
+        </div>
+      </section>
+
+      {/* 07 — The Result (glass) */}
+      <GlassSection>
+        <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
+          <SectionHeader
+            headline="The result"
+            highlightedWord="result"
+            alignment="left"
+            label={null}
+            description={null}
+          />
+          <ScrollFadeUp delay={0.1}>
+            <p className="text-base leading-relaxed text-text-secondary md:text-lg">
+              {cs.resultDetail}
+            </p>
+          </ScrollFadeUp>
+
+          {/* Key outcomes checklist */}
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            {cs.metrics.map((m, i) => (
+              <ScrollFadeUp key={i} delay={0.1 + i * 0.06}>
+                <div className="flex items-start gap-3 rounded-xl border border-glass-border bg-glass-bg/50 p-4">
+                  <Check
+                    className="mt-0.5 h-4 w-4 shrink-0 text-brand-mid"
+                    strokeWidth={2.5}
+                    aria-hidden
+                  />
+                  <div>
+                    <span className="heading-font block text-lg font-bold text-text-primary">
+                      {m.value}
+                    </span>
+                    <span className="text-xs text-text-tertiary">{m.label}</span>
+                  </div>
+                </div>
+              </ScrollFadeUp>
+            ))}
+          </div>
+        </div>
+      </GlassSection>
+
+      {/* 08 — Testimonial */}
+      {testimonials.length > 0 && (
+        <HomeTestimonials
+          headline="In their words"
+          highlightedWord="words"
+          items={testimonials}
+          ctaHeadline="Want results like these?"
+          ctaLabel="Start a project"
+          ctaUrl="/start"
+        />
+      )}
+
+      {/* 09 — Related Case Studies */}
+      {related.length > 0 && (
+        <section className="py-16 md:py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <ScrollFadeUp>
+              <SectionHeader
+                headline="More case studies"
+                highlightedWord="More"
+                label={null}
+                description={null}
+              />
+            </ScrollFadeUp>
+            <CaseStudiesSection items={related} />
+          </div>
+        </section>
+      )}
+
+      {/* Section CTA */}
+      <CTABanner
+        data={CTA_SECTION}
+        presentationMode="section"
+        colorScheme="teal-solid"
+      />
+    </>
   );
 }

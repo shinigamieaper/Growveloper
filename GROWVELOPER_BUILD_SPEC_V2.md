@@ -102,6 +102,401 @@ Adding a new industry or service in Sanity automatically updates the nav dropdow
 - **Minimum Node.js 20.9.0** — ensure local environment and Vercel build environment are on Node 20.9+.
 - **React 19.2** — View Transitions and `useEffectEvent` available.
 
+### Current implementation snapshot — shared systems already built
+
+This document defines the target product, but it must also stay synced with the real implementation state of the repo.
+
+**Core animation registry:**
+- `src/lib/gsap.ts`
+- Registers `gsap`, `ScrollTrigger`, `SplitText`, `useGSAP`
+- Exposes shared `prefersReducedMotion()`, easing presets, duration presets, and stagger presets
+
+**Shared animation components currently implemented:**
+- `TextReveal`
+- `ScrollFadeUp`
+- `StaggerChildren`
+- `CountUp`
+- `MagneticElement`
+- `LineReveal`
+- `ParallaxSection`
+- `ServiceLottie`
+
+**Shared UI / interaction components currently implemented:**
+- `LampContainer`
+- `GridBackground`
+- `CanvasText`
+- `LinkPreview`
+- `MovingBorderButton`
+- `Navbar` / `resizable-navbar`
+- `StickyScroll`
+- `ThemeToggle`
+
+**Shared card system (taxonomy):**
+- **Shared base card:** `GrowveloperCard`
+  - Variants used: `industry`, `diagnosis`, `resource`, `automation`, `sound-like-you`
+  - Purpose: one consistent visual + interaction baseline for all non-specialised cards
+- **Bespoke cards (intentionally separate):**
+  - `CaseStudyCard` (case studies have unique layout/media requirements)
+  - `TestimonialCard` (testimonial-specific layout + avatar/rating treatment)
+  - `LiveFeedCard` (mixed content types + modal/video behaviour)
+- **Legacy (deprecated; do not use for new work):**
+  - `DiagnosisCard`, `IndustryCard`, `SoundLikeYouCard` (superseded by `GrowveloperCard`)
+
+**Shared content components currently implemented:**
+- `Navigation`
+- `Footer`
+- `SocialProofPill`
+- `ScrollCue`
+- `ServiceRow`
+- `GrowveloperCard`
+- `CaseStudyCard`
+- `TestimonialsSection`
+- `CTABanner`
+- `FAQAccordion`
+- `LiveFeedBento`
+- `BentoGrid`
+- `VideoModal`
+- `SectionHeader`
+
+**Current CTA system state:**
+- One shared CTA family
+- `presentationMode: "inline" | "section"`
+- Inline mode is compact, horizontal on desktop, and defaults to headline + button without supporting sub-copy
+- Section mode is a standalone conversion block that may include sub-copy
+- CTA highlighted words use scheme-aware accent styling to avoid clashes across light and dark banner variants
+
+**Current QA route:**
+- `/test` is the active visual QA surface for shared animations, interaction patterns, sticky-scroll sections, CTA banner states, navigation theme review, live feed cards, and modal behavior
+
+**Session B — Proof widgets & content infrastructure (completed):**
+
+*Proof/animation primitives:*
+- `MetricsCounter` (`animations/MetricsCounter/`) — wraps existing `CountUp` in a card/label layout. Props: `value`, `label`, `prefix`, `suffix`, `decimals`, `duration`. Used in Section 06, case study metric strips.
+- `ChartClimb` (`animations/ChartClimb/`) — pure SVG + GSAP `stroke-dashoffset` path-draw animation. Dark panel, teal line `#5ab1b1`, teal fill at 15% opacity. No recharts dependency.
+- `WorkflowAnimation` (`animations/WorkflowAnimation/`) — 5 workflow nodes connected by lines, GSAP timeline lights them up L→R with pulse effect. Reuses `MetricsCounter` for "time saved" counter. Labels hardcoded (animation, not CMS).
+
+*Content infrastructure:*
+- `PortableTextRenderer` (`shared/PortableTextRenderer/`) — renders Sanity Portable Text with custom block renderers. General Sans headings, Gambetta body, JetBrains Mono code blocks (local woff2 via `next/font/local` at `public/fonts/JetBrainsMono/`). All styling via CSS variables.
+- `ContentFilterBar` (`shared/ContentFilterBar/`) — reusable pill-tab filter bar. Props: `filters`, `activeFilter`, `onFilterChange`. Mobile horizontal scroll with snap. Used on `/lab`, `/resources`, `/work`.
+- `ResourceCard` (`shared/ResourceCard/`) — thin wrapper composing `GrowveloperCard` with `variant="resource"`. Adds `resourceType`, `accessType`, `price` props and access badge. Does not modify `GrowveloperCardBaseProps`.
+- `FreeResourceBlock` + `PaidResourceBlock` (`shared/ResourceActionBlock/`) — free: email gate → download unlock via newsletter API. Paid: Stripe hosted checkout via `/api/stripe/resource-checkout` route handler. Stripe client lazy-loaded via `getStripe()` in `src/lib/stripe.ts`. `STRIPE_SECRET_KEY` required at runtime.
+
+*New dependencies added:*
+- `@portabletext/react` — Portable Text rendering
+- `@fontsource/jetbrains-mono` — font source (woff2 files copied to `public/fonts/`)
+- `stripe` — Stripe checkout integration (server-side only)
+- `shadcn/ui Badge` component installed
+
+*Font addition:*
+- JetBrains Mono (Regular 400, Bold 700) registered in `src/app/fonts.ts` as `--font-jetbrains-mono`, applied to `<body>` in root layout.
+
+**Session C — Lab content system (completed):**
+
+- `LabFeaturedCard` (`shared/LabFeaturedCard/`) — hero-sized featured card for `/lab` landing. Horizontal split: 60% thumbnail / 40% content. SpotlightCard wrap with teal glow, GSAP hover scale 1.01 + border brighten. Blog variant uses LinkPreview CTA → `/lab/[slug]`, video variant fires `onVideoClick` → VideoModal. Returns null when no item.
+- `LabFeedWrapper` (`shared/LabFeedWrapper/`) — layout composition for `/lab` feed page. Renders ContentFilterBar at top (multi-select), filters items client-side, 3-col CSS grid (2-col tablet, 1-col mobile), each item as LiveFeedCard. LoadMore button shows next 6 items. No data = null.
+- `SocialShareButtons` (`shared/SocialShareButtons/`) — share cluster for `/lab/[slug]` post headers. X (Twitter), LinkedIn, Copy link. Web Share API on mobile if available. Glassmorphism pill container, icon-only mobile, icon + label desktop. Copy button shows "Copied!" for 2s.
+- `RelatedContentGrid` (`shared/RelatedContentGrid/`) — "You might also like" block for detail pages. Props: `items`, `contentType` ("lab" | "resource"), `label`. Lab items render as LiveFeedCard, resource items render as GrowveloperCard variant="resource". No internal filtering — page controls matching. Empty = null.
+
+*ContentFilterBar updated:*
+- Changed from single-select to multi-select with checkmark indicators (Lucide Check icon)
+- Bordered/outlined pill style instead of solid fill
+- Wrap on desktop (`md:flex-wrap`), horizontal scroll on mobile
+- API: `activeFilters: string[]` + `onFilterChange(values: string[])`
+
+*Type addition:*
+- `BlogPostCardData` gained `featuredToggle?: boolean` to match `VideoCardData`
+
+**Test page audit (completed):**
+
+- `GridBackground` dark mode visibility fixed — line color bumped from `#1a1a1a` to `#2a2a2a`
+- `SectionHeader` enhanced with built-in `TextReveal` (word-by-word headline) + `ScrollFadeUp` (label + description) — every section header across the site now animates on scroll automatically
+- All card grids wrapped in `StaggerChildren`, all standalone content blocks wrapped in `ScrollFadeUp`
+- Strict alternating `bg-bg-primary` / `bg-bg-secondary` backgrounds across all 32 test page sections
+- `ParallaxSection` retained as animation showcase section with proper background alternation
+
+**Root layout implementation (completed):**
+
+Root layout (`src/app/layout.tsx`) rebuilt as the global site shell:
+
+- **Navigation** — rendered globally with `data={null}` (Rule 3 — structure first, Sanity wiring later)
+- **LayoutGridOverlay** (`layout/LayoutGridOverlay/`) — fixed-position theme-aware grid line overlay with radial edge mask. Covers entire viewport at `z-0`, `pointer-events-none`. Primary sections show the grid texture; `bg-bg-secondary` sections cover it naturally.
+- **`<main id="main-content">`** — `relative z-10`, sits above the fixed grid. Pages render their content here.
+- **Footer** — rendered globally with `data={null}` (Rule 3)
+- **ScrollToTop** (`layout/ScrollToTop/`) — glassmorphism floating button, appears after 400px scroll, respects `prefers-reduced-motion`, 44px minimum touch target
+- **GTM** — `next/script` with `strategy="afterInteractive"`, conditional on `NEXT_PUBLIC_GTM_ID` env var
+- **Theme init** — inline `<script>` in `<head>` prevents flash of wrong theme (reads `localStorage` → sets `data-theme`)
+
+Layout components live in `src/components/layout/` (separate from `shared/` and `ui/`). All exported from barrel file.
+
+**Root metadata (completed):**
+
+- `metadataBase` reads `NEXT_PUBLIC_SITE_URL` env var, falls back to `localhost:3000`
+- `title.template`: `"%s | GROWVELOPER"` — per-page titles append brand name
+- `openGraph` + `twitter` fallbacks with OG image at `/images/og/og-default.png` (placeholder path, asset TBD)
+- Theme-aware favicons via `prefers-color-scheme` media queries — `logo-icon-light.png` (teal, for light tabs) + `logo-icon-dark.png` (white, for dark tabs)
+- Apple touch icon: `logo-icon-light.png`
+- Old Vercel `favicon.ico` removed
+
+**Homepage Hero (completed):**
+
+- `Hero` component at `components/home/Hero/` — accepts `HomeHeroData` props (all CMS-driven)
+- Uses `LampContainer` for the teal conic gradient glow effect
+- `SocialProofPill` rendered above headline (conditional on data)
+- Headline supports `highlightedWord` which renders via `CanvasText` (teal gradient + growth underline)
+- Dual CTAs: `MovingBorderButton` default variant (primary) + `MovingBorderButton` inverted variant (secondary), both wrapped in `MagneticElement`
+- `ScrollCue` positioned absolute right side of hero (ThunderClap-inspired) — spinning text ring with down arrow, scrolls to next section
+- No section-level background colors — inherits from layout
+- Placeholder data in `page.tsx` — will be replaced with Sanity fetch
+
+**Hero pattern rule:** `LampContainer` is the standard hero treatment across ALL page heroes site-wide. Every page hero uses the same Lamp glow + motion.div fade-up entry pattern.
+
+**MovingBorderButton variants (completed):**
+
+- `variant="default"` — `bg-brand-dark` + `text-base-white` (original style)
+- `variant="inverted"` — `bg-bg-secondary` + `text-brand-dark` (light/white bg, teal text, same green moving border)
+- Both variants share the same animated teal border, hover lift, and active scale
+
+**Homepage Diagnosis section (completed):**
+
+- `DiagnosisCards` component at `components/home/DiagnosisCards/` — accepts `DiagnosisSectionData` props
+- `SectionHeader` with label, headline, description (TextReveal + ScrollFadeUp built in)
+- `StaggerChildren` wraps a responsive card grid — GSAP scroll-triggered stagger animation
+- Each card is a `GrowveloperCard` with `variant="diagnosis"` and `colorScheme="glass-dark"`
+- Grid layout driven by CMS `layoutStyle` field: `grid-2x2` | `grid-3col` | `single-col`
+- No section-level background colors — inherits from layout
+- Returns null if no data or empty cards array
+- Placeholder data in `page.tsx` — 4 pain-point cards in 2×2 layout
+- Icons use Lucide React via `ICON_MAP` string→component mapping (CMS stores string keys like `"zap"`, `"bot"`)
+
+**Homepage Services section — Section 04 (completed):**
+
+- `ServicesAlternating` component at `components/home/ServicesAlternating/` — accepts `StickyScrollSectionData` props
+- `SectionHeader` with label, headline, description
+- Delegates to `StickyScroll` component (Aceternity-derived sticky scroll with Lottie visuals)
+- Desktop: left text panel scrolls through service pillars, right visual swaps Lottie per active step
+- Mobile: accordion-style stacked cards with inline Lottie per service
+- `bottomCta` renders a full-width CTA below services (optional, CMS-driven)
+- 3 service items: Web Development, Growth Marketing, AI & Automation
+- Each item has stepNumber, heading, description, subItems (pills), CTA, lottiePath, fallbackGradient
+- Placeholder data in `page.tsx` — will be replaced with Sanity fetch
+
+**Homepage Industries section — Section 05 (completed):**
+
+- `IndustriesGrid` component at `components/home/IndustriesGrid/` — accepts `IndustriesGridData` props
+- `SectionHeader` with label, headline, description
+- `ScrollFadeUp` wraps a bordered container (`rounded-2xl border border-glass-border bg-glass-border`)
+- Grid with `gap-px` creates 1px border effect between cards (matching test page pattern)
+- Each industry card: `GrowveloperCard` variant="industry" colorScheme="dark" with Lucide icon via `ICON_MAP`
+- Final card: `GrowveloperCard` variant="sound-like-you" colorScheme="teal-solid" spanning `md:col-span-2`
+- Cards have `rounded-none border-0` to merge into the bordered container
+- Responsive: 1 col → 2 col (md) → 3 col (lg)
+- 4 industries: SaaS, B2B Lead Gen, AI & Tech Startups, FinTech
+- Placeholder data in `page.tsx` — will be replaced with Sanity fetch
+
+**Homepage Success section — Section 06 (completed):**
+
+- `SuccessAnimation` component at `components/home/SuccessAnimation/` — code-driven, no CMS data
+- Always dark panel (`bg-base-black text-base-white`) regardless of theme
+- 5 scroll-triggered states across 3 pillars:
+  - State 0 (Development): Lighthouse 100 + Load Time 0.9s — uses `MetricsCounter`
+  - State 1 (Development): Core Web Vitals all green — custom inline rows with pass indicators
+  - State 2 (Growth Marketing): GA4 chart climbing + ROAS/conversion — uses `ChartClimb` + `MetricsCounter`
+  - State 3 (Growth Marketing): AI search citation + JSON-LD schema — custom monospace terminal aesthetic
+  - State 4 (AI & Automation): Workflow nodes lighting up — uses `WorkflowAnimation`
+- Desktop: tall section (`500vh`) with CSS `position: sticky` inner panel, scroll progress drives active state. Progress dots on left, rotated section label on right.
+- Mobile: tabbed interface with horizontal scroll pill tabs, active panel content below
+- Animation components rendered with `key={activeState}` to re-trigger their scroll animations on state change
+- Monospace font (`font-mono`) for terminal/code aesthetic throughout
+
+**Homepage Process section — Section 07 (completed):**
+
+- `ProcessSteps` component at `components/home/ProcessSteps/` — accepts `StickyScrollSectionData` props
+- Composes `SectionHeader` (headline + description, no label) + `StickyScroll`
+- Layout: `py-24`, `max-w-6xl` — matches test page exactly
+- 4 items: Audit → Architect → Build → Scale (placeholder data in `page.tsx`)
+- Same shared sticky-scroll system as Section 04 (GSAP pinning, Lottie playback)
+- No section-level background — inherits from layout
+
+**Homepage Case Studies section — Section 08 (completed):**
+
+- `CaseStudiesSection` component at `components/home/CaseStudies/` — accepts headline, description, `items: CaseStudyCardData[]`
+- Composes `SectionHeader` + `ScrollFadeUp`-wrapped `CaseStudyCard` stack
+- Layout: `py-24`, `max-w-6xl`, `space-y-10` — matches test page exactly
+- Cards cycle `colorIndex` (0, 1, 2, 0…) for accent panel variety
+- 3 placeholder case studies in `page.tsx` — will be replaced with Sanity fetch
+- Returns null if no items
+- Exported from barrel file
+
+**Homepage Banner CTA 1 — Growth Audit (completed):**
+
+- `CTABanner` rendered directly in `page.tsx` between Case Studies and Testimonials
+- `presentationMode="section"`, `colorScheme="teal-solid"`
+- Placeholder data: "Not sure where to start? Get a Growth Audit." with highlighted word, destination `/audit`
+- `CTABanner` component gained `"use client"` directive — required because it passes `Link` function to `MovingBorderButton`'s `as` prop
+
+**Homepage Testimonials section — Section 09 (completed):**
+
+- `HomeTestimonials` component at `components/home/Testimonials/` — accepts headline, description, `items: TestimonialData[]`, CTA card config
+- Composes `SectionHeader` + `TestimonialsSection` (carousel over foggy background grid)
+- Layout: `py-24`, `max-w-6xl` — matches test page exactly
+- 2 placeholder testimonials + CTA card ("This could be you…") in `page.tsx`
+- Returns null if no items
+- Exported from barrel file
+
+**Homepage Banner CTA 2 — Free Consultation (completed):**
+
+- `CTABanner` rendered directly in `page.tsx` between Testimonials and FAQ
+- `presentationMode="section"`, `colorScheme="gradient"`
+- Placeholder data: "Ready to build your repeatable growth engine?" with highlighted word, destination `/start`
+
+**Homepage FAQ section — Section 10 (completed):**
+
+- `FAQAccordion` shared component rendered directly in `page.tsx`
+- Props: `sectionHeadline`, `sectionDescription`, `ctaHeadline`, `ctaDescription`, `ctaLabel`, `ctaUrl`, `items: FAQItem[]`
+- 4 placeholder FAQ items + bottom CTA card linking to `/start`
+- Component already fully implemented — no home wrapper needed
+
+**Homepage Live Feed section — Section 11 (completed):**
+
+- `LiveFeed` component at `components/home/LiveFeed/` — rewritten from empty stub
+- Composes `SectionHeader` + `LiveFeedBento` (BentoGrid with SpotlightCard hover)
+- Layout: `py-24`, `max-w-6xl` — matches test page exactly
+- 3 placeholder items: 1 blog (featured, 2-col), 1 YouTube, 1 TikTok
+- Accepts `onVideoClick` callback for modal integration
+- Returns null if no items
+
+**Homepage Newsletter section — Section 12 (completed):**
+
+- `NewsletterCapture` shared component rendered directly in `page.tsx`
+- Props: `headline`, `subCopy`, `ctaLabel`
+- Already fully implemented with React Hook Form + Zod validation, success/error states, reduced motion support
+- No home wrapper needed
+
+**Homepage is now fully wired — all sections 02–12 + both CTA banners are rendering with placeholder data. All content will be swapped to Sanity fetches in Stage 4.**
+
+**Homepage Cohesion Audit (completed):**
+
+A full design consistency pass was applied across all homepage sections to enforce a unified vertical alignment spine, consistent heading treatment, animation rhythm, and CTA button language. Changes:
+
+- **Container width standardized to `max-w-6xl`** across all sections (Diagnosis, Industries, Success previously used `max-w-5xl`). Hero and Newsletter form content are narrower by design (`max-w-4xl` / `max-w-xl`) but sit inside the standard `max-w-6xl` outer container.
+- **`SectionHeader` used everywhere** — FAQ and Newsletter now use the shared `SectionHeader` component instead of custom `<h2>` elements. This ensures all section headings share the same `TextReveal` animation, type scale (`text-3xl md:text-4xl lg:text-5xl`), and spacing (`mb-10 md:mb-14`). LiveFeedBento's internal sub-heading demoted from `<h2>` to `<h3>` since the real `<h2>` comes from the parent `LiveFeed` wrapper's `SectionHeader`.
+- **Vertical padding standardized to `py-24`** on all sections. FAQ previously used `py-16 md:py-24`, Newsletter used `py-16 md:py-20`.
+- **Horizontal padding standardized to `px-6`** everywhere. FAQ previously used `px-4 md:px-6`.
+- **One CTA button system: `MovingBorderButton`** — replaced all plain `bg-brand-dark` / `bg-base-black` link/button CTAs with `MovingBorderButton` + `MagneticElement` in FAQ (CTA card), Newsletter (submit), and Testimonials (CTA carousel card). Every primary action button on the homepage now shares the same animated teal border, hover lift, and active scale.
+- **Rogue backgrounds removed** — `SuccessAnimation` had `bg-bg-secondary` on both mobile and desktop views. `NewsletterCapture` had `bg-bg-tertiary`. Both removed. Homepage sections do not set their own backgrounds — backgrounds come from the layout system.
+- **Scroll entrance animations added** to FAQ (each accordion item wrapped in `ScrollFadeUp` with staggered delay) and LiveFeed (`ScrollFadeUp` wrapping `LiveFeedBento`). Every content section now has a scroll entrance animation.
+- **`SectionLabel`** remains an optional CMS-driven field on `SectionHeader`. No code change needed — when Sanity is wired, editors can add labels to any section. The component handles `label={undefined}` gracefully.
+
+**Cohesion rules (enforce going forward):**
+
+1. All homepage body sections use `max-w-6xl px-6` containers
+2. All section headings use `SectionHeader` — never roll custom `<h2>` elements
+3. All sections use `py-24` vertical padding (CTABanner is the only exception)
+4. All primary CTA buttons use `MovingBorderButton` + `MagneticElement` — no plain links/buttons for primary actions
+5. Alternating sections wrapped in `GlassSection` for visual separation (glass bg + backdrop-blur + border)
+6. Every content section has a scroll entrance animation (`ScrollFadeUp`, `StaggerChildren`, or `StickyScroll`)
+
+**Homepage Visual Fixes Phase 2 (completed):**
+
+1. **Unicode escapes fixed** — `\u2019` and `\u2014` in JSX props replaced with actual Unicode characters (', —) across LiveFeed, Testimonials, FAQ, Newsletter.
+2. **Navbar text visibility** — Nav links upgraded from `text-text-secondary` to `text-text-primary` for crisp contrast in both modes. Hover changed to `text-brand-mid`. Dropdown hover bg changed from opaque `bg-bg-tertiary` to `bg-glass-bg` for glass consistency.
+3. **CanvasText simplified** — Removed zigzag SVG underline + arrow marker entirely. Component now renders gradient text only via `.highlight-text-gradient` CSS class. No more `variant` prop. Fixes "G" cut-off issue.
+4. **SectionHeader `highlightedWord` prop** — New optional prop that splits the headline and wraps the matched word in `CanvasText` (teal gradient). Ready for Sanity CMS control.
+5. **SocialProofPill removed from hero** — The "5+ years, 3 companies" pill is no longer rendered. Component remains in codebase for potential reuse.
+6. **Lamp effect pushed below navbar** — Added `pt-20` to the gradient container so the conic gradient glow starts below the fixed navbar area.
+7. **Glass alternating section backgrounds** — New `GlassSection` wrapper component (`bg-glass-bg backdrop-blur-sm border-y border-glass-border`). Applied to Diagnosis, Industries, Process, Testimonials, and LiveFeed sections for clear visual separation while keeping background grid visible.
+8. **CTA Banner — 3 schemes only** — Removed `gradient` and `glass-light` color schemes. Renamed `glass-dark` to `glass`. Type updated to `"teal-solid" | "light-teal" | "glass"`. Default fallback changed to `glass`.
+9. **SuccessAnimation viewport fit** — Desktop sticky panel changed from `items-center` to `items-start` with `pt-24`. Reduced SectionHeader margin, text sizes, and visual area min-height to prevent overflow on laptop screens.
+10. **Newsletter glass card** — Content wrapped in a `rounded-3xl border border-glass-border bg-glass-bg backdrop-blur-md` card container, centered at `max-w-2xl` within the section.
+11. **Footer text visibility + logo animation** — Column headers upgraded from `text-text-tertiary` to `text-text-secondary`. Links from `text-text-secondary` to `text-text-primary`. Fog wordmark wrapped in `ScrollFadeUp` for scroll-reveal animation.
+12. **Sticky scroll spacing** — Pin distance reduced from `items.length * 100` to `items.length * 80` for tighter scroll feel in Services and Process sections.
+
+**Homepage Visual Fixes Phase 3 (completed):**
+
+1. **Highlighted words now visible in all section headers** — `TextReveal` (SplitText) was destroying `CanvasText` wrapper spans. Fix: added `highlightedWord` prop to `TextReveal`. After SplitText creates word spans, matching words get the `highlight-text-gradient` CSS class applied directly. Every section header now correctly shows teal gradient text on the highlighted word.
+2. **`highlightedWord` applied to all sections** — Diagnosis ("isn't working"), Services ("growth engine"), Industries ("accelerate"), Success ("Success"), Process ("It Works"), Case Studies ("numbers"), Testimonials ("clients"), FAQ ("Questions"), LiveFeed ("Up To"), Newsletter ("growth"), CTABanners (via `CTABannerData.highlightedWord`).
+3. **LinkPreview SVG underline+arrow removed** — The zigzag SVG path and arrow marker inside `LinkPreview` component deleted. Links now render as plain teal text with hover color change only.
+4. **"See everything" arrow removed** — The `→` HTML entity removed from the LiveFeedBento "See everything" link.
+5. **Testimonials GlassSection removed** — `GlassSection` wrapper caused visible border corners around the testimonial marquee grid, breaking the smoke-cloud blending effect. Wrapper removed; testimonials section now blends seamlessly into background again.
+6. **Services bottomCta replaced with CTABanner** — The inline `BottomCtaStrip` text ("Need the right mix…") removed from `SERVICES_DATA.bottomCta`. Replaced with a proper `<CTABanner presentationMode="inline" colorScheme="teal-solid">` after the Services section for consistent CTA treatment.
+7. **Arrow SVGs removed from sticky-scroll links** — "Learn More" links in both desktop and mobile StickyScroll panels no longer show arrow icons.
+8. **CTABanner scroll animation** — `ScrollFadeUp` added inside `CTABanner` component itself, so every CTA banner on the site gets a scroll entrance animation automatically.
+9. **GlassSection simplified** — Removed `backdrop-blur-sm` which created stacking context issues breaking GSAP pinning. Now uses `bg-bg-secondary/50 border-y border-glass-border` for subtle visual separation without blur interference.
+10. **CanvasText overflow fix** — Changed from `inline-block` to `inline` to prevent descender clipping on letters like "g", "y", "p".
+
+**Homepage Visual Fixes Phase 3b (completed):**
+
+1. **Inline CTA banner simplified** — Removed `subCopy` from the Services inline CTA. Combined headline+description into single impactful line: "Dev, marketing, and automation in one growth system — built for your stage." with "growth system" highlighted.
+2. **CTA banner placement rearranged** — Removed CTA banners from around Testimonials (Testimonials has built-in CTA, FAQ has built-in CTA). New layout: Growth Audit CTA before Case Studies, Consultation CTA after Newsletter (very bottom).
+3. **Text clipping fixed globally** — After GSAP SplitText creates word/char/line wrapper divs, `overflow: visible` is now forced on all of them. Fixes "G" cut-off in newsletter and any other letter clipping.
+4. **Testimonial grid blending improved** — Grid now renders full-width (no horizontal padding) by breaking out of the `max-w-6xl` container. Fog overlay gradients strengthened: tighter radial gradient, aggressive left/right edge fades (8%/92%), increased backdrop-blur to 3px.
+
+**Homepage Visual Fixes Phase 3c (in progress):**
+
+1. **Text clipping deep fix** — The `overflow: visible` JS fix alone wasn't enough. Root cause: `background-clip: text` on `.highlight-text-gradient` clips the gradient to the text bounding box, which excludes descenders. Multi-layered CSS fix applied:
+   - `[data-text-reveal]` and all child `div`/`span`: `overflow: visible !important` + `line-height: 1.2 !important`
+   - `.highlight-text-gradient`: `padding-bottom: 0.2em; margin-bottom: -0.2em; box-decoration-break: clone; transform: translateY(0.05em);` — extends gradient background area below baseline for descenders (g, y, p, q)
+   - JS runtime: forces `overflow: visible` on the text element itself AND all descendant wrappers after SplitText runs
+2. **Testimonial background cards blended** — `GridCard` changed from `border-glass-border bg-bg-secondary` (opaque, visible rectangles through blur) to `border-white/[0.04] bg-white/[0.03]` (nearly invisible, dissolves into fog)
+
+**Updated cohesion rules:**
+- `GlassSection` stays on Diagnosis, Industries, Process, LiveFeed — NOT on Testimonials (needs blending)
+- All linked text uses plain color styling — no SVG underlines or arrows anywhere
+- Every `SectionHeader` should receive `highlightedWord` for the teal gradient accent
+- `CTABanner` has built-in `ScrollFadeUp` — no external wrapper needed
+- CTA banners should not sandwich sections that already have built-in CTAs
+- Inline CTA banners: headline only, no subCopy — keep the text large and impactful
+- Text clipping: every `[data-text-reveal]` element gets `overflow: visible` + generous `line-height` globally via CSS; `.highlight-text-gradient` has padding to extend gradient below baseline
+
+**Growth Audit page — `/audit` (completed + visual fixes):**
+
+Full sales page at `src/app/audit/page.tsx` with 13 sections. Page renders as `<>` fragment (no `<main>` wrapper) — layout grid background shows through correctly, matching homepage pattern.
+
+- **Section 01 — Hero** (`components/audit/AuditHero/`) — `LampContainer` glow, headline with `CanvasText` highlighted word ("holding"), sub-statement with `ScrollFadeUp`. Price + primary CTA + secondary link wrapped in glassmorphism card (`border-glass-border bg-glass-bg backdrop-blur-md`). `MovingBorderButton` → Stripe. Secondary link uses `text-brand-mid` inline style. `ScrollCue` bottom-right linking to `#case-studies`. No teal label — removed per feedback.
+- **Section 02 — Who It's For** — `SectionHeader` + `AnimatedList` (new `ui/animated-list.tsx`) for scroll-triggered reveal of qualifier items. Each item: glassmorphism pill with teal `Check` icon. Items animate in one-by-one on scroll (motion/react `useInView`).
+- **Section 03 — What We Look At** — 3-col grid. `ServiceLottie` replaces Lucide icons in the icon position (`h-12 w-12`). No duplicate icons. Wrapped in `GlassSection`.
+- **Section 04 — What You Get** — 2×2 grid. Lucide icons via `ICON_MAP` for deliverables.
+- **Section 05 — How It Works** — 3-step timeline. Step circles use `bg-bg-secondary` (correct for GlassSection context). Wrapped in `GlassSection`.
+- **Section 06 — What We've Found** — `AnimatedList` for scroll-triggered reveal. Each finding: `blockquote` with glass border, left teal accent border, `hover:scale-[1.02]` interactivity, quote marks wrapping text.
+- **Section 07 — Pricing** (`components/audit/AuditPricing/`) — Buttons fixed: `as={Link}`, `variant="default"` for highlighted tier, `variant="inverted"` for others. Matches CTABanner button style exactly.
+- **Section 08 — Case Studies** — Reuses `CaseStudiesSection` from homepage with same placeholder data. `id="case-studies"` for ScrollCue target.
+- **Section 09 — Industries** — Reuses `IndustriesGrid` from homepage. Wrapped in `GlassSection`.
+- **Section 10 — Testimonials** — Reuses `HomeTestimonials` from homepage.
+- **Section 11 — FAQ** — `FAQAccordion` with audit-specific Q&A.
+- **Section 12 — Newsletter** — Reuses `NewsletterCapture` from homepage.
+- **Section 13 — Final CTA** — `CTABanner` teal-solid section.
+
+*New component:* `AnimatedList` (`components/ui/animated-list.tsx`) — scroll-triggered item reveal using `motion/react` `useInView`. Respects `prefers-reduced-motion`. Accepts `items: ReactNode[]`, `staggerDelay`, `className`.
+
+*Types added:* `AuditHeroData`, `AuditQualifierData`, `AuditScopeColumn`, `AuditScopeData`, `AuditDeliverable`, `AuditDeliverablesData`, `AuditProcessStep`, `AuditProcessData`, `AuditFinding`, `AuditFindingsData`, `AuditPricingTier`, `AuditPricingData`, `AuditSeoData`, `AuditPageData` — all in `src/lib/types.ts`.
+
+*Metadata:* `generateMetadata` async export with title/description/openGraph. JSON-LD `Service` schema.
+
+*Components exported from barrel file:* `AuditHero`, `AuditPricing`, `AuditFindings`, `AuditProcess`, `AnimatedList`.
+
+**Growth Marketing page — `/services/marketing` (completed):**
+
+Full 10-section sales funnel at `src/app/services/marketing/page.tsx`. Fragment wrapper (layout provides `<main>`).
+
+- **Section 01 — Hero** (`components/shared/ServiceHero/`) — shared service hero with `LampContainer`, `CanvasText` highlighted word, dual `MovingBorderButton` CTAs (Book Consultation + Get Audit), `ScrollCue` linking to `#sub-services`.
+- **Section 02 — The Problem** — 3 pain-point pills with `AnimatedList` scroll-reveal. Narrow `max-w-3xl` layout.
+- **Section 03 — What's Covered** (`components/shared/SubServicesGrid/`) — 2×3 responsive card grid. Each card: `ServiceLottie` icon (large, centered), title, description, glassmorphism styling, hover border + shadow. `StaggerChildren` entry. Wrapped in `GlassSection`. Sub-services: AEO, SEO, Paid Ads, Content Strategy, CRO, Analytics & Tracking.
+- **Section 04 — Who It's For** — qualifier bullets with teal Check icons in glass pills, `AnimatedList` scroll-reveal.
+- **Section 05 — How We Work** — Reuses `AuditProcess` GSAP timeline (3 steps with line-draw, circle pop-in, hover interactivity). Wrapped in `GlassSection`.
+- **Section 06 — Results** — Reuses `CaseStudiesSection`. Marketing-filtered case studies.
+- **Section 07 — Testimonials** — Reuses `HomeTestimonials`. Marketing-specific quotes.
+- **Section 08 — Banner CTA** — `CTABanner` inline, `colorScheme="light-teal"`, → `/audit`.
+- **Section 09 — FAQ** — `FAQAccordion` with 5 marketing-specific Q&A including AEO explanation.
+- **Section 10 — Final CTA** — `CTABanner` section, `colorScheme="teal-solid"`, → `/start`.
+
+*New shared components:* `ServiceHero` (reusable for all service pages), `SubServicesGrid` (2×3 card grid with Lottie icons).
+
+*Types added:* `ServicePageHeroData`, `ServiceProblemData`, `SubServiceItem`, `SubServicesData`, `ServiceQualifierData`, `ServiceProcessStep`, `ServiceProcessData`, `MarketingPageData` — all in `src/lib/types.ts`.
+
+*Metadata:* `generateMetadata` with title/description/openGraph. JSON-LD `Service` schema.
+
+*Components exported from barrel file:* `ServiceHero`, `SubServicesGrid`.
+
 ---
 
 ## 4. DESIGN SYSTEM
@@ -254,22 +649,32 @@ Industries dropdown (CMS-driven — auto-updates when new industry added in Sani
 
 **No hardcoded card content.** All four cards populated from Sanity.
 
+**Implementation note:** Use shared `GrowveloperCard` (`variant="diagnosis"`) for this section.
+
 ---
 
 ### Section 04 — What We Can Do For You
-**Layout:** Alternating full-width rows — visual left/text right, text left/visual right.
-**Three rows — one per service pillar.**
+**Layout:** Shared sticky-scroll reveal system.
+**Behaviour:** Left visual stays pinned while the active service panel on the right drives the visual swap and playback.
+**Three service pillars — one per panel.**
 
-Each row (CMS-driven):
-- Animated visual (GSAP/Aceternity — defined per pillar)
+Each panel (CMS-driven):
+- Step number
 - Pillar name
-- Outcome statement
+- Outcome statement / description
 - Sub-services list (array in Sanity)
-- "Learn More" link → service page
+- CTA label + destination
+- Lottie animation path with fallback gradient
+
+**Implementation note:** This section now uses the same shared sticky-scroll system as Section 07, with GSAP pinning and active-step synchronisation already implemented in the repo.
 
 **Row 1:** Web Development → `/services/development`
 **Row 2:** Growth Marketing → `/services/marketing`
 **Row 3:** AI & Automation → `/services/ai`
+
+**Bottom CTA:**
+- Optional shared bottom CTA block is supported below the sticky panels
+- CMS-driven headline, description, CTA label, CTA URL
 
 ---
 
@@ -281,9 +686,21 @@ Each row (CMS-driven):
 - Hook line
 - Link → industry silo page
 
+**Implementation note:** Use shared `GrowveloperCard` (`variant="industry"`) for all industry cards.
+
 **CTA card:**
 - "Sound like you?" — brand teal background
 - "Book a Consultation" → `/start`
+
+**Implementation note:** Use shared `GrowveloperCard` (`variant="sound-like-you"`) for the CTA card.
+
+**Responsive grid behaviour:**
+- Mobile: single-column stack
+- Tablet: 2-column grid
+- Desktop: 3-column grid
+- The CTA card must not leave dead space when it lands alone on a row
+- On tablet, the CTA spans the full row when it would otherwise sit alone (`md:col-span-2`)
+- On desktop, it fills the remaining grid space naturally based on how many CMS-driven industry cards exist
 
 ---
 
@@ -306,57 +723,122 @@ Each row (CMS-driven):
 ---
 
 ### Section 07 — How It Works
-**Layout:** Sticky scroll reveal — 4 steps, each locks into view as you scroll.
+**Layout:** Sticky scroll reveal — same shared system used in Section 04.
+**Behaviour:** 4 steps lock into view as you scroll, with pinned visual area and active-step Lottie playback.
 
-**Steps (CMS-driven — title + description per step):**
+**Steps (CMS-driven):**
 1. Audit
 2. Architect
 3. Build
 4. Scale
 
+Each step supports:
+- Step number
+- Title
+- Description
+- Optional Lottie animation path
+- Optional fallback gradient
+
+**Implementation note:** The earlier non-Lottie version has been replaced. The current build uses the same GSAP + Lottie sticky-scroll behaviour as Section 04.
+
 ---
 
 ### Section 08 — Case Studies
-**Layout:** Large stacked full-width visual cards.
-**CMS-driven — drops completely if no case studies exist.**
+**Layout:** Full-width stacked cards (almost full-width within `max-w-6xl`). One card per row, vertical scroll. Works with 0, 1, or many cards.
+**CMS-driven — section returns null if no case studies exist.**
 
-**Card components:**
-- Client hero image (full bleed)
-- Client situation (1 sentence)
+**Card layout (desktop) — horizontal two-panel split:**
+- Left side (55%): **Accent-colored panel** containing:
+  - Result headline (large, bold, uppercase, heading font, accent-colored text)
+  - Description (situation copy, 1–2 sentences)
+  - Tech stack icons at bottom (logo images if CMS provides them, small text pill fallback if not)
+- Right side (45%): Screenshot/video from CMS. `object-cover`, full height, subtle hover zoom. Dark teal gradient fallback if no media.
+- Mobile: stacks vertically — content on top, media below.
+
+**Card treatment:**
+- `bg-bg-secondary` + glass border + subtle teal accent border
+- Wrapped in `SpotlightCard` (brand teal radial spotlight on cursor)
+- GSAP hover: `scale: 1.015`, teal border brightens to 0.8 opacity
+- `prefers-reduced-motion` respected — no SpotlightCard wrapper, no GSAP
+- Video plays on hover if `heroVideo` provided
+- **Whole card is clickable** via overlay Link → `/work/[slug]`. No visible CTA text.
+
+**Accent palette (theme-aware, code-driven brand system):**
+- Use **only** the 3 brand teal variants already established in the design system
+- `colorIndex 0` → light teal panel + dark text treatment
+- `colorIndex 1` → mid teal panel + light text treatment
+- `colorIndex 2` → dark teal panel + light teal text treatment
+- Panels cycle by card order to keep variety while staying fully on-brand
+- No lilac, gold, rose, slate, or other non-brand accents
+
+**CMS fields per card:**
 - Result headline
-- "Development + Marketing" combined service tag — always combined
-- Tech stack pills
-- Arrow link → individual case study page
+- Situation / description (1–2 sentences)
+- Tech stack — array of tool name strings
+- Tech stack logos — optional map of tool name → logo image URL
+- Hero image (optional)
+- Hero video (optional)
+- Slug → `/work/[slug]`
+
+**Implementation note:** Uses bespoke `CaseStudyCard` component (not `GrowveloperCard`). SpotlightCard from `ui/spotlight-card.tsx`.
 
 ---
 
 ### Banner CTA 1 — Growth Audit
 **Placement:** After case studies.
-**Layout:** Full-width high-contrast block.
-**CMS-driven:** Headline, sub-copy, CTA label, destination.
+**Presentation mode:** `section`
+**Layout:** Full-width standalone conversion section.
+**Sizing:** Strong and prominent, but vertically compact. Avoid oversized tall blocks.
+**Styling:** Any highlighted word inside the headline must use a contrast-safe accent style based on the selected CTA colour variant. Do not reuse a one-size-fits-all global gradient if it reduces legibility.
+**CMS-driven:** Headline, sub-copy, CTA label, destination, colour variant.
 **Default destination:** `/audit`
 
 ---
 
 ### Section 09 — Testimonials
-**Layout:** Staggered masonry card grid.
+**Layout:** Centered testimonial carousel layered over a foggy testimonial background grid.
 **CMS-driven — drops if no testimonials exist.**
 
-**Card components:**
+**Background layer:**
+- 4-column testimonial grid on desktop, 3-column on tablet, 2-column on mobile
+- Background cards are intentionally hard to read: heavy radial fog mask + edge fades + subtle blur
+- Background always feels dense even with a low CMS count by repeating testimonials to fill the background grid
+- If 1 testimonial exists, it repeats to fill the grid
+- If 2–3 testimonials exist, they repeat in sequence until the grid is full
+- If many testimonials exist, the first set fills the visible background grid while the active card remains the focus
+
+**Foreground carousel:**
+- Single active rectangular card centered over the foggy grid
+- Auto-advances every 4 seconds
+- Pauses on hover
+- GSAP slide transitions
+- Respects `prefers-reduced-motion`
+
+**Active card content:**
 - Star rating
 - Quote
-- Avatar
+- Avatar with initials fallback
 - Name + role
-- Company logo
+- Company name and optional logo
 
-**Final card:** "This could be you" — brand teal, "Book a Consultation" → `/start`
+**Navigation:**
+- Dots only
+- No name-pill navigation
+- Active dot must remain clearly visible in both light and dark mode
+
+**Final CTA slide:**
+- "This could be you" / consultation CTA as the final carousel item
+- Larger headline and larger button than the standard testimonial cards so the conversion target feels intentional
 
 ---
 
 ### Banner CTA 2 — Free Consultation
 **Placement:** After testimonials.
-**Visually distinct from Banner CTA 1.**
-**CMS-driven:** All copy, CTA label, destination.
+**Presentation mode:** `section`
+**Same CTA family as Banner CTA 1** — differentiate via CMS colour variant and copy, not a different component shape.
+**Sizing:** Same compact section CTA proportions as Banner CTA 1.
+**Styling:** Same contrast-safe highlighted word rule as Banner CTA 1.
+**CMS-driven:** All copy, CTA label, destination, colour variant.
 **Default destination:** `/start`
 
 ---
@@ -368,7 +850,7 @@ Each row (CMS-driven):
 ---
 
 ### Section 11 — What We're Up To (Live Feed)
-**Layout:** Card grid. 3 latest items.
+**Layout:** Asymmetric bento grid. 3 latest items.
 **CMS-driven — drops if no content exists.**
 
 **Content types pulled from Sanity:**
@@ -376,11 +858,34 @@ Each row (CMS-driven):
 - YouTube videos (manually added via CMS — URL + thumbnail)
 - TikTok videos (manually added via CMS — URL + thumbnail)
 
-**Card components:**
-- Thumbnail
-- Content type tag (Blog / YouTube / TikTok)
-- Title
-- Date
+**Bento layout:**
+- Item 1: featured card spanning 2 columns on desktop/tablet-sized bento layout
+- Item 2: standard 1-column card
+- Item 3: standard 1-column card
+- Mobile: all cards stack in a single column; featured card loses its width advantage
+
+**Card shape and interaction:**
+- Uses Aceternity-style `BentoGrid` / `BentoGridItem` structure
+- Top "header" region is the thumbnail area
+- Bottom content region contains content-type icon, title, and meta row
+- Bottom content region shifts horizontally on hover (`group-hover/bento:translate-x-2`)
+- Wrapped in `SpotlightCard` with brand teal spotlight glow
+- Hover shadow increases for extra depth
+
+**Card styling:**
+- Card backgrounds cycle through the same 3 theme-aware brand accent variants used by `CaseStudyCard`
+- Matching foreground text is derived from each accent panel
+- Content type pill is rendered inside the thumbnail header
+
+**Content by type:**
+- **Blog:** landscape thumbnail, Blog pill, title, date + read time, click → `/lab/[slug]`
+- **YouTube:** landscape thumbnail, play overlay, YouTube pill, title, date, click → `VideoModal`
+- **TikTok:** portrait-leaning thumbnail treatment, play overlay, TikTok pill, title, date, click → `VideoModal`
+
+**Section header:**
+- Section title from CMS
+- "See everything →" link to `/lab`
+- Link uses `LinkPreview` for hover preview treatment
 
 **Video cards:** clicking opens a modal with embedded player. "Watch on YouTube/TikTok" link inside modal.
 
@@ -471,6 +976,12 @@ All three service pages share identical funnel structure.
 
 ### Reusable components across all service pages:
 - **Micro CTA component** — single line + button. CMS-driven copy. Placed at strategic scroll points.
+- **CTA Banner component** — one shared CTA family with 2 presentation modes:
+  - `inline` — embeddable inside any section, wide pill-style banner; low-height and horizontal on desktop; default to headline + button without supporting sub-copy
+  - `section` — full standalone conversion section between major page blocks
+  - both modes should keep a tight vertical rhythm; never let the CTA block become unnecessarily tall
+  - highlighted words inside CTA headlines must use scheme-aware accent styling so light and dark variants do not clash
+  - colour variant always CMS-driven
 - **"Sound like you?" card** — brand teal. CMS-driven copy. Used in industries section and elsewhere.
 
 ---
@@ -487,7 +998,7 @@ All three service pages share identical funnel structure.
 
 ---
 
-### Web Development — `/services/development`
+### Web Development — `/services/development` ✅ BUILT (Stage 3 dummy data)
 
 **Sub-services (CMS array):**
 - Next.js performance builds
@@ -497,9 +1008,22 @@ All three service pages share identical funnel structure.
 - API integrations
 - Ongoing maintenance
 
+**Section order (13 sections):**
+01 Hero → 02 StatsBand → 03 Problem (glass) → 04 SubServicesBento → 05 TechStackStrip (glass) →
+06 AuditProcess → 07 BeforeAfterCompare (glass) → 08 CaseStudies → 09 Testimonials (glass) →
+10 ServiceQualifiers → 11 FAQ (glass) → 12 CTABanner inline → 13 CTABanner section
+
 **Additional section unique to dev page:**
 Tech stack strip — logos of Next.js, Vercel, Tailwind, Sanity, GTM, GA4, TypeScript.
-Placed after "What's Covered." CMS-driven array of tool logos.
+Placed after "What's Covered" (Section 05), wrapped in GlassSection.
+Component: `src/components/development/TechStackStrip/index.tsx`
+
+**New shared components created during this build (reusable on AI page and beyond):**
+- `src/components/shared/ServiceProblem/index.tsx` — pain point list section (takes `ServiceProblemData`)
+- `src/components/shared/ServiceQualifiers/index.tsx` — qualifier grid section (takes `ServiceQualifierData`)
+
+**StatsBand and BeforeAfterCompare are now standard additions to all service pages.**
+Glass/no-glass alternation applies across all service page sections.
 
 ---
 
@@ -1426,6 +1950,174 @@ Usage rules:
   [data-theme="light"] → use logo-*-light.png
 - In Sanity site settings: logo asset field accepts both variants —
   Juwon can swap logo files from the CMS without code changes
+
+---
+
+## 32. CURRENT QA / TEST PAGE COVERAGE — `/test`
+
+`/test` is the living visual QA route for the shared system. When major shared components or animation patterns change, this route should be kept in sync.
+
+### Current showcased sections
+
+**01 — Navigation preview**
+- Shared `Navigation` component mounted at the top of the page
+- Used to review fixed navbar behaviour and light/dark theme switching
+
+**02 — Lamp hero**
+- `LampContainer`
+- `CanvasText`
+- `MagneticElement`
+- `MovingBorderButton`
+
+**03 — Grid background**
+- `GridBackground`
+- `TextReveal`
+- `ScrollFadeUp`
+
+**04 — Text animation coverage**
+- `TextReveal` with word, character, and line splits
+
+**05 — CanvasText coverage**
+- Gradient, underline, and combined highlight modes
+
+**06 — Link preview coverage**
+- `LinkPreview` hover-card behaviour with static preview images
+
+**07 — Entrance / motion coverage**
+- `StaggerChildren`
+- `CountUp`
+- `ParallaxSection`
+- `MagneticElement`
+- `LineReveal`
+
+**08 — Hero support components**
+- `SocialProofPill`
+- `ScrollCue`
+
+**09 — Homepage shared section components**
+- `DiagnosisCard`
+- `StickyScroll` for Section 04 (`What We Can Do For You`)
+- `StickyScroll` for Section 07 (`How It Works`)
+- `IndustryCard`
+- `SoundLikeYouCard`
+- `CaseStudyCard`
+- `TestimonialGrid`
+- `FAQAccordion`
+- `LiveFeedCard`
+- `VideoModal`
+
+**10 — CTA banner system**
+- `CTABanner` previewed in both current presentation modes:
+  - `inline`
+  - `section`
+- Previewed across all current CTA colour variants:
+  - `teal-solid`
+  - `light-teal`
+  - `glass-dark`
+  - `glass-light`
+  - `gradient`
+
+**11 — GrowveloperCard matrix**
+- All variants × all colour schemes rendered in a grid for visual QA
+- Variants: `industry`, `diagnosis`, `resource`, `automation`, `sound-like-you`
+
+**12 — Newsletter capture**
+- `NewsletterCapture` with React Hook Form + Zod validation
+- Default variant and `downloadUnlocks` variant
+- Posts to `/api/newsletter` (Mailchimp integration)
+- States: idle → loading → success (animated) or error (inline)
+
+**13 — Popup system**
+- `Popup` component with 3 trigger buttons for manual testing
+- Offer types: `newsletter` (with inline email form), `consultation`, `audit`
+- Desktop: centred glassmorphism modal with backdrop blur
+- Mobile (<768px): bottom sheet with swipe-down dismiss
+- 7-day localStorage dismissal (cleared on each test trigger)
+- Respects `prefers-reduced-motion`
+
+### Qualifying form (`/start`)
+- `QualifyingForm` — 4-step multi-step form wired on the `/start` page
+- Step 1: About You (name, email, company, website URL)
+- Step 2: What You Need (multi-select service checkboxes, URL param pre-fill via `?service=`)
+- Step 3: Your Situation (problem statement, budget range, timeline)
+- Step 4: Confirm (preferred contact method, additional context)
+- Per-step Zod validation blocks advancement until fields pass
+- Desktop: numbered stepper; mobile: progress bar
+- Submits to `POST /api/qualify` → Resend email + Sanity lead document
+- Redirects to `/start/confirmed` on success
+- `/start/confirmed` shows next steps, Cal.com booking link, WhatsApp link
+
+### API routes added in Session A
+- `POST /api/newsletter` — validates email, calls Mailchimp API (dev mode fallback if not configured)
+- `POST /api/qualify` — validates lead payload, sends notification email via Resend, creates Sanity lead document
+
+### Test page purpose
+
+- Visual QA for shared systems before wiring final CMS data
+- Review animation timing, theme behaviour, spacing, and interaction states
+- Verify sticky-scroll Lottie swapping and CTA banner presentation modes
+- Test popup trigger logic, newsletter form submissions, and form validation
+- Preserve a single route where the current shared system state can be inspected quickly after large refactors
+
+---
+
+## PAGE COMPOSITION REFACTOR — Session Snapshot
+
+### Accessibility: text-tertiary contrast fix
+- Light mode `--text-tertiary`: `#7a7a7a` → `#595959` (~6.6:1 ratio vs `#f8f8f8`)
+- Dark mode `--text-tertiary`: `#606060` → `#8a8a8a` (~5.7:1 ratio vs `#0a0a0a`)
+- Both now pass WCAG AA minimum 4.5:1 for normal text
+
+### ContentFilterBar redesign
+- Replaced glass-border/transparent pills with branded filter buttons
+- Active state: `border-brand-mid bg-brand-dark text-brand-light shadow-md`
+- Inactive state: `border-brand-mid/25 bg-bg-secondary text-text-secondary` with brand hover
+- Check icon now `text-brand-light` for contrast on dark background
+
+### Industry pages (`/industries/[slug]`) — full restructure
+- **Removed** `SubServicesGrid` for "How we help"
+- **Added** `ServicesAlternating` (StickyScroll 3 pillars) — maps industry service cards to sticky scroll items with CTAs linking to service pages
+- **Added** `ProcessSteps` (How It Works) — Audit → Architect → Build → Scale, industry-name aware descriptions
+- **Added** `BeforeAfterCompare` — visual transformation proof with placeholder images
+- **Added** `IndustriesGrid` — shows other industries (filters out current industry)
+- **Added** `LiveFeed` (From The Lab) — blog/YouTube/TikTok content cards at bottom
+- Section order: Hero → Pain Points → How We Help (StickyScroll) → How It Works → Before/After → Outcome Stats → Case Studies → Testimonials → Who It's For → Other Industries → Inline CTA → FAQ → Lab → Final CTA
+
+### Work page (`/work`) — enriched from thin listing to full conversion page
+- **Added** `ServicesAlternating` (What We Do — 3 pillars) after case study feed
+- **Added** `ProcessSteps` (How It Works) in GlassSection
+- **Added** `BeforeAfterCompare` — visual proof section
+- **Added** `IndustriesGrid` (Industries We Accelerate) in GlassSection
+- **Added** `LiveFeed` (From The Lab) — content section
+- Section order: Hero + Filter + Case Studies → What We Do → How It Works → Before/After → Testimonials → Industries → Lab → CTAs
+
+### Service pages (`/services/development`, `/services/marketing`, `/services/ai`) — bottom enrichment
+- **Added** `IndustriesGrid` (Industries We Accelerate) in GlassSection after FAQ
+- **Added** `LiveFeed` (From The Lab) after IndustriesGrid
+- Existing CTAs moved below new sections
+
+### Homepage (`/`) — added BeforeAfterCompare
+- **Added** `BeforeAfterCompare` in GlassSection between Case Studies and Testimonials
+- All other sections unchanged
+
+### Reuse matrix (components now present across pages)
+
+| Component | Homepage | Work | Industry | Dev | Marketing | AI |
+|---|---|---|---|---|---|---|
+| ServicesAlternating | ✅ | ✅ | ✅ | — | — | — |
+| ProcessSteps | ✅ | ✅ | ✅ | — | — | — |
+| BeforeAfterCompare | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| IndustriesGrid | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| LiveFeed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SubServicesBento | — | — | — | ✅ | ✅ | ✅ |
+| CaseStudiesSection | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| HomeTestimonials | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| FAQAccordion | ✅ | — | ✅ | ✅ | ✅ | ✅ |
+
+### Build status
+- `next build` passes — all 53 pages generated successfully
+- CSS lint warnings for `@custom-variant`, `@theme`, `@apply` are false positives (valid Tailwind CSS v4 directives)
+
 ---
 
 *This document is the build contract for Growveloper. Every section, component, route, CMS schema and flow is defined here. Do not make assumptions — if something isn't in this document, ask before building it.*

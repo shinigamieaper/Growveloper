@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
+import { ResourcesPageClient } from "./ResourcesPageClient";
 
 export const metadata: Metadata = {
   title: "Resources — GROWVELOPER",
-  description: "Guides, templates, frameworks, and playbooks for founders.",
+  description:
+    "Guides, templates, frameworks, and playbooks for founders who build and market.",
 };
 
 export default function ResourcesPage() {
-  return (
-    <main className="min-h-screen bg-bg-primary text-text-primary">
-      {/* Stage 6 — Resources hub sections */}
-    </main>
-  );
+  return <ResourcesPageClient />;
 }

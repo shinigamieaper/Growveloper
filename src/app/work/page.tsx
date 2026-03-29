@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
+import { WorkPageClient } from "./WorkPageClient";
 
 export const metadata: Metadata = {
   title: "Our Work — GROWVELOPER",
-  description: "Case studies showing real results from development and marketing working together.",
+  description:
+    "Real projects. Real results. See how development and marketing working as one system compounds growth.",
 };
 
 export default function WorkPage() {
-  return (
-    <main className="min-h-screen bg-bg-primary text-text-primary">
-      {/* Stage 7 — Case study hub sections */}
-    </main>
-  );
+  return <WorkPageClient />;
 }

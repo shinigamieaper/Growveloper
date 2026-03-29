@@ -1,9 +1,10 @@
 "use client";
 
-import { Sun, Moon } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { THEME_STORAGE_KEY } from "@/lib/constants";
+import { motion } from "motion/react";
 
 interface ThemeToggleProps extends React.ComponentPropsWithoutRef<"button"> {}
 
@@ -12,7 +13,8 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = document.documentElement.getAttribute("data-theme") ?? "dark";
+    const stored =
+      document.documentElement.getAttribute("data-theme") ?? "dark";
     setTheme(stored);
     setMounted(true);
   }, []);
@@ -24,6 +26,8 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
     setTheme(next);
   }
 
+  const isDark = theme === "dark";
+
   if (!mounted) {
     return <div className="h-10 w-10" />;
   }
@@ -32,17 +36,46 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
     <button
       onClick={toggle}
       className={cn(
-        "relative flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-glass-border bg-glass-bg transition-all hover:scale-105",
+        "group relative flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center transition-transform duration-200 hover:scale-110",
         className,
       )}
-      aria-label="Toggle theme"
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       {...props}
     >
-      {theme === "dark" ? (
-        <Sun className="h-5 w-5 text-brand-light" />
-      ) : (
-        <Moon className="h-5 w-5 text-brand-dark" />
-      )}
+      {/* Neon glow aura — visible only in dark mode */}
+      <motion.span
+        animate={{
+          opacity: isDark ? 1 : 0,
+          scale: isDark ? 1 : 0.6,
+        }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="pointer-events-none absolute inset-0 rounded-full"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(174,238,238,0.35) 0%, rgba(90,177,177,0.12) 50%, transparent 70%)",
+          filter: "blur(6px)",
+        }}
+      />
+
+      {/* Bulb icon */}
+      <motion.span
+        animate={{
+          filter: isDark
+            ? "drop-shadow(0 0 8px rgba(174,238,238,0.8)) drop-shadow(0 0 20px rgba(90,177,177,0.4))"
+            : "drop-shadow(0 0 0px transparent) drop-shadow(0 0 0px transparent)",
+        }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="relative z-10"
+      >
+        <Lightbulb
+          className={cn(
+            "h-5 w-5 transition-colors duration-300",
+            isDark ? "text-brand-light" : "text-text-tertiary",
+          )}
+          fill={isDark ? "rgba(174,238,238,0.2)" : "none"}
+          strokeWidth={1.8}
+        />
+      </motion.span>
     </button>
   );
 }
