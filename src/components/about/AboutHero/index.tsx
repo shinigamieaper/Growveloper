@@ -29,7 +29,7 @@ export function AboutHero({ data, className, ...props }: AboutHeroProps) {
 
   if (!data) return null;
 
-  const { name, identity, portraitImage, portraitAlt, scrollCueText, scrollCueTargetId } = data;
+  const { name, identity, portraitImage, portraitAlt, scrollCueText, scrollCueTargetId, namePrefix } = data;
 
   return (
     <section
@@ -45,7 +45,7 @@ export function AboutHero({ data, className, ...props }: AboutHeroProps) {
           className="max-w-sm"
         >
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-text-tertiary">
-            Hello, I&apos;m
+            {namePrefix ?? "Hello, I\u2019m"}
           </p>
           <h1 className="mt-5 heading-font text-6xl font-extrabold leading-none tracking-tight sm:text-7xl md:text-8xl lg:text-[8rem]">
             <CanvasText text={name} />
@@ -85,7 +85,7 @@ export function AboutHero({ data, className, ...props }: AboutHeroProps) {
 
       {/* Scroll cue — bottom-left, clear of portrait */}
       {scrollCueTargetId && (
-        <div className="absolute bottom-8 left-6 z-30 md:left-14">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 md:left-14 md:translate-x-0">
           <ScrollCue
             text={scrollCueText ?? "SCROLL TO LEARN MORE \u00b7 "}
             targetId={scrollCueTargetId}

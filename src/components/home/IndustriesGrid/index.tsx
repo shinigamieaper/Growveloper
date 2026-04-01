@@ -60,7 +60,7 @@ export function IndustriesGrid({ data, className, ...props }: IndustriesGridProp
                     colorScheme="dark"
                     headline={industry.name}
                     subCopy={industry.hookLine}
-                    ctaLabel="Learn More"
+                    ctaLabel={industry.ctaLabel ?? "Learn More"}
                     ctaHref={`/industries/${industry.slug}`}
                     icon={
                       IconComponent ? (

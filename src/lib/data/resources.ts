@@ -81,7 +81,7 @@ const RESOURCE_3: ResourcePageData = {
   resourceType: "Playbook",
   category: "Marketing",
   accessType: "paid",
-  price: 49,
+  priceUSD: 49,
   coverImage:
     "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=1200&h=675&fit=crop",
   featuredToggle: false,
@@ -113,7 +113,7 @@ const RESOURCE_4: ResourcePageData = {
   resourceType: "Framework",
   category: "Marketing",
   accessType: "paid",
-  price: 59,
+  priceUSD: 59,
   coverImage:
     "https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?w=1200&h=675&fit=crop",
   featuredToggle: false,
@@ -144,7 +144,7 @@ const RESOURCE_5: ResourcePageData = {
   resourceType: "Framework",
   category: "Development",
   accessType: "paid",
-  price: 29,
+  priceUSD: 29,
   coverImage:
     "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=675&fit=crop",
   featuredToggle: false,
@@ -235,7 +235,7 @@ const RESOURCE_8: ResourcePageData = {
   resourceType: "Playbook",
   category: "Automation",
   accessType: "paid",
-  price: 39,
+  priceUSD: 39,
   coverImage:
     "https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=1200&h=675&fit=crop",
   featuredToggle: false,

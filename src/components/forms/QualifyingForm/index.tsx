@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/lib/constants";
+import { trackFormStart, trackFormComplete } from "@/lib/analytics";
 import Stepper, { Step } from "@/components/ui/stepper";
 import { qualifyingFormSchema, STEP_FIELDS } from "./types";
 import type { QualifyingFormValues } from "./types";
@@ -49,6 +50,10 @@ export function QualifyingForm({ preSelectedService, className, ...props }: Qual
   });
 
   useEffect(() => {
+    trackFormStart();
+  }, []);
+
+  useEffect(() => {
     if (preSelectedService) {
       setValue("servicesInterested", [preSelectedService]);
     }
@@ -84,6 +89,7 @@ export function QualifyingForm({ preSelectedService, className, ...props }: Qual
         throw new Error(json.error || "Something went wrong");
       }
 
+      trackFormComplete();
       router.push(ROUTES.startConfirmed);
     } catch (err) {
       setSubmitStatus("error");

@@ -9,53 +9,99 @@ import {
   NewsletterCapture,
   ScrollFadeUp,
 } from "@/components";
-import {
-  RESOURCES,
-  RESOURCE_CATEGORIES,
-  RESOURCES_HEADLINE,
-  RESOURCES_HIGHLIGHTED_WORD,
-  RESOURCES_DESCRIPTION,
-  RESOURCES_NEWSLETTER,
-  RESOURCES_CTA_INLINE,
-  RESOURCES_CTA_SECTION,
-} from "@/lib/data/resources";
+import type { CTABannerData, ResourceCardData } from "@/lib/types";
 
-const FILTER_OPTIONS = RESOURCE_CATEGORIES.map((c) => ({ label: c, value: c }));
+interface ResourcesPageClientProps {
+  resources: ResourceCardData[];
+  pageHeadline?: string | null;
+  pageHighlightedWord?: string | null;
+  pageDescription?: string | null;
+  newsletterHeadline?: string | null;
+  newsletterHighlightedWord?: string | null;
+  newsletterSubCopy?: string | null;
+  newsletterCtaLabel?: string | null;
+  newsletterSuccessHeadline?: string | null;
+  newsletterSuccessSubCopy?: string | null;
+  newsletterEmailPlaceholder?: string | null;
+  inlineCtaHeadline?: string | null;
+  inlineCtaHighlightedWord?: string | null;
+  inlineCtaLabel?: string | null;
+  inlineCtaDestination?: string | null;
+  sectionCtaHeadline?: string | null;
+  sectionCtaHighlightedWord?: string | null;
+  sectionCtaLabel?: string | null;
+  sectionCtaDestination?: string | null;
+  emptyStatePrimary?: string | null;
+  emptyStateFiltered?: string | null;
+}
 
-export function ResourcesPageClient() {
+export function ResourcesPageClient({
+  resources,
+  pageHeadline,
+  pageHighlightedWord,
+  pageDescription,
+  newsletterHeadline,
+  newsletterHighlightedWord,
+  newsletterSubCopy,
+  newsletterCtaLabel,
+  newsletterSuccessHeadline,
+  newsletterSuccessSubCopy,
+  newsletterEmailPlaceholder,
+  inlineCtaHeadline,
+  inlineCtaHighlightedWord,
+  inlineCtaLabel,
+  inlineCtaDestination,
+  sectionCtaHeadline,
+  sectionCtaHighlightedWord,
+  sectionCtaLabel,
+  sectionCtaDestination,
+  emptyStatePrimary,
+  emptyStateFiltered,
+}: ResourcesPageClientProps) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
+  const categories = useMemo(
+    () => [...new Set(resources.map((r) => r.category))],
+    [resources],
+  );
+
+  const filterOptions = categories.map((c) => ({ label: c, value: c }));
+
   const visibleCategories = useMemo(() => {
-    const cats = activeFilters.length > 0 ? activeFilters : RESOURCE_CATEGORIES;
+    const cats = activeFilters.length > 0 ? activeFilters : categories;
     return cats.map((cat) => ({
       name: cat,
-      items: RESOURCES.filter((r) => r.category === cat),
+      items: resources.filter((r) => r.category === cat),
     }));
-  }, [activeFilters]);
+  }, [activeFilters, categories, resources]);
 
   return (
     <>
       {/* 01 — Hero */}
-      <section className="pt-32 pb-16 md:pt-40 md:pb-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <SectionHeader
-            headline={RESOURCES_HEADLINE}
-            highlightedWord={RESOURCES_HIGHLIGHTED_WORD}
-            description={RESOURCES_DESCRIPTION}
-          />
-        </div>
-      </section>
+      {pageHeadline && (
+        <section className="pt-32 pb-16 md:pt-40 md:pb-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <SectionHeader
+              headline={pageHeadline}
+              highlightedWord={pageHighlightedWord}
+              description={pageDescription}
+            />
+          </div>
+        </section>
+      )}
 
       {/* 02 — Filter Bar */}
-      <section className="pb-8">
-        <div className="mx-auto max-w-6xl px-6">
-          <ContentFilterBar
-            filters={FILTER_OPTIONS}
-            activeFilters={activeFilters}
-            onFilterChange={setActiveFilters}
-          />
-        </div>
-      </section>
+      {filterOptions.length > 0 && (
+        <section className="pb-8">
+          <div className="mx-auto max-w-6xl px-6">
+            <ContentFilterBar
+              filters={filterOptions}
+              activeFilters={activeFilters}
+              onFilterChange={setActiveFilters}
+            />
+          </div>
+        </section>
+      )}
 
       {/* 03 — Category Sections */}
       <section className="py-8 md:py-12">
@@ -79,7 +125,7 @@ export function ResourcesPageClient() {
                         tag={resource.category}
                         resourceType={resource.resourceType}
                         accessType={resource.accessType}
-                        price={resource.price}
+                        price={resource.priceUSD}
                         href={`/resources/${resource.slug}`}
                       />
                     </ScrollFadeUp>
@@ -89,35 +135,48 @@ export function ResourcesPageClient() {
             );
           })}
 
-          {visibleCategories.every((c) => c.items.length === 0) && (
-            <p className="text-center text-text-tertiary">
-              No resources found for the selected filters.
-            </p>
+          {resources.length === 0 && emptyStatePrimary && (
+            <p className="text-center text-text-tertiary">{emptyStatePrimary}</p>
           )}
+
+          {resources.length > 0 &&
+            visibleCategories.every((c) => c.items.length === 0) &&
+            emptyStateFiltered && (
+              <p className="text-center text-text-tertiary">{emptyStateFiltered}</p>
+            )}
         </div>
       </section>
 
       {/* CTA inline */}
-      <CTABanner
-        data={RESOURCES_CTA_INLINE}
-        presentationMode="inline"
-        colorScheme="light-teal"
-      />
+      {inlineCtaHeadline && inlineCtaLabel && (
+        <CTABanner
+          data={{ headline: inlineCtaHeadline, highlightedWord: inlineCtaHighlightedWord ?? undefined, ctaLabel: inlineCtaLabel, ctaDestination: inlineCtaDestination ?? "/start" }}
+          presentationMode="inline"
+          colorScheme="light-teal"
+        />
+      )}
 
       {/* 04 — Newsletter */}
-      <NewsletterCapture
-        headline={RESOURCES_NEWSLETTER.headline}
-        highlightedWord={RESOURCES_NEWSLETTER.highlightedWord}
-        subCopy={RESOURCES_NEWSLETTER.subCopy}
-        ctaLabel={RESOURCES_NEWSLETTER.ctaLabel}
-      />
+      {newsletterHeadline && (
+        <NewsletterCapture
+          headline={newsletterHeadline}
+          highlightedWord={newsletterHighlightedWord}
+          subCopy={newsletterSubCopy}
+          ctaLabel={newsletterCtaLabel}
+          successHeadline={newsletterSuccessHeadline}
+          successSubCopy={newsletterSuccessSubCopy}
+          emailPlaceholder={newsletterEmailPlaceholder}
+        />
+      )}
 
       {/* CTA section */}
-      <CTABanner
-        data={RESOURCES_CTA_SECTION}
-        presentationMode="section"
-        colorScheme="teal-solid"
-      />
+      {sectionCtaHeadline && sectionCtaLabel && (
+        <CTABanner
+          data={{ headline: sectionCtaHeadline, highlightedWord: sectionCtaHighlightedWord ?? undefined, ctaLabel: sectionCtaLabel, ctaDestination: sectionCtaDestination ?? "/start" }}
+          presentationMode="section"
+          colorScheme="teal-solid"
+        />
+      )}
     </>
   );
 }

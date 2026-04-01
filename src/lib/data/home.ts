@@ -22,7 +22,7 @@ export const HOME_HERO: HomeHeroData = {
   secondaryCtaLabel: "Get a Growth Audit",
   secondaryCtaUrl: "/audit",
   scrollCueText: "EXPLORE OUR WORK · EXPLORE OUR WORK · ",
-  scrollCueTargetId: "Case studies",
+  scrollCueTargetId: "case-studies",
 };
 
 export const HOME_DIAGNOSIS: DiagnosisSectionData = {

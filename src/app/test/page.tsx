@@ -628,8 +628,8 @@ export default function TestPage() {
                 label="Related"
                 items={[
                   { title: "Next.js Performance Playbook", slug: "nextjs-performance-playbook", description: "Achieve 100 Lighthouse scores.", resourceType: "Guide" as const, category: "Performance", accessType: "free" as const },
-                  { title: "Growth Marketing Template Pack", slug: "growth-marketing-templates", description: "12 battle-tested templates.", resourceType: "Template" as const, category: "Marketing", accessType: "paid" as const, price: 49 },
-                  { title: "AI Automation Workflow Kit", slug: "ai-automation-kit", description: "Pre-built Zapier and Make templates.", resourceType: "Framework" as const, category: "Automation", accessType: "paid" as const, price: 79 },
+                  { title: "Growth Marketing Template Pack", slug: "growth-marketing-templates", description: "12 battle-tested templates.", resourceType: "Template" as const, category: "Marketing", accessType: "paid" as const, priceUSD: 49 },
+                  { title: "AI Automation Workflow Kit", slug: "ai-automation-kit", description: "Pre-built Zapier and Make templates.", resourceType: "Framework" as const, category: "Automation", accessType: "paid" as const, priceUSD: 79 },
                 ]}
               />
             </div>
@@ -815,12 +815,14 @@ export default function TestPage() {
             <div>
               <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-text-tertiary">Paid Resource</p>
               <PaidResourceBlock
-                price={49}
-                resourceTitle="Growth Marketing Template Pack"
-                slug="growth-marketing-templates"
+                resourceSlug="test-resource"
+                resourceTitle="Test Resource"
+                priceUSD={49}
+                priceGBP={39}
+                priceNGN={75000}
               />
               <p className="mt-3 text-xs text-text-tertiary">
-                Note: Buy Now will fail without STRIPE_SECRET_KEY configured. This is expected in test.
+                Note: Checkout handled via Flutterwave. Set FLW_SECRET_KEY in .env.
               </p>
             </div>
           </StaggerChildren>

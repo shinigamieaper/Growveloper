@@ -1,14 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Home, CalendarDays, BookOpen } from "lucide-react";
-import { LAB_CONTENT } from "@/lib/data/lab";
+import { getAllBlogPosts } from "@/lib/sanity/queries";
 import { LiveFeedCard } from "@/components/shared/LiveFeedCard";
 import ASCIIText from "@/components/ASCIIText";
-import type { BlogPostCardData } from "@/lib/types";
-
-const latestPosts = LAB_CONTENT.filter(
-  (item): item is BlogPostCardData =>
-    "platform" in item && item.platform === "blog",
-).slice(0, 3);
 
 const quickLinks = [
   {
@@ -31,19 +25,22 @@ const quickLinks = [
   },
 ];
 
-export default function NotFound() {
+export default async function NotFound() {
+  const posts = await getAllBlogPosts();
+  const latestPosts = posts.slice(0, 3);
+
   return (
     <>
       <section className="pt-32 pb-16 md:pt-40 md:pb-20">
         <div className="mx-auto max-w-6xl px-6">
           {/* ASCII 404 hero */}
-          <div className="relative h-44 w-full md:h-56">
+          <div className="relative h-56 w-full md:h-72">
             <ASCIIText
               text="404"
-              textFontSize={320}
-              asciiFontSize={7}
-              textColor="#aeeee"
-              planeBaseHeight={7}
+              textFontSize={400}
+              asciiFontSize={9}
+              textColor="#aeeeee"
+              planeBaseHeight={9}
               enableWaves
             />
           </div>

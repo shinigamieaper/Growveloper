@@ -21,7 +21,7 @@ export const AUDIT_HERO: AuditHeroData = {
   subStatement:
     "A comprehensive audit of your development, marketing, and AI infrastructure \u2014 with a clear roadmap to fix it.",
   primaryCtaLabel: "Get the Audit",
-  primaryCtaUrl: "#stripe-placeholder",
+  primaryCtaUrl: "/audit#pricing",
   secondaryCtaText: "Not sure? Book a free consultation first.",
   secondaryCtaUrl: "/start",
 };
@@ -180,7 +180,7 @@ export const AUDIT_PRICING: AuditPricingData = {
         "Live walkthrough call",
       ],
       ctaLabel: "Get the Audit",
-      ctaUrl: "#stripe-placeholder",
+      ctaUrl: "/audit#pricing",
       highlighted: true,
       badge: "Recommended",
     },
@@ -232,7 +232,7 @@ export const AUDIT_CTA_FINAL: CTABannerData = {
   headline: "Ready to find out what\u2019s holding you back?",
   subCopy: "One audit. Every answer. A clear path forward.",
   ctaLabel: "Get the Audit",
-  ctaDestination: "#stripe-placeholder",
+  ctaDestination: "/audit#pricing",
   highlightedWord: "holding",
   colorScheme: "teal-solid",
   presentationMode: "section",

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, type PanInfo } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +9,7 @@ import { z } from "zod";
 import { X, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MovingBorderButton } from "@/components/ui/moving-border";
+import { trackPopupShown, trackPopupDismissed, trackPopupConverted } from "@/lib/analytics";
 import type { PopupConfig } from "@/lib/types";
 
 const newsletterSchema = z.object({
@@ -97,6 +99,7 @@ export function Popup({ config, open: controlledOpen, onOpenChange, className, .
   const isMobile = useIsMobile();
   const reducedMotion = useReducedMotion();
   const lastScrollTime = useRef(Date.now());
+  const pathname = usePathname();
 
   // Use controlled state if provided, otherwise use internal state
   const isControlled = controlledOpen !== undefined;
@@ -121,11 +124,22 @@ export function Popup({ config, open: controlledOpen, onOpenChange, className, .
 
   const dismiss = useCallback(() => {
     setIsOpen(false);
+    if (config) {
+      trackPopupDismissed({ page: pathname, offerType: config.offerType });
+    }
     // Only set dismissal for auto-triggered popups, not manual ones
     if (config?.triggerType !== "manual") {
       setDismissed();
     }
-  }, [setIsOpen, config?.triggerType]);
+  }, [setIsOpen, config, pathname]);
+
+  // Fire shown event when popup opens
+  useEffect(() => {
+    if (isOpen && config) {
+      trackPopupShown({ page: pathname, offerType: config.offerType });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const onNewsletterSubmit = async (data: NewsletterFormData) => {
     setFormStatus("loading");
@@ -341,6 +355,7 @@ export function Popup({ config, open: controlledOpen, onOpenChange, className, .
           duration={3000}
           containerClassName="inline-flex"
           className="px-8 py-3 text-sm font-semibold md:px-10 md:text-base"
+          onClick={() => config && trackPopupConverted({ page: pathname, offerType: config.offerType })}
         >
           {ctaLabel}
         </MovingBorderButton>

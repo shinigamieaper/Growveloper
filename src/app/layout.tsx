@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Suspense } from "react";
 import { generalSans, gambetta, jetbrainsMono } from "./fonts";
 import { Navigation } from "@/components/shared/Navigation";
 import { Footer } from "@/components/shared/Footer";
 import { LayoutGridOverlay } from "@/components/layout/LayoutGridOverlay";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
+import { ScrollDepthTracker } from "@/components/layout/ScrollDepthTracker";
+import { PopupController } from "@/components/layout/PopupController";
+import { getNavigation, getFooter, getAllPopupConfigs, getSiteSettings } from "@/lib/sanity/queries";
+import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/jsonld";
+import { JsonLd } from "@/components/shared/JsonLd";
 import type { NavigationData, FooterData } from "@/lib/types";
 import "./globals.css";
 
 /* ─── Placeholder data (Rule 3 — structure first, Sanity wiring later) ─── */
 const PLACEHOLDER_NAV: NavigationData = {
+  servicesLabel: "Services",
+  industriesLabel: "Industries",
   serviceLinks: [
     { label: "Web Development", url: "/services/development" },
     { label: "Growth Marketing", url: "/services/marketing" },
@@ -115,22 +123,35 @@ const THEME_INIT_SCRIPT = `
 })();
 `;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [nav, footer, popupConfigs, settings] = await Promise.all([
+    getNavigation(),
+    getFooter(),
+    getAllPopupConfigs(),
+    getSiteSettings(),
+  ]);
+
+  const navData: NavigationData = nav ?? PLACEHOLDER_NAV;
+  const footerData: FooterData = footer ?? PLACEHOLDER_FOOTER;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <JsonLd schema={[buildWebSiteSchema(), buildOrganizationSchema(settings?.seoDescription)]} />
       </head>
       <body
         suppressHydrationWarning
         className={`${generalSans.variable} ${gambetta.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {/* Global navigation — CMS data wired after Sanity schemas are built */}
-        <Navigation data={PLACEHOLDER_NAV} />
+        {/* Global navigation - disabled on studio route */}
+        <Suspense fallback={null}>
+          <Navigation data={navData} suppressOnStudio={true} />
+        </Suspense>
 
         {/* Fixed grid background overlay — subtle texture across entire site */}
         <LayoutGridOverlay />
@@ -140,11 +161,17 @@ export default function RootLayout({
           {children}
         </main>
 
-        {/* Global footer — CMS data wired after Sanity schemas are built */}
-        <Footer data={PLACEHOLDER_FOOTER} />
+        {/* Global footer */}
+        <Footer data={footerData} />
 
         {/* Floating scroll-to-top button */}
         <ScrollToTop />
+
+        {/* Popup system — single controller reads all enabled configs, matches by pathname */}
+        <PopupController configs={popupConfigs} />
+
+        {/* Scroll depth tracker — fires GTM events at 25/50/75/100% */}
+        <ScrollDepthTracker />
 
         {/* Google Tag Manager — loads after page is interactive */}
         {process.env.NEXT_PUBLIC_GTM_ID && (
@@ -158,6 +185,23 @@ export default function RootLayout({
                 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
                 })(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GTM_ID}');
+              `,
+            }}
+          />
+        )}
+
+        {/* Microsoft Clarity — loads after page is interactive */}
+        {process.env.NEXT_PUBLIC_CLARITY_ID && (
+          <Script
+            id="clarity"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(c,l,a,r,i,t,y){
+                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+                })(window,document,"clarity","script","${process.env.NEXT_PUBLIC_CLARITY_ID}");
               `,
             }}
           />

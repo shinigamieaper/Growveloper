@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MovingBorderButton } from "@/components/ui/moving-border";
 import { ScrollFadeUp } from "@/components/animations/ScrollFadeUp";
 import { cn } from "@/lib/utils";
+import { trackCTAClick } from "@/lib/analytics";
 import type { CTABannerColorScheme, CTABannerPresentationMode, CTABannerProps } from "@/lib/types";
 
 const legacyPresentationModeMap = {
@@ -64,6 +66,8 @@ const presentationModeClasses = {
 } as const;
 
 export function CTABanner({ data, colorScheme, presentationMode, variant, className, ...props }: CTABannerProps) {
+  const pathname = usePathname();
+
   if (!data) return null;
 
   const resolvedColorScheme: CTABannerColorScheme = colorScheme ?? data.colorScheme ?? "glass";
@@ -90,6 +94,7 @@ export function CTABanner({ data, colorScheme, presentationMode, variant, classN
             containerClassName="inline-flex w-full md:w-auto"
             borderClassName={schemeClasses.buttonBorder}
             className={cn("px-6 py-3 text-sm font-semibold md:px-7", schemeClasses.button)}
+            onClick={() => trackCTAClick(pathname, data.ctaLabel, data.ctaDestination)}
           >
             {data.ctaLabel}
           </MovingBorderButton>

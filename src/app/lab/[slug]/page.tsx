@@ -12,17 +12,17 @@ import { SocialShareButtons } from "@/components/shared/SocialShareButtons";
 import { RelatedContentGrid } from "@/components/shared/RelatedContentGrid";
 import {
   getBlogPostBySlug,
-  getRelatedPosts,
-  LAB_CONTENT,
-} from "@/lib/data/lab";
+  getAllBlogPosts,
+  getAllLabContent,
+  getSiteSettings,
+  getLabPage,
+} from "@/lib/sanity/queries";
 import type { CTABannerData } from "@/lib/types";
 
 /* ─── Static params — only blog posts have detail pages ─── */
-export function generateStaticParams() {
-  return LAB_CONTENT.filter(
-    (item): item is import("@/lib/types").BlogPostCardData =>
-      "platform" in item && item.platform === "blog",
-  ).map((post) => ({ slug: post.slug }));
+export async function generateStaticParams() {
+  const posts = await getAllBlogPosts();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 /* ─── Metadata ─── */
@@ -32,28 +32,19 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
-  if (!post) return { title: "Post Not Found — GROWVELOPER" };
+  const [post, settings] = await Promise.all([
+    getBlogPostBySlug(slug),
+    getSiteSettings(),
+  ]);
+  if (!post) return { title: "Post Not Found" };
   return {
-    title: `${post.title} — The Lab — GROWVELOPER`,
+    title: `${post.title} — The Lab`,
     description: post.excerpt,
+    openGraph: settings?.ogImage
+      ? { images: [{ url: settings.ogImage }] }
+      : undefined,
   };
 }
-
-/* ─── CTA data ─── */
-const CTA_INLINE: CTABannerData = {
-  headline: "Working on something similar? Let\u2019s talk.",
-  highlightedWord: "Let\u2019s talk",
-  ctaLabel: "Book a free consultation",
-  ctaDestination: "/start",
-};
-
-const CTA_SECTION: CTABannerData = {
-  headline: "Ready to build something that compounds?",
-  highlightedWord: "compounds",
-  ctaLabel: "Start a project",
-  ctaDestination: "/start",
-};
 
 /* ─── Page ─── */
 export default async function LabPostPage({
@@ -62,10 +53,32 @@ export default async function LabPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+  const [post, allContent, settings, lab] = await Promise.all([
+    getBlogPostBySlug(slug),
+    getAllLabContent(),
+    getSiteSettings(),
+    getLabPage(),
+  ]);
   if (!post) notFound();
 
-  const related = getRelatedPosts(slug);
+  /* Handle both static bodyParagraphs (Stage 3) and Sanity portable text body (Stage 4) */
+  const bodyContent: string[] =
+    post.bodyParagraphs ??
+    ((post as unknown as Record<string, unknown>).body as Array<{ _type: string; children?: Array<{ text: string }> }> ?? [])
+      .filter((b) => b._type === "block")
+      .map((b) => b.children?.map((c) => c.text).join("") ?? "")
+      .filter(Boolean);
+
+  /* Related posts: same category, exclude self */
+  const related = allContent
+    .filter(
+      (item) =>
+        "slug" in item &&
+        item.slug !== slug &&
+        "category" in item &&
+        (item as { category?: string }).category === post.category,
+    )
+    .slice(0, 3);
 
   const publishedDate = new Date(post.publishedAt).toLocaleDateString("en-GB", {
     day: "numeric",
@@ -75,6 +88,24 @@ export default async function LabPostPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: post.excerpt ?? "",
+            image: post.heroImage ?? undefined,
+            datePublished: post.publishedAt,
+            author: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+            publisher: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+            mainEntityOfPage: { "@type": "WebPage", "@id": `https://growveloper.com/lab/${slug}` },
+          }),
+        }}
+      />
+
       {/* 01 — Post Header */}
       <section className="pt-32 pb-10 md:pt-40 md:pb-14">
         <div className="mx-auto max-w-3xl px-6">
@@ -132,44 +163,45 @@ export default async function LabPostPage({
       )}
 
       {/* 03 — Article Body */}
-      <section className="py-4 md:py-6">
-        <div className="mx-auto max-w-3xl px-6">
-          <div className="space-y-6">
-            {post.bodyParagraphs.map((paragraph, i) => {
-              /* Pull quote — insert after first paragraph if defined */
-              const showPullQuote = i === 1 && post.pullQuote;
-              return (
-                <ScrollFadeUp key={i} delay={i * 0.04}>
-                  <p className="text-base leading-[1.85] text-text-secondary md:text-lg">
-                    {paragraph}
-                  </p>
-                  {showPullQuote && (
-                    <blockquote className="my-8 border-l-4 border-brand-mid pl-6">
-                      <p className="text-lg font-medium italic leading-relaxed text-text-primary md:text-xl">
-                        &ldquo;{post.pullQuote}&rdquo;
-                      </p>
-                    </blockquote>
-                  )}
-                </ScrollFadeUp>
-              );
-            })}
-          </div>
-
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 flex flex-wrap gap-2 border-t border-glass-border pt-8">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-glass-border bg-bg-secondary px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-text-tertiary"
-                >
-                  {tag}
-                </span>
-              ))}
+      {bodyContent.length > 0 && (
+        <section className="py-4 md:py-6">
+          <div className="mx-auto max-w-3xl px-6">
+            <div className="space-y-6">
+              {bodyContent.map((paragraph, i) => {
+                const showPullQuote = i === 1 && post.pullQuote;
+                return (
+                  <ScrollFadeUp key={i} delay={i * 0.04}>
+                    <p className="text-base leading-[1.85] text-text-secondary md:text-lg">
+                      {paragraph}
+                    </p>
+                    {showPullQuote && (
+                      <blockquote className="my-8 border-l-4 border-brand-mid pl-6">
+                        <p className="text-lg font-medium italic leading-relaxed text-text-primary md:text-xl">
+                          &ldquo;{post.pullQuote}&rdquo;
+                        </p>
+                      </blockquote>
+                    )}
+                  </ScrollFadeUp>
+                );
+              })}
             </div>
-          )}
-        </div>
-      </section>
+
+            {/* Tags */}
+            {post.tags && post.tags.length > 0 && (
+              <div className="mt-12 flex flex-wrap gap-2 border-t border-glass-border pt-8">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-glass-border bg-bg-secondary px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-text-tertiary"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* 04 — Share + CTA (conditional) */}
       {post.showCTA && (
@@ -191,7 +223,13 @@ export default async function LabPostPage({
       )}
 
       {/* 05 — Inline CTA */}
-      <CTABanner data={CTA_INLINE} presentationMode="inline" colorScheme="light-teal" />
+      {lab?.postInlineCtaHeadline && lab?.postInlineCtaLabel && (
+        <CTABanner
+          data={{ headline: lab.postInlineCtaHeadline, highlightedWord: lab.postInlineCtaHighlightedWord ?? undefined, ctaLabel: lab.postInlineCtaLabel, ctaDestination: lab.postInlineCtaDestination ?? "/start" } as CTABannerData}
+          presentationMode="inline"
+          colorScheme="light-teal"
+        />
+      )}
 
       {/* 06 — Related Posts */}
       {related.length > 0 && (
@@ -209,15 +247,26 @@ export default async function LabPostPage({
       )}
 
       {/* 07 — Newsletter */}
-      <NewsletterCapture
-        headline="Stay in the loop"
-        highlightedWord="loop"
-        subCopy="No spam. Just builds, breakdowns, and the occasional experiment."
-        ctaLabel="Subscribe"
-      />
+      {lab?.postNewsletterHeadline && (
+        <NewsletterCapture
+          headline={lab.postNewsletterHeadline}
+          highlightedWord={lab.postNewsletterHighlightedWord}
+          subCopy={lab.postNewsletterSubCopy}
+          ctaLabel={lab.postNewsletterCtaLabel}
+          successHeadline={settings?.newsletterSuccessHeadline}
+          successSubCopy={settings?.newsletterSuccessSubCopy}
+          emailPlaceholder={settings?.newsletterEmailPlaceholder}
+        />
+      )}
 
       {/* 08 — Section CTA */}
-      <CTABanner data={CTA_SECTION} presentationMode="section" colorScheme="teal-solid" />
+      {lab?.postSectionCtaHeadline && lab?.postSectionCtaLabel && (
+        <CTABanner
+          data={{ headline: lab.postSectionCtaHeadline, highlightedWord: lab.postSectionCtaHighlightedWord ?? undefined, ctaLabel: lab.postSectionCtaLabel, ctaDestination: lab.postSectionCtaDestination ?? "/start" } as CTABannerData}
+          presentationMode="section"
+          colorScheme="teal-solid"
+        />
+      )}
     </>
   );
 }

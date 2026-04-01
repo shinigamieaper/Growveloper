@@ -50,7 +50,7 @@ export function AutomationsCatalogueHero({
         </motion.div>
       </LampContainer>
 
-      <div className="absolute bottom-8 right-6 z-60 md:right-12">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-60 md:left-auto md:right-12 md:translate-x-0">
         <ScrollCue
           text={scrollCueText}
           targetId={scrollCueTargetId}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { AlertTriangle, RotateCcw, Home } from "lucide-react";
 import Link from "next/link";
 
@@ -11,8 +12,7 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
-    // Log to error tracking service in Stage 4
-    console.error(error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

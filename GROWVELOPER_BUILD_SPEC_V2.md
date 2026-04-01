@@ -80,7 +80,7 @@ Adding a new industry or service in Sanity automatically updates the nav dropdow
 | Deployment | Vercel (Edge) |
 | Tracking | Google Tag Manager (Server-Side) + GA4 |
 | Error monitoring | Sentry |
-| Payments | Stripe (global — works in Nigeria, US, worldwide) |
+| Payments | Flutterwave (multi-currency checkout — GBP, USD, NGN; USD default) |
 | Forms | React Hook Form + Zod validation |
 | Email delivery | Resend |
 | Newsletter | Mailchimp |
@@ -179,12 +179,11 @@ This document defines the target product, but it must also stay synced with the 
 - `PortableTextRenderer` (`shared/PortableTextRenderer/`) — renders Sanity Portable Text with custom block renderers. General Sans headings, Gambetta body, JetBrains Mono code blocks (local woff2 via `next/font/local` at `public/fonts/JetBrainsMono/`). All styling via CSS variables.
 - `ContentFilterBar` (`shared/ContentFilterBar/`) — reusable pill-tab filter bar. Props: `filters`, `activeFilter`, `onFilterChange`. Mobile horizontal scroll with snap. Used on `/lab`, `/resources`, `/work`.
 - `ResourceCard` (`shared/ResourceCard/`) — thin wrapper composing `GrowveloperCard` with `variant="resource"`. Adds `resourceType`, `accessType`, `price` props and access badge. Does not modify `GrowveloperCardBaseProps`.
-- `FreeResourceBlock` + `PaidResourceBlock` (`shared/ResourceActionBlock/`) — free: email gate → download unlock via newsletter API. Paid: Stripe hosted checkout via `/api/stripe/resource-checkout` route handler. Stripe client lazy-loaded via `getStripe()` in `src/lib/stripe.ts`. `STRIPE_SECRET_KEY` required at runtime.
+- `FreeResourceBlock` + `PaidResourceBlock` (`shared/ResourceActionBlock/`) — free: email gate → download unlock via newsletter API. Paid: currency switcher (USD/GBP/NGN, USD default), email input, POST to `/api/flutterwave/checkout` → redirect to Flutterwave hosted page → webhook on `charge.completed`.
 
 *New dependencies added:*
 - `@portabletext/react` — Portable Text rendering
 - `@fontsource/jetbrains-mono` — font source (woff2 files copied to `public/fonts/`)
-- `stripe` — Stripe checkout integration (server-side only)
 - `shadcn/ui Badge` component installed
 
 *Font addition:*
@@ -431,7 +430,7 @@ A full design consistency pass was applied across all homepage sections to enfor
 3. **Text clipping fixed globally** — After GSAP SplitText creates word/char/line wrapper divs, `overflow: visible` is now forced on all of them. Fixes "G" cut-off in newsletter and any other letter clipping.
 4. **Testimonial grid blending improved** — Grid now renders full-width (no horizontal padding) by breaking out of the `max-w-6xl` container. Fog overlay gradients strengthened: tighter radial gradient, aggressive left/right edge fades (8%/92%), increased backdrop-blur to 3px.
 
-**Homepage Visual Fixes Phase 3c (in progress):**
+**Homepage Visual Fixes Phase 3c (completed):**
 
 1. **Text clipping deep fix** — The `overflow: visible` JS fix alone wasn't enough. Root cause: `background-clip: text` on `.highlight-text-gradient` clips the gradient to the text bounding box, which excludes descenders. Multi-layered CSS fix applied:
    - `[data-text-reveal]` and all child `div`/`span`: `overflow: visible !important` + `line-height: 1.2 !important`
@@ -452,7 +451,7 @@ A full design consistency pass was applied across all homepage sections to enfor
 
 Full sales page at `src/app/audit/page.tsx` with 13 sections. Page renders as `<>` fragment (no `<main>` wrapper) — layout grid background shows through correctly, matching homepage pattern.
 
-- **Section 01 — Hero** (`components/audit/AuditHero/`) — `LampContainer` glow, headline with `CanvasText` highlighted word ("holding"), sub-statement with `ScrollFadeUp`. Price + primary CTA + secondary link wrapped in glassmorphism card (`border-glass-border bg-glass-bg backdrop-blur-md`). `MovingBorderButton` → Stripe. Secondary link uses `text-brand-mid` inline style. `ScrollCue` bottom-right linking to `#case-studies`. No teal label — removed per feedback.
+- **Section 01 — Hero** (`components/audit/AuditHero/`) — `LampContainer` glow, headline with `CanvasText` highlighted word ("holding"), sub-statement with `ScrollFadeUp`. Price + primary CTA + secondary link wrapped in glassmorphism card (`border-glass-border bg-glass-bg backdrop-blur-md`). `MovingBorderButton` → Lemon Squeezy buy URL (set via `heroPrimaryCtaUrl` in Sanity `auditPage`). Secondary link uses `text-brand-mid` inline style. `ScrollCue` bottom-right linking to `#case-studies`. No teal label — removed per feedback.
 - **Section 02 — Who It's For** — `SectionHeader` + `AnimatedList` (new `ui/animated-list.tsx`) for scroll-triggered reveal of qualifier items. Each item: glassmorphism pill with teal `Check` icon. Items animate in one-by-one on scroll (motion/react `useInView`).
 - **Section 03 — What We Look At** — 3-col grid. `ServiceLottie` replaces Lucide icons in the icon position (`h-12 w-12`). No duplicate icons. Wrapped in `GlassSection`.
 - **Section 04 — What You Get** — 2×2 grid. Lucide icons via `ICON_MAP` for deliverables.
@@ -600,8 +599,8 @@ Industries dropdown (CMS-driven — auto-updates when new industry added in Sani
 | 19 | Industry: AI & Tech | `/industries/ai-tech` | CMS template |
 | 20 | Industry: FinTech | `/industries/fintech` | CMS template |
 | 21 | The Brains (About) | `/about` | Static + CMS |
-| 22 | Privacy Policy | `/privacy` | Static |
-| 23 | Terms of Service | `/terms` | Static |
+| 22 | Privacy Policy | `/privacy` | CMS (`privacyPage`) |
+| 23 | Terms of Service | `/terms` | CMS (`termsPage`) |
 | 24 | 404 | `/not-found` | Static |
 
 ---
@@ -914,7 +913,7 @@ Each step supports:
 **Goal:** Get visitor to purchase the audit.
 **Purchase flow:**
 ```
-Read page → Click "Get the Audit" → Stripe payment → Intake form → Audit → Delivery → Walkthrough call
+Read page → Click "Get the Audit" → Lemon Squeezy checkout → Intake form → Audit → Delivery → Walkthrough call
 ```
 Payment = qualification. Intake form comes after payment, not before.
 
@@ -923,7 +922,7 @@ Payment = qualification. Intake form comes after payment, not before.
 **01 — Hero**
 - Page name + outcome statement
 - "From $500" — price CMS-driven (update anytime)
-- Primary CTA: "Get the Audit" → Stripe
+- Primary CTA: "Get the Audit" → Lemon Squeezy buy URL (CMS-driven via `heroPrimaryCtaUrl`)
 
 **02 — Who It's For**
 - Qualifier bullet list — CMS array
@@ -947,14 +946,14 @@ All CMS-driven — add or remove deliverables without code change.
 
 **07 — Pricing**
 - Price CMS-driven
-- CTA: "Get the Audit" → Stripe
+- CTA: "Get the Audit" → Lemon Squeezy buy URL (CMS-driven per pricing tier `ctaUrl`)
 - Secondary link: "Not sure? Book a free consultation first." → `/start`
 
 **08 — FAQ**
 - CMS-driven accordion
 
 **09 — Final CTA**
-- CMS-driven headline + button → Stripe
+- CMS-driven headline + button → Lemon Squeezy buy URL
 
 ---
 
@@ -998,9 +997,8 @@ All three service pages share identical funnel structure.
 
 ---
 
-### Web Development — `/services/development` ✅ BUILT (Stage 3 dummy data)
-
-**Sub-services (CMS array):**
+### Web Development — `/services/development` 
+- **Sub-services (CMS array):**
 - Next.js performance builds
 - Performance optimisation (Core Web Vitals, LCP)
 - CMS setup (Sanity)
@@ -1254,11 +1252,12 @@ Design differs by access type:
 - File served from Sanity asset (PDF) or external URL (Notion link)
 
 **Paid resource block:**
-- Price displayed clearly (CMS-driven)
-- "Buy now" → Stripe hosted checkout
-- On payment success → redirect to confirmation page with download link
-- Confirmation email sent automatically via Resend
-- Download link expires after 48 hours
+- Multi-currency tabs: USD (default) / GBP / NGN — prices CMS-driven (`priceUSD`, `priceGBP`, `priceNGN`)
+- Email input (required for Flutterwave customer record)
+- "Buy now" → POST `/api/flutterwave/checkout` → server creates Flutterwave session → redirect to hosted checkout
+- On payment success → Flutterwave webhook fires to `/api/flutterwave/webhook` (verifies `verif-hash` header)
+- `redirect_url` → `/resources/[slug]/confirmed` (set server-side)
+- Confirmation email sent via Resend on `charge.completed` event
 
 **08 — Related Resources**
 3 cards from same category. Same card component as hub.
@@ -1272,11 +1271,13 @@ description (Portable Text)
 resourceType (Template / Guide / Framework / Playbook)
 category
 accessType (free / paid)
-price (number — paid only)
+priceUSD (number — paid only, USD $)
+priceGBP (number — paid only, GBP £)
+priceNGN (number — paid only, NGN ₦)
 coverImage
 previewImages (array — optional)
-whatsIncluded (array of strings)
-whoItIsFor (array of strings)
+whatsIncluded (array)
+whoItIsFor (array)
 fileAsset (Sanity file asset or external URL)
 featuredToggle
 publishedAt
@@ -1360,7 +1361,7 @@ heroImage
 situation (Portable Text)
 metrics (array — label + value)
 approach (Portable Text)
-buildSection (Portable Text + images)
+buildSection (Portable Text)
 result (Portable Text)
 testimonial (reference → Testimonial)
 techStack (array of tool names/logos)
@@ -1400,7 +1401,7 @@ Qualifier bullets. CMS array.
 
 **08 — CTA Block**
 Two paths (controlled by `accessType`):
-- Fixed price → Stripe payment
+- Fixed price → Lemon Squeezy buy URL
 - Custom → "Book a consultation" → `/start`
 
 **09 — FAQ**
@@ -1535,41 +1536,19 @@ seoDescription
 ## 19. CONSULTATION CONFIRMATION — `/start/confirmed`
 
 **Sections:**
-
-**01 — Success Message**
-"You're in. Here's what happens next."
-
-**02 — Next Steps**
-1. Check your email for confirmation
-2. We'll review your submission within 24 hours
-3. You'll receive a calendar link to pick your slot
-
-**03 — Calendar Embed**
-Cal.com embed — book a slot immediately without waiting.
-
-**04 — While You Wait**
-2–3 resource or article cards from CMS. "Here's something useful while you wait." Drops if no content.
-
-**05 — Soft CTA**
-"Prefer to talk now?" WhatsApp or email link.
+- Headline: "This page doesn't exist. But your growth problem does."
+- 3 quick links: Homepage / Book a Consultation / Resources
+- Latest 3 Lab posts from CMS (drops if none)
 
 ---
 
 ## 20. AUDIT PAYMENT CONFIRMATION — `/audit/confirmed`
 
 **Sections:**
-
-**01 — Success Message**
-"Your audit is booked."
-
-**02 — Complete Intake**
-Link to intake form — separate from qualifying form. Gives Juwon info needed to conduct the audit.
-
-**03 — What to Expect**
-Delivery in 3–5 days. Package: Loom + Notion doc + walkthrough call.
-
-**04 — Book Your Walkthrough**
-Cal.com embed to book the walkthrough call in advance.
+- Success Message
+- Complete Intake
+- What to Expect
+- Book Your Walkthrough
 
 ---
 
@@ -1625,12 +1604,11 @@ Resource page → Click Download
 
 ### Flow 3 — Paid Resource Purchase
 ```
-Resource page → Click Buy
-→ Stripe hosted checkout
-→ Payment success → Stripe webhook fires
-→ Redirect to confirmation page with download link
-→ Confirmation email sent via Resend
-→ Download link expires after 48 hours
+Resource page → Select currency (USD/GBP/NGN) → Enter email → Click Buy
+→ POST /api/flutterwave/checkout → Flutterwave hosted checkout
+→ Payment success → redirect_url → /resources/[slug]/confirmed
+→ Flutterwave webhook fires to /api/flutterwave/webhook (verif-hash verified)
+→ charge.completed + status "successful" → confirmation email via Resend
 ```
 
 ---
@@ -1679,8 +1657,9 @@ thumbnail, description, publishedAt, featuredToggle
 ### Resource
 ```
 title, slug, description (Portable Text), resourceType,
-category, accessType (free/paid), price, coverImage,
-previewImages (array), whatsIncluded (array),
+category, accessType (free/paid),
+priceUSD (paid only), priceGBP (paid only), priceNGN (paid only),
+coverImage, previewImages (array), whatsIncluded (array),
 whoItIsFor (array), fileAsset, featuredToggle,
 publishedAt, showPreview (boolean)
 ```
@@ -1742,12 +1721,17 @@ preferredContact, additionalContext, submittedAt
 - `generateMetadata` function required on every page — pulls from Sanity site settings
 - Schema markup (JSON-LD) injected per page:
   - `TechnicalArticle` — Lab articles
-  - `CaseStudy` — Case study pages
-  - `SoftwareApplication` — Automation product pages
-  - `Organization` — Site-wide
-  - `Person` — The Brains page
-  - `Service` — Service pages
-- Sitemap auto-generated from all CMS-driven routes
+  - `WebSite` + `Organization` — Home page
+  - `BlogPosting` — Lab post pages (`/lab/[slug]`)
+  - `Service` — Industry pages (`/industries/[slug]`)
+  - `CreativeWork` — Case study pages (`/work/[slug]`)
+  - `SoftwareApplication` — Automation product pages (`/automations/[slug]`)
+  - `Person` — About page (`/about`)
+  - `Blog` — Lab index (`/lab`)
+  - `CollectionPage` — Work index (`/work`), Resources (`/resources`)
+  - `WebPage` — Start confirmed (`/start/confirmed`)
+- Sitemap auto-generated from all CMS-driven routes via `src/app/sitemap.ts`
+- `robots.ts` with crawl rules and sitemap location
 - Open Graph + Twitter card meta on every page
 - Canonical URLs on all pages
 
@@ -1755,11 +1739,14 @@ preferredContact, additionalContext, submittedAt
 
 ## 26. TRACKING SETUP
 
-- GTM loaded via `next/script` with `strategy="afterInteractive"`
+- GTM loaded via `next/script` with `strategy="afterInteractive"` — env var `NEXT_PUBLIC_GTM_ID`
+- Microsoft Clarity loaded via `next/script` with `strategy="afterInteractive"` — env var `NEXT_PUBLIC_CLARITY_ID`
 - Never call `window.dataLayer` directly — use `/lib/analytics.ts` helper
 - All CTA buttons fire `cta_click` with `{ page, cta_label, destination }`
+  - Implemented on: `ServiceHero` (primary + secondary CTAs), `CTABanner`
 - Form steps fire `form_start` on mount, `form_complete` on submit
-- Stripe payment success fires `purchase` event with `{ item, value, currency }`
+  - Implemented on: `QualifyingForm`, `NewsletterCapture`
+- Flutterwave webhook `charge.completed` fires `purchase` event with `{ item, value, currency }`
 - Resource download fires `download` event with `{ resource_title, access_type }`
 
 **GA4 events:**
@@ -1875,7 +1862,7 @@ popup_converted — popup CTA clicked
     /schemas/
   /analytics.ts
   /mailchimp.ts
-  /stripe.ts
+  /flutterwave.ts
   /types.ts
   /utils.ts
   /constants.ts
@@ -1893,19 +1880,23 @@ popup_converted — popup CTA clicked
 ## 29. ENVIRONMENT VARIABLES
 
 ```
+NEXT_PUBLIC_SITE_URL=https://growveloper.com
 NEXT_PUBLIC_SANITY_PROJECT_ID=
 NEXT_PUBLIC_SANITY_DATASET=
-SANITY_API_TOKEN=
+SANITY_API_READ_TOKEN=        # Sanity read-only token (used by server components)
+SANITY_API_WRITE_TOKEN=       # Sanity write token (human-readable label)
+SANITY_API_TOKEN=             # Same value as SANITY_API_WRITE_TOKEN — used by /api/qualify and client.server.ts
 NEXT_PUBLIC_GTM_ID=
-NEXT_PUBLIC_GA4_ID=
 SENTRY_DSN=
-STRIPE_PUBLIC_KEY=
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
+SENTRY_ORG=
+SENTRY_PROJECT=
 RESEND_API_KEY=
 MAILCHIMP_API_KEY=
 MAILCHIMP_AUDIENCE_ID=
 NEXT_PUBLIC_CALCOM_URL=
+NEXT_PUBLIC_WHATSAPP_NUMBER=
+FLW_SECRET_KEY=               # Flutterwave secret key (from Flutterwave Dashboard → API)
+FLW_SECRET_HASH=              # User-defined string set in Flutterwave Dashboard → Settings → Webhooks AND here
 ```
 
 ---
@@ -1914,18 +1905,20 @@ NEXT_PUBLIC_CALCOM_URL=
 
 Build in stages. Complete and review each stage before moving to the next.
 
-| Stage | What to build |
-|---|---|
-| 1 | Foundation — repo, design tokens, typography, layout shell (Nav + Footer), `.windsurfrules` in root |
-| 2 | Homepage — all 13 sections, GSAP setup, Success animation, responsive |
-| 3 | Core service pages — Audit, Marketing, Development, AI |
-| 4 | Sanity CMS — all schemas, Studio config, GROQ queries, wiring to pages |
-| 5 | Supporting pages — The Brains, Qualifying form + confirmations, Automations catalogue + product pages |
-| 6 | The Lab + Resources — blog post page, video modal, resource page, download flows, Mailchimp + Stripe integration |
-| 7 | Case study hub + individual pages |
-| 8 | Industry silo template — single template, 4 instances, dynamic routing |
-| 9 | Popup system — component + Sanity config wiring |
-| 10 | Tracking + performance — GTM/GA4 events, server-side GTM, schema markup, Sentry, Lighthouse 100 |
+| Stage | What to build | Status |
+|---|---|---|
+| 1 | Foundation — repo, design tokens, typography, layout shell (Nav + Footer) | ✅ Done |
+| 2 | Homepage — all 13 sections, GSAP setup, Success animation, responsive | ✅ Done |
+| 3 | Core service pages — Audit, Marketing, Development, AI | ✅ Done |
+| 4 | Sanity CMS — all schemas, Studio config, GROQ queries, wiring to pages | ✅ Done |
+| 4b | Payment — Flutterwave multi-currency checkout (replaces Lemon Squeezy) | ✅ Done |
+| 4c | Mobile UX — overflow, lamp, ScrollCue, ScrollFadeUp, Before/After, Lottie | ✅ Done |
+| 5 | Supporting pages — The Brains, Qualifying form + confirmations, Automations catalogue + product pages | ✅ Done |
+| 6 | The Lab + Resources — blog post page, video modal, resource page, download flows, Mailchimp + Flutterwave | ✅ Done |
+| 7 | Case study hub + individual pages | ✅ Done |
+| 8 | Industry silo template — single template, 4 instances, dynamic routing | ✅ Done |
+| 9 | Popup system — component + Sanity config wiring | ⏳ Not started |
+| 10 | Tracking + performance — GTM/GA4 events, schema markup, Sentry, Lighthouse 100 | ⏳ Not started |
 ## 31. LOGO ASSETS
 
 All logo files are PNG with transparent background.
@@ -2083,7 +2076,9 @@ Usage rules:
 - **Added** `LiveFeed` (From The Lab) — blog/YouTube/TikTok content cards at bottom
 - Section order: Hero → Pain Points → How We Help (StickyScroll) → How It Works → Before/After → Outcome Stats → Case Studies → Testimonials → Who It's For → Other Industries → Inline CTA → FAQ → Lab → Final CTA
 
-### Work page (`/work`) — enriched from thin listing to full conversion page
+### Work page (`/work`) — fully CMS-driven via `workPage` Sanity document
+- All hardcoded constants removed from `WorkPageClient.tsx` — all copy from Sanity
+- **Sanity schema:** `workPage` — hero, services, process, beforeAfter, industries, inline CTA, section CTA, empty state strings
 - **Added** `ServicesAlternating` (What We Do — 3 pillars) after case study feed
 - **Added** `ProcessSteps` (How It Works) in GlassSection
 - **Added** `BeforeAfterCompare` — visual proof section
@@ -2116,7 +2111,58 @@ Usage rules:
 
 ### Build status
 - `next build` passes — all 53 pages generated successfully
+- `tsc --noEmit --skipLibCheck` passes — zero type errors
 - CSS lint warnings for `@custom-variant`, `@theme`, `@apply` are false positives (valid Tailwind CSS v4 directives)
+
+---
+
+## 33. CURRENT COMPLETION STATUS (as of 2026-04-01)
+
+### Pages — all 24 routes implemented and CMS-wired
+
+| Route | Status |
+|---|---|
+| `/` | ✅ Full — all 13 sections, CMS-wired |
+| `/audit` | ✅ Full — 13 sections, CMS-wired |
+| `/services/marketing` | ✅ Full — CMS-wired |
+| `/services/development` | ✅ Full — CMS-wired |
+| `/services/ai` | ✅ Full — CMS-wired |
+| `/automations` | ✅ Full — CMS-wired |
+| `/automations/[slug]` | ✅ Full — CMS template |
+| `/start` | ✅ Full — 4-step form, Resend + Sanity |
+| `/start/confirmed` | ✅ Full |
+| `/work` | ✅ Full — CMS-wired via `workPage` doc |
+| `/work/[slug]` | ✅ Full — CMS template |
+| `/lab` | ✅ Full — CMS-wired |
+| `/lab/[slug]` | ✅ Full — CMS template |
+| `/resources` | ✅ Full — CMS-wired |
+| `/resources/[slug]` | ✅ Full — CMS template |
+| `/resources/[slug]/confirmed` | ✅ Full |
+| `/industries/[slug]` | ✅ Full — single template, 4 instances |
+| `/about` | ✅ Full — CMS-wired |
+| `/privacy` | ✅ Full — CMS-wired |
+| `/terms` | ✅ Full — CMS-wired |
+| `/not-found` | ✅ Full — CMS-wired (latest 3 Lab posts) |
+
+### Integrations
+
+| Integration | Status | Notes |
+|---|---|---|
+| Sanity CMS reads | ✅ Live | All pages via GROQ + `"use cache"` |
+| Sanity CMS writes | ✅ Live | `/api/qualify` creates lead docs |
+| Resend (transactional) | ✅ Wired | Qualify notification + Flutterwave confirm email |
+| Mailchimp (newsletter) | ✅ Wired | `/api/newsletter` → `MAILCHIMP_AUDIENCE_ID` |
+| Flutterwave (payments) | ✅ Wired | Multi-currency: USD/GBP/NGN checkout + webhook |
+| Cal.com (booking) | ✅ Wired | URL-based via `NEXT_PUBLIC_CALCOM_URL` |
+| WhatsApp (contact) | ✅ Wired | Via `NEXT_PUBLIC_WHATSAPP_NUMBER` |
+| GTM | ✅ Wired | Conditional on `NEXT_PUBLIC_GTM_ID` |
+| Sentry | ✅ Wired | Via `withSentryConfig` in `next.config.ts` |
+
+### What's next
+1. **Content entry** — all schemas ready; Juwon needs to add real content in Sanity Studio
+2. **Env vars** — set real values for `RESEND_API_KEY`, `MAILCHIMP_API_KEY`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_WHATSAPP_NUMBER` in Vercel dashboard
+3. **Stage 9** — Popup system (component + Sanity config wiring)
+4. **Stage 10** — GTM/GA4 event firing, JSON-LD schema markup, Lighthouse 100 audit
 
 ---
 

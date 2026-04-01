@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
@@ -21,11 +22,13 @@ import { MovingBorderButton } from "@/components/ui/moving-border";
 
 interface NavigationProps extends React.ComponentPropsWithoutRef<"div"> {
   data: NavigationData | null;
+  suppressOnStudio?: boolean;
 }
 
-export function Navigation({ data, className, ...props }: NavigationProps) {
+export function Navigation({ data, className, suppressOnStudio, ...props }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setThemeState] = useState<string>("dark");
+  const pathname = usePathname();
 
   useEffect(() => {
     const current =
@@ -42,6 +45,11 @@ export function Navigation({ data, className, ...props }: NavigationProps) {
     });
     return () => observer.disconnect();
   }, []);
+
+  // Suppress navigation on studio and structure routes if requested
+  if (suppressOnStudio && (pathname?.startsWith("/studio") || pathname?.startsWith("/structure"))) {
+    return null;
+  }
 
   if (!data) return null;
 
@@ -62,8 +70,8 @@ export function Navigation({ data, className, ...props }: NavigationProps) {
           />
 
           {/* Nav links — always visible, flow naturally in the pill */}
-          <NavDropdown label="Services" items={data.serviceLinks} />
-          <NavDropdown label="Industries" items={data.industryLinks} />
+          <NavDropdown label={data.servicesLabel ?? "Services"} items={data.serviceLinks} />
+          <NavDropdown label={data.industriesLabel ?? "Industries"} items={data.industryLinks} />
           {data.staticLinks.map((link) => (
             <a
               key={link.url}
@@ -141,12 +149,12 @@ export function Navigation({ data, className, ...props }: NavigationProps) {
             {/* Nav links */}
             <nav className="flex-1 overflow-y-auto">
               <MobileAccordion
-                label="Services"
+                label={data.servicesLabel ?? "Services"}
                 items={data.serviceLinks}
                 onItemClick={() => setIsMobileMenuOpen(false)}
               />
               <MobileAccordion
-                label="Industries"
+                label={data.industriesLabel ?? "Industries"}
                 items={data.industryLinks}
                 onItemClick={() => setIsMobileMenuOpen(false)}
               />

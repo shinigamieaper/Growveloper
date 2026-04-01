@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Check, Download, Loader2, ExternalLink } from "lucide-react";
+import { Check, Download, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ─── Shared schema ─── */
@@ -183,54 +183,85 @@ export function FreeResourceBlock({
    PaidResourceBlock
    ════════════════════════════════════════════════════════════ */
 
+const CURRENCIES = [
+  { key: "USD" as const, symbol: "$", label: "USD" },
+  { key: "GBP" as const, symbol: "£", label: "GBP" },
+  { key: "NGN" as const, symbol: "₦", label: "NGN" },
+];
+type Currency = (typeof CURRENCIES)[number]["key"];
+
 interface PaidResourceBlockProps extends React.ComponentPropsWithoutRef<"div"> {
-  /** Price in dollars */
-  price: number;
-  /** Resource title for Stripe line item */
+  resourceSlug: string;
   resourceTitle: string;
-  /** Resource slug for redirect URLs */
-  slug: string;
+  priceUSD?: number;
+  priceGBP?: number;
+  priceNGN?: number;
 }
 
 export function PaidResourceBlock({
-  price,
+  resourceSlug,
   resourceTitle,
-  slug,
+  priceUSD,
+  priceGBP,
+  priceNGN,
   className,
   ...props
 }: PaidResourceBlockProps) {
+  const [currency, setCurrency] = useState<Currency>("USD");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const reduced = usePrefersReduced();
 
-  const handleCheckout = async () => {
+  const prices: Record<Currency, number | undefined> = {
+    USD: priceUSD,
+    GBP: priceGBP,
+    NGN: priceNGN,
+  };
+  const symbols: Record<Currency, string> = { USD: "$", GBP: "£", NGN: "₦" };
+  const activePrice = prices[currency];
+
+  if (!priceUSD && !priceGBP && !priceNGN) return null;
+
+  const handleBuy = async () => {
+    setEmailError("");
+    if (!email || !email.includes("@")) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+    if (activePrice == null) {
+      setErrorMessage("Price not available for this currency");
+      return;
+    }
     setStatus("loading");
     setErrorMessage("");
 
     try {
-      const res = await fetch("/api/stripe/resource-checkout", {
+      const res = await fetch("/api/flutterwave/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resourceTitle, price, slug }),
+        body: JSON.stringify({
+          resourceSlug,
+          resourceTitle,
+          currency,
+          amount: activePrice,
+          email,
+        }),
       });
 
-      if (!res.ok) {
-        const json = await res.json().catch(() => ({}));
-        throw new Error(json.error || "Checkout failed");
+      const json = await res.json().catch(() => ({})) as { url?: string; error?: string };
+
+      if (!res.ok || !json.url) {
+        throw new Error(json.error ?? "Checkout failed");
       }
 
-      const { url } = await res.json();
-      if (url) {
-        window.location.href = url;
-      } else {
-        throw new Error("No checkout URL returned");
-      }
+      window.location.href = json.url;
     } catch (err) {
       setStatus("error");
-      setErrorMessage(err instanceof Error ? err.message : "Checkout failed");
+      setErrorMessage(err instanceof Error ? err.message : "Something went wrong");
     }
   };
-
-  if (!price || !resourceTitle || !slug) return null;
 
   return (
     <div
@@ -240,34 +271,91 @@ export function PaidResourceBlock({
       )}
       {...props}
     >
-      <div className="mb-6">
-        <span className="heading-font text-3xl font-bold text-text-primary">
-          ${price}
-        </span>
-        <span className="ml-1 text-sm text-text-tertiary">one-time</span>
+      {/* Currency selector */}
+      <div className="mb-5 flex gap-1.5">
+        {CURRENCIES.map(({ key, label }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setCurrency(key)}
+            className={cn(
+              "rounded-full px-3 py-1 text-xs font-semibold transition-colors",
+              currency === key
+                ? "bg-brand-dark text-base-white"
+                : "bg-bg-tertiary text-text-secondary hover:text-text-primary",
+            )}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      <button
-        onClick={handleCheckout}
-        disabled={status === "loading"}
-        className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full bg-brand-dark px-6 py-3 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105 disabled:opacity-60 disabled:hover:scale-100 sm:w-auto"
-      >
-        {status === "loading" ? (
-          <Loader2 className="h-5 w-5 animate-spin" />
-        ) : (
+      {/* Price display */}
+      <div className="mb-6">
+        {activePrice != null ? (
           <>
-            <ExternalLink className="h-4 w-4" />
-            Buy Now
+            <span className="heading-font text-3xl font-bold text-text-primary">
+              {symbols[currency]}{activePrice.toLocaleString()}
+            </span>
+            <span className="ml-1 text-sm text-text-tertiary">one-time</span>
           </>
+        ) : (
+          <span className="text-sm text-text-tertiary">
+            Price not set for {currency}
+          </span>
         )}
-      </button>
+      </div>
 
-      {status === "error" && errorMessage && (
-        <p className="mt-3 text-xs text-red-500">{errorMessage}</p>
-      )}
+      {/* Email + buy */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="buy-form"
+          initial={reduced ? { opacity: 1 } : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col gap-3 sm:flex-row sm:items-start"
+        >
+          <div className="flex-1">
+            <label htmlFor="paid-resource-email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="paid-resource-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={status === "loading"}
+              className={cn(
+                "min-h-[44px] w-full rounded-full border bg-bg-primary px-5 py-3 text-sm text-text-primary outline-none transition-colors focus:border-brand-mid",
+                emailError ? "border-red-500" : "border-glass-border",
+              )}
+            />
+            {emailError && (
+              <p className="mt-1.5 text-xs text-red-500">{emailError}</p>
+            )}
+            {status === "error" && errorMessage && (
+              <p className="mt-1.5 text-xs text-red-500">{errorMessage}</p>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handleBuy}
+            disabled={status === "loading" || activePrice == null}
+            className="min-h-[44px] rounded-full bg-brand-dark px-6 py-3 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105 disabled:opacity-60 disabled:hover:scale-100"
+          >
+            {status === "loading" ? (
+              <Loader2 className="mx-auto h-5 w-5 animate-spin" />
+            ) : (
+              "Buy Now"
+            )}
+          </button>
+        </motion.div>
+      </AnimatePresence>
 
       <p className="mt-4 text-xs text-text-tertiary">
-        Secure checkout via Stripe. You&apos;ll get instant access after payment.
+        Secure checkout via Flutterwave. You&apos;ll receive a confirmation email after payment.
       </p>
     </div>
   );

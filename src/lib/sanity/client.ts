@@ -1,14 +1,12 @@
-/* ============================================================
-   Sanity Client — placeholder until Stage 4 (CMS wiring)
-   ============================================================ */
+import { createClient } from "next-sanity";
 
-const SANITY_PROJECT_ID = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "";
-const SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
-const SANITY_API_VERSION = "2024-01-01";
+export const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
+export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
+export const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION ?? "2025-03-01";
 
-export const sanityConfig = {
-  projectId: SANITY_PROJECT_ID,
-  dataset: SANITY_DATASET,
-  apiVersion: SANITY_API_VERSION,
-  useCdn: true,
-} as const;
+export const client = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false, // We use Next.js "use cache" instead
+});

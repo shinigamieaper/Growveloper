@@ -14,16 +14,17 @@ import { AutomationHero } from "@/components/automations/AutomationHero";
 import { AutomationCard } from "@/components/shared/AutomationCard";
 import { AutomationToolIcon } from "@/components/shared/AutomationToolIcons";
 import {
-  ALL_AUTOMATIONS,
   getAutomationBySlug,
-  getRelatedAutomations,
-} from "@/lib/data/automations";
+  getAllAutomations,
+  getSiteSettings,
+} from "@/lib/sanity/queries";
 import type { AuditProcessData, ServiceQualifierData, CTABannerData } from "@/lib/types";
 
 /* ─── Static params ─── */
 
-export function generateStaticParams() {
-  return ALL_AUTOMATIONS.map((a) => ({ slug: a.slug }));
+export async function generateStaticParams() {
+  const items = await getAllAutomations();
+  return items.map((a) => ({ slug: a.slug }));
 }
 
 /* ─── Metadata ─── */
@@ -34,15 +35,21 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const automation = getAutomationBySlug(slug);
+  const [automation, settings] = await Promise.all([
+    getAutomationBySlug(slug),
+    getSiteSettings(),
+  ]);
 
   if (!automation) {
-    return { title: "Automation Not Found — GROWVELOPER" };
+    return { title: "Automation Not Found" };
   }
 
   return {
-    title: `${automation.title} — Automations — GROWVELOPER`,
+    title: `${automation.title} — Automations`,
     description: automation.tagline,
+    openGraph: settings?.ogImage
+      ? { images: [{ url: settings.ogImage }] }
+      : undefined,
   };
 }
 
@@ -54,11 +61,18 @@ export default async function AutomationPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const automation = getAutomationBySlug(slug);
+  const [automation, allAutomations] = await Promise.all([
+    getAutomationBySlug(slug),
+    getAllAutomations(),
+  ]);
 
   if (!automation) notFound();
 
   const isFixed = automation.accessType === "fixed" && automation.price != null;
+
+  const related = allAutomations
+    .filter((a) => a.category === automation.category && a.slug !== automation.slug)
+    .slice(0, 3);
 
   /* Map data to shared component shapes */
 
@@ -92,10 +106,27 @@ export default async function AutomationPage({
         presentationMode: "section",
       };
 
-  const related = getRelatedAutomations(automation.category, automation.slug, 3);
-
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: automation.title,
+            description: automation.tagline ?? "",
+            applicationCategory: "BusinessApplication",
+            offers: isFixed
+              ? { "@type": "Offer", price: automation.price, priceCurrency: "GBP" }
+              : { "@type": "Offer", price: "0", priceCurrency: "GBP", description: "Custom quote" },
+            provider: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+            url: `https://growveloper.com/automations/${automation.slug}`,
+          }),
+        }}
+      />
+
       {/* 01 — Hero */}
       <AutomationHero data={automation} />
 

@@ -9,6 +9,8 @@ import { MovingBorderButton } from "@/components/ui/moving-border";
 import { MagneticElement } from "@/components/animations/MagneticElement";
 import { ScrollFadeUp } from "@/components/animations/ScrollFadeUp";
 import { ScrollCue } from "@/components/shared/ScrollCue";
+import { trackCTAClick } from "@/lib/analytics";
+import { usePathname } from "next/navigation";
 import type { ServicePageHeroData } from "@/lib/types";
 
 interface ServiceHeroProps extends React.ComponentPropsWithoutRef<"section"> {
@@ -16,6 +18,8 @@ interface ServiceHeroProps extends React.ComponentPropsWithoutRef<"section"> {
 }
 
 export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
+  const pathname = usePathname();
+
   if (!data) return null;
 
   const {
@@ -71,6 +75,7 @@ export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
                   href={primaryCtaUrl}
                   duration={3000}
                   containerClassName="inline-flex w-full sm:w-auto"
+                  onClick={() => trackCTAClick(pathname, primaryCtaLabel, primaryCtaUrl)}
                 >
                   {primaryCtaLabel}
                 </MovingBorderButton>
@@ -83,6 +88,7 @@ export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
                   duration={3500}
                   variant="inverted"
                   containerClassName="inline-flex w-full sm:w-auto"
+                  onClick={() => trackCTAClick(pathname, secondaryCtaLabel ?? "", secondaryCtaUrl ?? "")}
                 >
                   {secondaryCtaLabel}
                 </MovingBorderButton>
@@ -93,7 +99,7 @@ export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
       </LampContainer>
 
       {scrollCueTargetId && (
-        <div className="absolute bottom-8 right-6 z-[60] md:right-12">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[60] md:left-auto md:right-12 md:translate-x-0">
           <ScrollCue
             text={scrollCueText ?? "EXPLORE · EXPLORE · EXPLORE · "}
             targetId={scrollCueTargetId}

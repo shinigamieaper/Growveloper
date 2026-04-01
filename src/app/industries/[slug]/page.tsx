@@ -9,6 +9,7 @@ import {
   StatsBand,
   ServiceProblem,
   ServiceQualifiers,
+  BeforeAfterCompare,
 } from "@/components";
 import { SuccessAnimation } from "@/components/home/SuccessAnimation";
 import { HomeTestimonials } from "@/components/home/Testimonials";
@@ -19,28 +20,26 @@ import { ProcessSteps } from "@/components/home/ProcessSteps";
 import { IndustriesGrid } from "@/components/home/IndustriesGrid";
 import { LiveFeed } from "@/components/home/LiveFeed";
 import {
-  ALL_INDUSTRIES,
-  ALL_INDUSTRY_CARDS,
+  getAllIndustries,
   getIndustryBySlug,
-  INDUSTRY_CTA_SECTION,
-} from "@/lib/data/industries";
-import {
   getCaseStudyBySlug,
-} from "@/lib/data/caseStudies";
+  getAllLabContent,
+  getSiteSettings,
+} from "@/lib/sanity/queries";
 import type {
   ServicePageHeroData,
   ServiceProblemData,
   StickyScrollSectionData,
   IndustriesGridData,
-  LabContentCard,
   ServiceQualifierData,
-  CaseStudyPageData,
   CTABannerData,
+  BeforeAfterData,
 } from "@/lib/types";
 
 /* ─── Static params ─── */
-export function generateStaticParams() {
-  return ALL_INDUSTRIES.map((i) => ({ slug: i.slug }));
+export async function generateStaticParams() {
+  const industries = await getAllIndustries();
+  return industries.map((i) => ({ slug: i.slug }));
 }
 
 /* ─── Metadata ─── */
@@ -50,11 +49,17 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const industry = getIndustryBySlug(slug);
-  if (!industry) return { title: "Industry Not Found — GROWVELOPER" };
+  const [industry, settings] = await Promise.all([
+    getIndustryBySlug(slug),
+    getSiteSettings(),
+  ]);
+  if (!industry) return { title: "Industry Not Found" };
   return {
-    title: `${industry.name} — GROWVELOPER`,
+    title: `${industry.name}`,
     description: industry.heroSubStatement,
+    openGraph: settings?.ogImage
+      ? { images: [{ url: settings.ogImage }] }
+      : undefined,
   };
 }
 
@@ -65,8 +70,17 @@ export default async function IndustryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const industry = getIndustryBySlug(slug);
+  const [industry, allIndustries, labContent] = await Promise.all([
+    getIndustryBySlug(slug),
+    getAllIndustries(),
+    getAllLabContent(),
+  ]);
   if (!industry) notFound();
+
+  /* Resolve case studies from slugs */
+  const caseStudies = (
+    await Promise.all(industry.caseStudySlugs.map((s) => getCaseStudyBySlug(s)))
+  ).filter((cs): cs is NonNullable<typeof cs> => cs !== null);
 
   /* Map data into shared component shapes */
 
@@ -74,29 +88,29 @@ export default async function IndustryPage({
     headline: industry.heroHeadline,
     highlightedWord: industry.heroHighlightedWord,
     subStatement: industry.heroSubStatement,
-    primaryCtaLabel: industry.primaryCtaLabel,
-    primaryCtaUrl: industry.primaryCtaUrl,
-    secondaryCtaLabel: "See our work",
-    secondaryCtaUrl: "/work",
-    scrollCueText: "Scroll to explore",
+    primaryCtaLabel: industry.primaryCtaLabel ?? "Book a free consultation",
+    primaryCtaUrl: industry.primaryCtaUrl ?? "/start",
+    secondaryCtaLabel: industry.secondaryCtaLabel ?? "See our work",
+    secondaryCtaUrl: industry.secondaryCtaUrl ?? "/work",
+    scrollCueText: industry.scrollCueText ?? "Scroll to explore",
     scrollCueTargetId: "pain-points",
   };
 
   const problemData: ServiceProblemData = {
-    headline: "Sound familiar?",
-    highlightedWord: "familiar",
+    headline: industry.problemHeadline ?? "Sound familiar?",
+    highlightedWord: industry.problemHighlightedWord ?? "familiar",
     painPoints: industry.painPoints,
   };
 
   const howWeHelpData: StickyScrollSectionData = {
-    headline: "How we help",
-    highlightedWord: "help",
-    description: `Three pillars working together to accelerate ${industry.name} growth.`,
+    headline: industry.howWeHelpHeadline ?? "How we help",
+    highlightedWord: industry.howWeHelpHighlightedWord ?? "help",
+    description: industry.howWeHelpDescription ?? `Three pillars working together to accelerate ${industry.name} growth.`,
     items: industry.serviceCards.map((card, i) => ({
       stepNumber: String(i + 1).padStart(2, "0"),
       heading: card.title,
       description: card.description,
-      ctaLabel: "Learn more",
+      ctaLabel: industry.serviceCardCtaLabel ?? "Learn more",
       ctaUrl: card.link,
       lottiePath:
         i === 0
@@ -114,116 +128,107 @@ export default async function IndustryPage({
   };
 
   const processData: StickyScrollSectionData = {
-    headline: "How it works",
-    highlightedWord: "it works",
-    description:
-      "Four steps from audit to scale. One team, one vision, measurable results at every stage.",
-    items: [
-      {
-        stepNumber: "01",
-        heading: "Audit",
-        description: `We analyse your current ${industry.name} setup — site speed, SEO health, ad performance, tech stack, and conversion flow. You get a clear picture of what\u2019s working and what\u2019s leaking revenue.`,
-        lottiePath: "/lottie/step-audit.lottie",
-        fallbackGradient: "linear-gradient(135deg, #1a1a2e, var(--brand-dark))",
-      },
-      {
-        stepNumber: "02",
-        heading: "Architect",
-        description:
-          "Based on the audit, we design your growth engine — the right tech stack, marketing channels, and automation workflows tailored to your business model and budget.",
-        lottiePath: "/lottie/step-architect.lottie",
-        fallbackGradient: "linear-gradient(135deg, var(--brand-dark), #1a2a2a)",
-      },
-      {
-        stepNumber: "03",
-        heading: "Build",
-        description:
-          "We build everything in-house. Development, marketing campaigns, automation flows — one team, one vision, no broken telephone between agencies.",
-        lottiePath: "/lottie/step-build.lottie",
-        fallbackGradient: "linear-gradient(135deg, #1a2a2a, var(--brand-mid))",
-      },
-      {
-        stepNumber: "04",
-        heading: "Scale",
-        description:
-          "Once the engine is running, we optimise and scale. Monthly reporting, A/B testing, new automations, and continuous iteration to compound your growth.",
-        lottiePath: "/lottie/step-scale.lottie",
-        fallbackGradient: "linear-gradient(135deg, var(--brand-mid), var(--brand-dark))",
-      },
-    ],
+    headline: industry.processHeadline ?? "How it works",
+    highlightedWord: industry.processHighlightedWord ?? "it works",
+    description: industry.processDescription ?? "Four steps from audit to scale. One team, one vision, measurable results at every stage.",
+    items: industry.processSteps?.length
+      ? industry.processSteps
+      : [
+          {
+            stepNumber: "01",
+            heading: "Audit",
+            description: `We analyse your current ${industry.name} setup — site speed, SEO health, ad performance, tech stack, and conversion flow. You get a clear picture of what’s working and what’s leaking revenue.`,
+            lottiePath: "/lottie/step-audit.lottie",
+            fallbackGradient: "linear-gradient(135deg, #1a1a2e, var(--brand-dark))",
+          },
+          {
+            stepNumber: "02",
+            heading: "Architect",
+            description: "Based on the audit, we design your growth engine — the right tech stack, marketing channels, and automation workflows tailored to your business model and budget.",
+            lottiePath: "/lottie/step-architect.lottie",
+            fallbackGradient: "linear-gradient(135deg, var(--brand-dark), #1a2a2a)",
+          },
+          {
+            stepNumber: "03",
+            heading: "Build",
+            description: "We build everything in-house. Development, marketing campaigns, automation flows — one team, one vision, no broken telephone between agencies.",
+            lottiePath: "/lottie/step-build.lottie",
+            fallbackGradient: "linear-gradient(135deg, #1a2a2a, var(--brand-mid))",
+          },
+          {
+            stepNumber: "04",
+            heading: "Scale",
+            description: "Once the engine is running, we optimise and scale. Monthly reporting, A/B testing, new automations, and continuous iteration to compound your growth.",
+            lottiePath: "/lottie/step-scale.lottie",
+            fallbackGradient: "linear-gradient(135deg, var(--brand-mid), var(--brand-dark))",
+          },
+        ],
   };
 
-  const otherIndustries = ALL_INDUSTRY_CARDS.filter(
-    (card) => card.slug !== industry.slug,
-  );
+  const beforeAfterData: BeforeAfterData | null = industry.beforeAfterHeadline
+    ? {
+        headline: industry.beforeAfterHeadline,
+        highlightedWord: industry.beforeAfterHighlightedWord,
+        description: industry.beforeAfterDescription,
+        pairs: industry.beforeAfterPairs ?? [],
+      }
+    :  null;
+
+  const otherIndustries = allIndustries.filter((i) => i.slug !== industry.slug);
 
   const otherIndustriesData: IndustriesGridData = {
-    headline: "Industries we accelerate",
-    highlightedWord: "accelerate",
-    description:
-      "We specialise in high-growth sectors where technical performance and marketing ROI are inseparable.",
+    headline: industry.otherIndustriesHeadline ?? "Industries we accelerate",
+    highlightedWord: industry.otherIndustriesHighlightedWord ?? "accelerate",
+    description: industry.otherIndustriesDescription ?? "We specialise in high-growth sectors where technical performance and marketing ROI are inseparable.",
     industries: otherIndustries,
-    ctaHeadline: "Don\u2019t see your industry?",
-    ctaLabel: "Let\u2019s talk",
+    ctaHeadline: industry.otherIndustriesCtaHeadline ?? "Don't see your industry?",
+    ctaLabel: industry.otherIndustriesCtaLabel ?? "Let's talk",
     ctaUrl: "/start",
   };
 
-  const labItems: LabContentCard[] = [
-    {
-      title: `How We Approach ${industry.name} Growth`,
-      slug: "growth-approach",
-      excerpt:
-        "A deep dive into the strategy, design decisions, and technical implementation behind our growth methodology.",
-      heroImage:
-        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop",
-      publishedAt: "2024-12-15",
-      readTime: "8 min read",
-      category: "Strategy",
-      platform: "blog",
-    },
-    {
-      title: "Building a Design System from Scratch",
-      platform: "youtube",
-      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      thumbnail:
-        "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=600&h=400&fit=crop",
-      description:
-        "Watch how we approach design systems for scalable products.",
-      publishedAt: "2024-11-28",
-    },
-    {
-      title: "60-Second Website Audit Tips",
-      platform: "tiktok",
-      videoUrl: "https://www.tiktok.com/@example/video/123",
-      thumbnail:
-        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=700&fit=crop",
-      description: "Quick wins you can implement today.",
-      publishedAt: "2024-12-01",
-    },
-  ];
-
   const qualifierData: ServiceQualifierData = {
-    headline: "This is for you if\u2026",
-    highlightedWord: "for you",
+    headline: industry.qualifierHeadline ?? "This is for you if…",
+    highlightedWord: industry.qualifierHighlightedWord ?? "for you",
     qualifiers: industry.painPoints.slice(0, 4).map((p) =>
       p.replace(/^[A-Z]/, (c) => c.toLowerCase()),
     ),
   };
 
-  /* Resolve case studies from slugs */
-  const caseStudies: CaseStudyPageData[] = industry.caseStudySlugs
-    .map((s) => getCaseStudyBySlug(s))
-    .filter((cs): cs is CaseStudyPageData => cs !== null);
-
   const ctaInline: CTABannerData = {
-    headline: `Working in ${industry.name}? Let\u2019s talk.`,
-    highlightedWord: industry.name,
-    ctaLabel: "Book a free consultation",
-    ctaDestination: "/start",
+    headline: industry.ctaInlineHeadline ?? `Working in ${industry.name}? Let's talk.`,
+    highlightedWord: industry.ctaInlineHighlightedWord ?? industry.name,
+    ctaLabel: industry.ctaInlineLabel ?? "Book a free consultation",
+    ctaDestination: industry.ctaInlineDestination ?? "/start",
   };
+
+  const ctaSectionData: CTABannerData = {
+    headline: industry.ctaSectionHeadline ?? "Ready to accelerate your growth?",
+    highlightedWord: industry.ctaSectionHighlightedWord ?? "accelerate",
+    ctaLabel: industry.ctaSectionLabel ?? "Book a free consultation",
+    ctaDestination: industry.ctaSectionDestination ?? "/start",
+  };
+
+  const labItems = labContent.slice(0, 3);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: `${industry.name} Growth Services`,
+            description: industry.heroSubStatement ?? "",
+            provider: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+            serviceType: industry.name,
+            areaServed: "Worldwide",
+            url: `https://growveloper.com/industries/${industry.slug}`,
+          }),
+        }}
+      />
+
       {/* 01 — Hero */}
       <ServiceHero data={heroData} />
 
@@ -240,26 +245,33 @@ export default async function IndustryPage({
         <ProcessSteps data={processData} />
       </GlassSection>
 
-      {/* 05 — What Success Looks Like */}
+      {/* 05 — Before & After */}
+      {beforeAfterData && beforeAfterData.pairs.length > 0 && (
+        <BeforeAfterCompare data={beforeAfterData} />
+      )}
+
+      {/* 06 — What Success Looks Like */}
       <SuccessAnimation />
 
       {/* 06 — Outcome Stats (glass) */}
-      <GlassSection>
-        <div className="py-16 md:py-24">
-          <div className="mx-auto max-w-6xl px-6">
-            <ScrollFadeUp>
-              <SectionHeader
-                headline="The numbers"
-                highlightedWord="numbers"
-                description={`Real outcomes from our work in ${industry.name}.`}
-              />
-            </ScrollFadeUp>
+      {industry.outcomeStats.length > 0 && (
+        <GlassSection>
+          <div className="py-16 md:py-24">
+            <div className="mx-auto max-w-6xl px-6">
+              <ScrollFadeUp>
+                <SectionHeader
+                  headline="The numbers"
+                  highlightedWord="numbers"
+                  description={`Real outcomes from our work in ${industry.name}.`}
+                />
+              </ScrollFadeUp>
+            </div>
+            <StatsBand items={industry.outcomeStats} />
           </div>
-          <StatsBand items={industry.outcomeStats} />
-        </div>
-      </GlassSection>
+        </GlassSection>
+      )}
 
-      {/* 05 — Case Studies */}
+      {/* 07 — Case Studies */}
       {caseStudies.length > 0 && (
         <section className="py-16 md:py-24">
           <div className="mx-auto max-w-6xl px-6">
@@ -275,7 +287,7 @@ export default async function IndustryPage({
         </section>
       )}
 
-      {/* 06 — Testimonials (glass) */}
+      {/* 08 — Testimonials (glass) */}
       {industry.testimonials.length > 0 && (
         <GlassSection>
           <HomeTestimonials
@@ -289,13 +301,15 @@ export default async function IndustryPage({
         </GlassSection>
       )}
 
-      {/* 07 — Who It\u2019s For */}
+      {/* 09 — Who It\u2019s For */}
       <ServiceQualifiers data={qualifierData} />
 
       {/* 10 — Other Industries */}
-      <GlassSection>
-        <IndustriesGrid data={otherIndustriesData} />
-      </GlassSection>
+      {otherIndustries.length > 0 && (
+        <GlassSection>
+          <IndustriesGrid data={otherIndustriesData} />
+        </GlassSection>
+      )}
 
       {/* 11 — Inline CTA */}
       <CTABanner
@@ -321,21 +335,23 @@ export default async function IndustryPage({
       )}
 
       {/* 13 — From The Lab */}
-      <GlassSection>
-        <LiveFeed
-          headline="From The Lab"
-          highlightedWord="Lab"
-          description="The latest insights, experiments, and deep dives from our team."
-          items={labItems}
-          sectionTitle="Latest from The Lab"
-          seeAllLabel="See everything"
-          seeAllUrl="/lab"
-        />
-      </GlassSection>
+      {labItems.length > 0 && (
+        <GlassSection>
+          <LiveFeed
+            headline="From The Lab"
+            highlightedWord="Lab"
+            description="The latest insights, experiments, and deep dives from our team."
+            items={labItems}
+            sectionTitle="Latest from The Lab"
+            seeAllLabel="See everything"
+            seeAllUrl="/lab"
+          />
+        </GlassSection>
+      )}
 
       {/* 14 — Section CTA */}
       <CTABanner
-        data={INDUSTRY_CTA_SECTION}
+        data={ctaSectionData}
         presentationMode="section"
         colorScheme="teal-solid"
       />

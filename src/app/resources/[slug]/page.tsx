@@ -14,13 +14,15 @@ import { PaidResourceBlock } from "@/components/shared/ResourceActionBlock";
 import { RelatedContentGrid } from "@/components/shared/RelatedContentGrid";
 import {
   getResourceBySlug,
-  getRelatedResources,
-  RESOURCES,
-} from "@/lib/data/resources";
+  getAllResources,
+  getSiteSettings,
+  getResourcesPage,
+} from "@/lib/sanity/queries";
 import type { CTABannerData } from "@/lib/types";
 
 export async function generateStaticParams() {
-  return RESOURCES.map((r) => ({ slug: r.slug }));
+  const resources = await getAllResources();
+  return resources.map((r) => ({ slug: r.slug }));
 }
 
 export async function generateMetadata({
@@ -29,27 +31,19 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const resource = getResourceBySlug(slug);
-  if (!resource) return { title: "Resource Not Found — GROWVELOPER" };
+  const [resource, settings] = await Promise.all([
+    getResourceBySlug(slug),
+    getSiteSettings(),
+  ]);
+  if (!resource) return { title: "Resource Not Found" };
   return {
-    title: `${resource.title} — Resources — GROWVELOPER`,
+    title: `${resource.title} — Resources`,
     description: resource.description,
+    openGraph: settings?.ogImage
+      ? { images: [{ url: settings.ogImage }] }
+      : undefined,
   };
 }
-
-const CTA_INLINE: CTABannerData = {
-  headline: "Want something built specifically for your business?",
-  highlightedWord: "specifically",
-  ctaLabel: "Talk to me",
-  ctaDestination: "/start",
-};
-
-const CTA_SECTION: CTABannerData = {
-  headline: "Ready to build something that compounds?",
-  highlightedWord: "compounds",
-  ctaLabel: "Start a project",
-  ctaDestination: "/start",
-};
 
 export default async function ResourcePage({
   params,
@@ -57,10 +51,36 @@ export default async function ResourcePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const resource = getResourceBySlug(slug);
+  const [resource, allResources, resPage] = await Promise.all([
+    getResourceBySlug(slug),
+    getAllResources(),
+    getResourcesPage(),
+  ]);
   if (!resource) notFound();
 
-  const related = getRelatedResources(resource);
+  const related = allResources
+    .filter((r) => r.category === resource.category && r.slug !== resource.slug)
+    .slice(0, 3);
+
+  const ctaInline: CTABannerData | null =
+    resPage?.inlineCtaHeadline && resPage?.inlineCtaLabel
+      ? {
+          headline: resPage.inlineCtaHeadline,
+          highlightedWord: resPage.inlineCtaHighlightedWord ?? undefined,
+          ctaLabel: resPage.inlineCtaLabel,
+          ctaDestination: resPage.inlineCtaDestination ?? "/start",
+        }
+      : null;
+
+  const ctaSection: CTABannerData | null =
+    resPage?.sectionCtaHeadline && resPage?.sectionCtaLabel
+      ? {
+          headline: resPage.sectionCtaHeadline,
+          highlightedWord: resPage.sectionCtaHighlightedWord ?? undefined,
+          ctaLabel: resPage.sectionCtaLabel,
+          ctaDestination: resPage.sectionCtaDestination ?? "/start",
+        }
+      : null;
 
   return (
     <>
@@ -81,7 +101,7 @@ export default async function ResourcePage({
                 </Badge>
               ) : (
                 <Badge className="rounded-full bg-bg-tertiary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-text-primary border-glass-border">
-                  {resource.price ? `$${resource.price}` : "Paid"}
+                  {resource.priceUSD ? `$${resource.priceUSD}` : "Paid"}
                 </Badge>
               )}
             </div>
@@ -97,7 +117,7 @@ export default async function ResourcePage({
         <section className="pb-12 md:pb-16">
           <div className="mx-auto max-w-3xl px-6">
             <ScrollFadeUp delay={0.1}>
-              <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-glass-border">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-glass-border">
                 <Image
                   src={resource.coverImage}
                   alt={resource.title}
@@ -113,68 +133,74 @@ export default async function ResourcePage({
       )}
 
       {/* 03 — What It Is */}
-      <section className="py-12 md:py-16">
-        <div className="mx-auto max-w-3xl px-6">
-          <SectionHeader
-            headline="What it is"
-            highlightedWord="is"
-            alignment="left"
-            label={null}
-            description={null}
-          />
-          <ScrollFadeUp delay={0.1}>
-            <p className="text-base leading-relaxed text-text-secondary md:text-lg">
-              {resource.whatItIs}
-            </p>
-          </ScrollFadeUp>
-        </div>
-      </section>
+      {resource.whatItIs && (
+        <section className="py-12 md:py-16">
+          <div className="mx-auto max-w-3xl px-6">
+            <SectionHeader
+              headline="What it is"
+              highlightedWord="is"
+              alignment="left"
+              label={null}
+              description={null}
+            />
+            <ScrollFadeUp delay={0.1}>
+              <p className="text-base leading-relaxed text-text-secondary md:text-lg">
+                {resource.whatItIs}
+              </p>
+            </ScrollFadeUp>
+          </div>
+        </section>
+      )}
 
       {/* 04 — What's Inside */}
-      <GlassSection>
-        <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
-          <SectionHeader
-            headline="What's inside"
-            highlightedWord="inside"
-            alignment="left"
-            label={null}
-            description={null}
-          />
-          <div className="grid gap-3 sm:grid-cols-2">
-            {resource.whatsIncluded.map((item, i) => (
-              <ScrollFadeUp key={i} delay={i * 0.06}>
-                <div className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-mid" strokeWidth={2.5} />
-                  <span className="text-sm leading-relaxed text-text-secondary">{item}</span>
-                </div>
-              </ScrollFadeUp>
-            ))}
+      {resource.whatsIncluded?.length > 0 && (
+        <GlassSection>
+          <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
+            <SectionHeader
+              headline="What's inside"
+              highlightedWord="inside"
+              alignment="left"
+              label={null}
+              description={null}
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              {resource.whatsIncluded.map((item, i) => (
+                <ScrollFadeUp key={i} delay={i * 0.06}>
+                  <div className="flex items-start gap-3">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-mid" strokeWidth={2.5} />
+                    <span className="text-sm leading-relaxed text-text-secondary">{item}</span>
+                  </div>
+                </ScrollFadeUp>
+              ))}
+            </div>
           </div>
-        </div>
-      </GlassSection>
+        </GlassSection>
+      )}
 
       {/* 05 — Who It's For */}
-      <section className="py-12 md:py-16">
-        <div className="mx-auto max-w-3xl px-6">
-          <SectionHeader
-            headline="Who it's for"
-            highlightedWord="for"
-            alignment="left"
-            label={null}
-            description={null}
-          />
-          <div className="space-y-3">
-            {resource.whoItIsFor.map((item, i) => (
-              <ScrollFadeUp key={i} delay={i * 0.07}>
-                <div className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-mid" strokeWidth={2.5} />
-                  <span className="text-sm leading-relaxed text-text-secondary">{item}</span>
-                </div>
-              </ScrollFadeUp>
-            ))}
+      {resource.whoItIsFor?.length > 0 && (
+        <section className="py-12 md:py-16">
+          <div className="mx-auto max-w-3xl px-6">
+            <SectionHeader
+              headline="Who it's for"
+              highlightedWord="for"
+              alignment="left"
+              label={null}
+              description={null}
+            />
+            <div className="space-y-3">
+              {resource.whoItIsFor.map((item, i) => (
+                <ScrollFadeUp key={i} delay={i * 0.07}>
+                  <div className="flex items-start gap-3">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-mid" strokeWidth={2.5} />
+                    <span className="text-sm leading-relaxed text-text-secondary">{item}</span>
+                  </div>
+                </ScrollFadeUp>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 06 — Action Block */}
       <GlassSection>
@@ -190,9 +216,11 @@ export default async function ResourcePage({
             <FreeResourceBlock fileUrl={resource.fileUrl ?? "#"} />
           ) : (
             <PaidResourceBlock
-              price={resource.price ?? 0}
+              resourceSlug={resource.slug}
               resourceTitle={resource.title}
-              slug={resource.slug}
+              priceUSD={resource.priceUSD}
+              priceGBP={resource.priceGBP}
+              priceNGN={resource.priceNGN}
             />
           )}
         </div>
@@ -214,10 +242,10 @@ export default async function ResourcePage({
       )}
 
       {/* CTA inline */}
-      <CTABanner data={CTA_INLINE} presentationMode="inline" colorScheme="light-teal" />
+      {ctaInline && <CTABanner data={ctaInline} presentationMode="inline" colorScheme="light-teal" />}
 
       {/* CTA section */}
-      <CTABanner data={CTA_SECTION} presentationMode="section" colorScheme="teal-solid" />
+      {ctaSection && <CTABanner data={ctaSection} presentationMode="section" colorScheme="teal-solid" />}
     </>
   );
 }

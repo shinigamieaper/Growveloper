@@ -58,17 +58,23 @@ function useLottieAnimationData(lottiePath?: string) {
         return;
       }
 
-      const response = await fetch(encodeURI(jsonPath));
-      if (!response.ok) {
-        setAnimationData(null);
-        return;
-      }
+      try {
+        const response = await fetch(encodeURI(jsonPath));
+        if (!response.ok) {
+          setAnimationData(null);
+          return;
+        }
 
-      const data = (await response.json()) as LottieAnimationData;
-      lottieDataCache.set(jsonPath, data);
+        const data = (await response.json()) as LottieAnimationData;
+        lottieDataCache.set(jsonPath, data);
 
-      if (isMounted) {
-        setAnimationData(data);
+        if (isMounted) {
+          setAnimationData(data);
+        }
+      } catch {
+        if (isMounted) {
+          setAnimationData(null);
+        }
       }
     }
 
@@ -136,7 +142,7 @@ function StickyLottieVisual({ lottiePath, playToken }: { lottiePath: string; pla
   );
 }
 
-function MobileLottieVisual({ lottiePath }: { lottiePath: string }) {
+function MobileLottieVisual({ lottiePath, item }: { lottiePath: string; item: StickyScrollItem }) {
   const prefersReduced = usePrefersReducedMotion();
   const animationData = useLottieAnimationData(lottiePath);
   const lottieRef = useRef<LottieRefCurrentProps | null>(null);
@@ -145,13 +151,13 @@ function MobileLottieVisual({ lottiePath }: { lottiePath: string }) {
   const [hasPlayed, setHasPlayed] = useState(false);
 
   const playAnimation = useCallback(() => {
-    if (prefersReduced || hasPlayed || !shouldPlay) return;
+    if (prefersReduced || hasPlayed) return;
     window.requestAnimationFrame(() => {
       lottieRef.current?.goToAndStop(0, true);
       lottieRef.current?.play();
       setHasPlayed(true);
     });
-  }, [hasPlayed, prefersReduced, shouldPlay]);
+  }, [hasPlayed, prefersReduced]);
 
   useEffect(() => {
     if (prefersReduced || !containerRef.current || hasPlayed) return;
@@ -162,7 +168,7 @@ function MobileLottieVisual({ lottiePath }: { lottiePath: string }) {
         setShouldPlay(true);
         observer.disconnect();
       },
-      { threshold: 0.35 },
+      { threshold: 0.15 },
     );
 
     observer.observe(containerRef.current);
@@ -175,7 +181,7 @@ function MobileLottieVisual({ lottiePath }: { lottiePath: string }) {
   }, [animationData, hasPlayed, playAnimation, prefersReduced, shouldPlay]);
 
   if (!animationData || prefersReduced) {
-    return null;
+    return <StickyVisualFallback item={item} />;
   }
 
   return (
@@ -371,7 +377,7 @@ function MobileStickyScroll({ items, visualContent }: { items: StickyScrollItem[
             {visualContent?.[index] ? (
               visualContent[index]
             ) : item.lottiePath ? (
-              <MobileLottieVisual lottiePath={item.lottiePath} />
+              <MobileLottieVisual lottiePath={item.lottiePath} item={item} />
             ) : (
               <StickyVisualFallback item={item} />
             )}

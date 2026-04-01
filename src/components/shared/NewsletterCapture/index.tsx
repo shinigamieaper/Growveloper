@@ -1,3 +1,4 @@
+// CMS GAP: fallback "Subscribe" at line ~163 (ctaLabel || "Subscribe") — add newsletterCtaLabel to siteSettings in Sanity and pass via getSiteSettings()
 "use client";
 
 import React, { useState } from "react";
@@ -9,6 +10,7 @@ import { Check, Loader2 } from "lucide-react";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { MovingBorderButton } from "@/components/ui/moving-border";
 import { cn } from "@/lib/utils";
+import { trackFormComplete, trackNewsletterSignup } from "@/lib/analytics";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -22,6 +24,9 @@ interface NewsletterCaptureProps extends React.ComponentPropsWithoutRef<"section
   subCopy?: string | null;
   ctaLabel?: string | null;
   downloadUnlocks?: boolean;
+  successHeadline?: string | null;
+  successSubCopy?: string | null;
+  emailPlaceholder?: string | null;
 }
 
 export function NewsletterCapture({
@@ -30,6 +35,9 @@ export function NewsletterCapture({
   subCopy,
   ctaLabel,
   downloadUnlocks = false,
+  successHeadline,
+  successSubCopy,
+  emailPlaceholder,
   className,
   ...props
 }: NewsletterCaptureProps) {
@@ -68,6 +76,8 @@ export function NewsletterCapture({
       }
 
       setStatus("success");
+      trackFormComplete();
+      trackNewsletterSignup();
       reset();
 
       if (downloadUnlocks) {
@@ -107,12 +117,12 @@ export function NewsletterCapture({
                 <Check className="h-6 w-6 text-brand-mid" strokeWidth={2.5} />
               </div>
               <p className="text-lg font-semibold text-text-primary">
-                You&apos;re in!
+                {successHeadline ?? "You\u2019re in!"}
               </p>
               <p className="text-sm text-text-secondary">
                 {downloadUnlocks
-                  ? "Check your inbox — your download is on the way."
-                  : "Check your inbox to confirm your subscription."}
+                  ? "Check your inbox \u2014 your download is on the way."
+                  : (successSubCopy ?? "Check your inbox to confirm your subscription.")}
               </p>
             </motion.div>
           ) : (
@@ -134,7 +144,7 @@ export function NewsletterCapture({
                   type="email"
                   inputMode="email"
                   autoComplete="email"
-                  placeholder="your@email.com"
+                  placeholder={emailPlaceholder ?? "your@email.com"}
                   disabled={status === "loading"}
                   className={cn(
                     "min-h-[44px] w-full rounded-full border bg-bg-secondary px-5 py-3 text-sm text-text-primary outline-none transition-colors focus:border-brand-mid",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Check, CalendarDays, MessageCircle, ArrowRight } from "lucide-react";
+import { ConfettiBurst } from "@/components";
 
 export const metadata: Metadata = {
   title: "Consultation Confirmed — GROWVELOPER",
@@ -30,6 +31,20 @@ const nextSteps = [
 export default function StartConfirmedPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "Consultation Confirmed — GROWVELOPER",
+            description: "Your consultation request has been received.",
+            url: "https://growveloper.com/start/confirmed",
+          }),
+        }}
+      />
+      <ConfettiBurst />
       <section className="min-h-screen px-6 py-16 md:py-24">
       <div className="mx-auto max-w-2xl">
         {/* Success icon */}

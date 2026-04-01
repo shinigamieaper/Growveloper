@@ -86,11 +86,13 @@ const PAGE_SIZE = 6;
 interface LabFeedWrapperProps extends React.ComponentPropsWithoutRef<"div"> {
   items: LabContentCard[];
   onVideoClick?: (videoUrl: string, platform: "youtube" | "tiktok") => void;
+  emptyStateFiltered?: string | null;
 }
 
 export function LabFeedWrapper({
   items,
   onVideoClick,
+  emptyStateFiltered,
   className,
   ...props
 }: LabFeedWrapperProps) {
@@ -229,10 +231,8 @@ export function LabFeedWrapper({
       </BentoGrid>
 
       {/* Empty after filtering */}
-      {filteredItems.length === 0 && activeFilters.length > 0 && (
-        <p className="mt-12 text-center text-sm text-text-tertiary">
-          No content matches the selected filters.
-        </p>
+      {filteredItems.length === 0 && activeFilters.length > 0 && emptyStateFiltered && (
+        <p className="mt-12 text-center text-sm text-text-tertiary">{emptyStateFiltered}</p>
       )}
 
       {/* Load More */}

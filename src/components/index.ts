@@ -36,7 +36,9 @@ export { QualifyingForm } from "./forms/QualifyingForm";
 export { ServiceHero } from "./shared/ServiceHero";
 export { SubServicesGrid } from "./shared/SubServicesGrid";
 export { BeforeAfterCompare } from "./shared/BeforeAfterCompare";
+export { JsonLd } from "./shared/JsonLd";
 export { ResultsStats } from "./shared/ResultsStats";
+export { ConfettiBurst } from "./shared/ConfettiBurst";
 
 /* ─── Audit Section Components ─── */
 export { AuditHero } from "./audit/AuditHero";

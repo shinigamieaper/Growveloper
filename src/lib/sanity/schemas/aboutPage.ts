@@ -1,0 +1,333 @@
+import { defineType, defineField, defineArrayMember } from "sanity";
+
+export default defineType({
+  name: "aboutPage",
+  title: "About Page",
+  type: "document",
+  fieldsets: [
+    { name: "hero", title: "Hero", options: { collapsible: true } },
+    { name: "shortVersion", title: "Short Version", options: { collapsible: true } },
+    { name: "story", title: "Story", options: { collapsible: true } },
+    { name: "stats", title: "Stats", options: { collapsible: true } },
+    { name: "companies", title: "Companies", options: { collapsible: true } },
+    { name: "principles", title: "Principles", options: { collapsible: true } },
+    { name: "skills", title: "Skills", options: { collapsible: true } },
+    { name: "interests", title: "Interests", options: { collapsible: true } },
+    { name: "caseStudies", title: "Featured Work", options: { collapsible: true, collapsed: true } },
+    { name: "ctaBanners", title: "CTA Banners", options: { collapsible: true, collapsed: true } },
+    { name: "cta", title: "Final CTA (legacy)", options: { collapsible: true, collapsed: true } },
+  ],
+  fields: [
+    /* ── Hero ── */
+    defineField({
+      name: "heroName",
+      title: "Hero Name",
+      type: "string",
+      fieldset: "hero",
+    }),
+    defineField({
+      name: "heroIdentity",
+      title: "Hero Identity",
+      type: "string",
+      fieldset: "hero",
+    }),
+    defineField({
+      name: "portraitImage",
+      title: "Portrait Image",
+      type: "image",
+      options: { hotspot: true },
+      fieldset: "hero",
+    }),
+    defineField({
+      name: "portraitAlt",
+      title: "Portrait Alt Text",
+      type: "string",
+      fieldset: "hero",
+    }),
+    defineField({
+      name: "heroNamePrefix",
+      title: "Hero Name Prefix",
+      type: "string",
+      fieldset: "hero",
+      description: 'The greeting before the name, e.g. "Hello, I\'m"',
+    }),
+
+    /* ── Short Version ── */
+    defineField({
+      name: "shortVersionHeadline",
+      title: "Short Version Headline",
+      type: "string",
+      fieldset: "shortVersion",
+    }),
+    defineField({
+      name: "shortVersionHighlightedWord",
+      title: "Short Version Highlighted Word",
+      type: "string",
+      fieldset: "shortVersion",
+    }),
+    defineField({
+      name: "shortVersionBody",
+      title: "Short Version Body",
+      type: "text",
+      fieldset: "shortVersion",
+    }),
+
+    /* ── Story ── */
+    defineField({
+      name: "storyHeadline",
+      title: "Story Headline",
+      type: "string",
+      fieldset: "story",
+    }),
+    defineField({
+      name: "storyHighlightedWord",
+      title: "Story Highlighted Word",
+      type: "string",
+      fieldset: "story",
+    }),
+    defineField({
+      name: "storyBody",
+      title: "Story Body",
+      description: "Multiple paragraphs stored as an array of strings",
+      type: "array",
+      fieldset: "story",
+      of: [defineArrayMember({ type: "string" })],
+    }),
+
+    /* ── Stats ── */
+    defineField({
+      name: "stats",
+      title: "Stats",
+      type: "array",
+      fieldset: "stats",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({ name: "value", title: "Value", type: "string" }),
+            defineField({ name: "label", title: "Label", type: "string" }),
+          ],
+        }),
+      ],
+    }),
+
+    /* ── Companies ── */
+    defineField({
+      name: "companiesHeadline",
+      title: "Companies Headline",
+      type: "string",
+      fieldset: "companies",
+    }),
+    defineField({
+      name: "companiesHighlightedWord",
+      title: "Companies Highlighted Word",
+      type: "string",
+      fieldset: "companies",
+    }),
+    defineField({
+      name: "companies",
+      title: "Companies",
+      type: "array",
+      fieldset: "companies",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({ name: "company", title: "Company", type: "string" }),
+            defineField({ name: "role", title: "Role", type: "string" }),
+            defineField({ name: "insight", title: "Insight", type: "text" }),
+          ],
+        }),
+      ],
+    }),
+
+    /* ── Principles ── */
+    defineField({
+      name: "principlesHeadline",
+      title: "Principles Headline",
+      type: "string",
+      fieldset: "principles",
+    }),
+    defineField({
+      name: "principlesHighlightedWord",
+      title: "Principles Highlighted Word",
+      type: "string",
+      fieldset: "principles",
+    }),
+    defineField({
+      name: "principles",
+      title: "Principles",
+      type: "array",
+      fieldset: "principles",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({ name: "title", title: "Title", type: "string" }),
+            defineField({ name: "description", title: "Description", type: "text" }),
+          ],
+        }),
+      ],
+    }),
+
+    /* ── Skills ── */
+    defineField({
+      name: "skillsHeadline",
+      title: "Skills Headline",
+      type: "string",
+      fieldset: "skills",
+    }),
+    defineField({
+      name: "skillsHighlightedWord",
+      title: "Skills Highlighted Word",
+      type: "string",
+      fieldset: "skills",
+    }),
+    defineField({
+      name: "disciplines",
+      title: "Disciplines",
+      type: "array",
+      fieldset: "skills",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({ name: "name", title: "Name", type: "string" }),
+            defineField({
+              name: "tools",
+              title: "Tools",
+              type: "array",
+              of: [
+                defineArrayMember({
+                  type: "reference",
+                  to: [{ type: "toolRegistry" }],
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+
+    /* ── Interests ── */
+    defineField({
+      name: "interestsHeadline",
+      title: "Interests Headline",
+      type: "string",
+      fieldset: "interests",
+    }),
+    defineField({
+      name: "interestsHighlightedWord",
+      title: "Interests Highlighted Word",
+      type: "string",
+      fieldset: "interests",
+    }),
+    defineField({
+      name: "interests",
+      title: "Interests",
+      type: "array",
+      fieldset: "interests",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({ name: "interest", title: "Interest", type: "string" }),
+            defineField({ name: "connection", title: "Connection", type: "text" }),
+          ],
+        }),
+      ],
+    }),
+
+    /* ── Featured Work ── */
+    defineField({
+      name: "caseStudiesHeadline",
+      title: "Featured Work Headline",
+      type: "string",
+      fieldset: "caseStudies",
+    }),
+    defineField({
+      name: "caseStudiesHighlightedWord",
+      title: "Featured Work Highlighted Word",
+      type: "string",
+      fieldset: "caseStudies",
+    }),
+    defineField({
+      name: "featuredCaseStudies",
+      title: "Featured Case Studies",
+      type: "array",
+      fieldset: "caseStudies",
+      of: [defineArrayMember({ type: "reference", to: [{ type: "caseStudy" }] })],
+    }),
+
+    /* ── CTA Banners ── */
+    defineField({
+      name: "inlineCta",
+      title: "Inline CTA Banner",
+      type: "object",
+      fieldset: "ctaBanners",
+      fields: [
+        defineField({ name: "headline", title: "Headline", type: "string" }),
+        defineField({ name: "highlightedWord", title: "Highlighted Word", type: "string" }),
+        defineField({ name: "subCopy", title: "Sub Copy", type: "text" }),
+        defineField({ name: "ctaLabel", title: "CTA Label", type: "string" }),
+        defineField({ name: "ctaUrl", title: "CTA URL", type: "string" }),
+        defineField({
+          name: "colorScheme",
+          title: "Color Scheme",
+          type: "string",
+          options: { list: ["teal-solid", "light-teal", "glass"] },
+        }),
+      ],
+    }),
+    defineField({
+      name: "finalCta",
+      title: "Final CTA Banner",
+      type: "object",
+      fieldset: "ctaBanners",
+      fields: [
+        defineField({ name: "headline", title: "Headline", type: "string" }),
+        defineField({ name: "highlightedWord", title: "Highlighted Word", type: "string" }),
+        defineField({ name: "subCopy", title: "Sub Copy", type: "text" }),
+        defineField({ name: "ctaLabel", title: "CTA Label", type: "string" }),
+        defineField({ name: "ctaUrl", title: "CTA URL", type: "string" }),
+        defineField({
+          name: "colorScheme",
+          title: "Color Scheme",
+          type: "string",
+          options: { list: ["teal-solid", "light-teal", "glass"] },
+        }),
+      ],
+    }),
+
+    /* ── CTA (legacy single CTA) ── */
+    defineField({
+      name: "ctaHeadline",
+      title: "CTA Headline",
+      type: "string",
+      fieldset: "cta",
+    }),
+    defineField({
+      name: "ctaHighlightedWord",
+      title: "CTA Highlighted Word",
+      type: "string",
+      fieldset: "cta",
+    }),
+    defineField({
+      name: "ctaLabel",
+      title: "CTA Label",
+      type: "string",
+      fieldset: "cta",
+    }),
+    defineField({
+      name: "ctaUrl",
+      title: "CTA URL",
+      type: "string",
+      fieldset: "cta",
+    }),
+  ],
+  preview: {
+    prepare() {
+      return { title: "About Page" };
+    },
+  },
+});

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import dynamic from "next/dynamic";
+const SubServicesBento = dynamic(() => import("@/components/development/SubServicesBento").then((m) => ({ default: m.SubServicesBento })), { ssr: false });
+const BeforeAfterCompare = dynamic(() => import("@/components/shared/BeforeAfterCompare").then((m) => ({ default: m.BeforeAfterCompare })), { ssr: false });
 import { ServiceHero } from "@/components/shared/ServiceHero";
 import { AuditProcess } from "@/components/audit/AuditProcess";
-import { BeforeAfterCompare } from "@/components/shared/BeforeAfterCompare";
 import { CaseStudiesSection } from "@/components/home/CaseStudies";
 import { HomeTestimonials } from "@/components/home/Testimonials";
-import { SubServicesBento } from "@/components/development/SubServicesBento";
 import { IndustriesGrid } from "@/components/home/IndustriesGrid";
 import { LiveFeed } from "@/components/home/LiveFeed";
 import {
@@ -15,45 +17,137 @@ import {
   ServiceProblem,
   ServiceQualifiers,
 } from "@/components";
-import {
-  DEVELOPMENT_HERO,
-  DEVELOPMENT_STATS,
-  DEVELOPMENT_PROBLEM,
-  DEVELOPMENT_SUB_SERVICES,
-  DEVELOPMENT_PROCESS,
-  DEVELOPMENT_BEFORE_AFTER,
-  DEVELOPMENT_CASE_STUDIES,
-  DEVELOPMENT_TESTIMONIALS,
-  DEVELOPMENT_QUALIFIERS,
-  DEVELOPMENT_FAQ,
-  DEVELOPMENT_CTA_MID,
-  DEVELOPMENT_CTA_FINAL,
-  DEVELOPMENT_INDUSTRIES,
-  DEVELOPMENT_LAB_ITEMS,
-} from "@/lib/data/services/development";
-
-/* ─── SEO ─── */
+import { getServicePage, getServiceFAQ, getAllLabContent, getSiteSettings } from "@/lib/sanity/queries";
+import type {
+  ServicePageHeroData,
+  ServiceProblemData,
+  SubServicesData,
+  AuditProcessData,
+  ServiceQualifierData,
+  CTABannerData,
+  IndustriesGridData,
+  BeforeAfterData,
+} from "@/lib/types";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
   return {
     title: "Web Development \u2014 GROWVELOPER",
     description:
-      "Performance-first Next.js development where every millisecond of load time and every GA4 event is treated as a growth lever \u2014 not an afterthought.",
+      settings?.seoDescription ??
+      "Performance-first Next.js development where every millisecond of load time and every GA4 event is treated as a growth lever.",
     openGraph: {
       title: "Web Development \u2014 GROWVELOPER",
-      description:
-        "Performance-first Next.js builds engineered for conversion. Core Web Vitals, GTM, GA4, and CMS setup \u2014 all under one roof.",
       url: "/services/development",
     },
   };
 }
 
-/* ─── Page ─── */
+export default async function DevelopmentPage() {
+  const [page, faq, labItems] = await Promise.all([
+    getServicePage("development"),
+    getServiceFAQ("development"),
+    getAllLabContent(),
+  ]);
 
-export default function DevelopmentPage() {
+  if (!page) notFound();
+
+  /* ── Hero ── */
+  const hero: ServicePageHeroData = {
+    headline: page.heroHeadline ?? "",
+    highlightedWord: page.heroHighlightedWord,
+    subStatement: page.heroSubStatement ?? "",
+    primaryCtaLabel: page.heroPrimaryCtaLabel ?? "",
+    primaryCtaUrl: page.heroPrimaryCtaUrl ?? "/start",
+    secondaryCtaLabel: page.heroSecondaryCtaLabel ?? "",
+    secondaryCtaUrl: page.heroSecondaryCtaUrl ?? "/work",
+    scrollCueText: page.heroScrollCueText,
+    scrollCueTargetId: page.heroScrollCueTargetId,
+  };
+
+  /* ── Problem ── */
+  const problem: ServiceProblemData | null = page.problemHeadline
+    ? {
+        headline: page.problemHeadline,
+        highlightedWord: page.problemHighlightedWord,
+        painPoints: page.problemPainPoints ?? [],
+      }
+    : null;
+
+  /* ── Sub Services ── */
+  const subServices: SubServicesData | null = page.subServicesHeadline
+    ? {
+        headline: page.subServicesHeadline,
+        highlightedWord: page.subServicesHighlightedWord,
+        description: page.subServicesDescription,
+        items: (page.subServiceItems ?? []).map((item) => ({
+          title: item.title,
+          description: item.description,
+          icon: item.icon,
+        })),
+      }
+    : null;
+
+  /* ── Process ── */
+  const process: AuditProcessData | null = page.processHeadline
+    ? {
+        headline: page.processHeadline,
+        highlightedWord: page.processHighlightedWord,
+        steps: (page.processSteps ?? []).map((s) => ({
+          stepNumber: s.stepNumber,
+          title: s.title,
+          description: s.description,
+        })),
+      }
+    : null;
+
+  /* ── Qualifiers ── */
+  const qualifiers: ServiceQualifierData | null = page.qualifiersHeadline
+    ? {
+        headline: page.qualifiersHeadline,
+        highlightedWord: page.qualifiersHighlightedWord,
+        qualifiers: page.qualifiers ?? [],
+      }
+    : null;
+
+  /* ── CTA Banners ── */
+  const ctaMid: CTABannerData | null = page.ctaBannerMid?.headline
+    ? (page.ctaBannerMid as CTABannerData)
+    : null;
+
+  const ctaFinal: CTABannerData | null = page.ctaBannerFinal?.headline
+    ? (page.ctaBannerFinal as CTABannerData)
+    : null;
+
+  /* ── Before & After ── */
+  const beforeAfter: BeforeAfterData | null =
+    page.beforeAfterHeadline && (page.beforeAfterPairs?.length ?? 0) > 0
+      ? {
+          headline: page.beforeAfterHeadline,
+          highlightedWord: page.beforeAfterHighlightedWord,
+          description: page.beforeAfterDescription,
+          pairs: page.beforeAfterPairs ?? [],
+        }
+      : null;
+
+  /* ── Industries ── */
+  const industriesData: IndustriesGridData | null =
+    page.industriesHeadline && page.industriesCtaHeadline
+      ? {
+          headline: page.industriesHeadline,
+          highlightedWord: page.industriesHighlightedWord,
+          description: page.industriesDescription,
+          industries: page.featuredIndustries ?? [],
+          ctaHeadline: page.industriesCtaHeadline,
+          ctaLabel: page.industriesCtaLabel ?? "",
+          ctaUrl: page.industriesCtaUrl ?? "/start",
+        }
+      : null;
+
+  const labSample = labItems.slice(0, 6);
+
   return (
     <>
-      {/* JSON-LD */}
       <script
         type="application/ld+json"
         suppressHydrationWarning
@@ -62,13 +156,8 @@ export default function DevelopmentPage() {
             "@context": "https://schema.org",
             "@type": "Service",
             name: "Web Development",
-            description:
-              "Performance-first Next.js development with Core Web Vitals, GTM, GA4, and CMS setup.",
-            provider: {
-              "@type": "Organization",
-              name: "GROWVELOPER",
-              url: "https://growveloper.com",
-            },
+            description: page.heroSubStatement ?? "",
+            provider: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
             serviceType: "Web Development",
             areaServed: "Worldwide",
           }),
@@ -76,96 +165,105 @@ export default function DevelopmentPage() {
       />
 
       {/* Section 01 — Hero */}
-      <ServiceHero data={DEVELOPMENT_HERO} />
+      <ServiceHero data={hero} />
 
-      {/* Section 02 — Credibility stats */}
-      <StatsBand
-        items={DEVELOPMENT_STATS}
-        headline="Performance you can measure"
-        highlightedWord="measure"
-        description="Numbers from real builds we\u2019ve shipped and maintained."
-      />
+      {/* Section 02 — Stats Band */}
+      {page.statsHeadline && (page.statsItems?.length ?? 0) > 0 && (
+        <StatsBand
+          items={page.statsItems ?? []}
+          headline={page.statsHeadline}
+          highlightedWord={page.statsHighlightedWord}
+          description={page.statsDescription}
+        />
+      )}
 
-      {/* Section 03 — The Problem (glass) */}
-      <GlassSection>
-        <ServiceProblem data={DEVELOPMENT_PROBLEM} />
-      </GlassSection>
+      {/* Section 03 — The Problem */}
+      {problem && (
+        <GlassSection>
+          <ServiceProblem data={problem} />
+        </GlassSection>
+      )}
 
-      {/* Section 04 — What's Covered (Bento Grid) */}
-      <SubServicesBento data={DEVELOPMENT_SUB_SERVICES} id="dev-services" />
+      {/* Section 04 — Sub Services */}
+      {subServices && <SubServicesBento data={subServices} id="dev-services" />}
 
-      {/* Section 05 — How We Build (glass) */}
-      <GlassSection>
-        <AuditProcess data={DEVELOPMENT_PROCESS} />
-      </GlassSection>
+      {/* Section 05 — Process */}
+      {process && (
+        <GlassSection>
+          <AuditProcess data={process} />
+        </GlassSection>
+      )}
 
       {/* Section 06 — Before vs After */}
-      <BeforeAfterCompare data={DEVELOPMENT_BEFORE_AFTER} />
+      {beforeAfter && <BeforeAfterCompare data={beforeAfter} />}
+
+      {/* Section 07 — Mid CTA */}
+      {ctaMid && <CTABanner data={ctaMid} presentationMode="inline" colorScheme="light-teal" />}
 
       {/* Section 08 — Case Studies */}
-      <CaseStudiesSection
-        headline="Proof in the numbers"
-        highlightedWord="numbers"
-        description="Real performance improvements from real client projects."
-        items={DEVELOPMENT_CASE_STUDIES}
-      />
-
-      {/* Section 09 — Testimonials (glass) */}
-      <GlassSection>
-        <HomeTestimonials
-          headline="What our clients say"
-          highlightedWord="clients"
-          description="Hear from the founders and growth leads who hired us."
-          items={DEVELOPMENT_TESTIMONIALS}
+      {page.caseStudiesHeadline && (page.featuredCaseStudies?.length ?? 0) > 0 && (
+        <CaseStudiesSection
+          headline={page.caseStudiesHeadline}
+          highlightedWord={page.caseStudiesHighlightedWord}
+          description={page.caseStudiesDescription}
+          items={page.featuredCaseStudies ?? []}
         />
-      </GlassSection>
+      )}
 
-      {/* Section 10 — Who It's For */}
-      <ServiceQualifiers data={DEVELOPMENT_QUALIFIERS} />
+      {/* Section 09 — Testimonials */}
+      {page.testimonialsHeadline && (page.featuredTestimonials?.length ?? 0) > 0 && (
+        <GlassSection>
+          <HomeTestimonials
+            headline={page.testimonialsHeadline}
+            highlightedWord={page.testimonialsHighlightedWord}
+            description={page.testimonialsDescription}
+            items={page.featuredTestimonials ?? []}
+          />
+        </GlassSection>
+      )}
 
-      {/* Section 11 — FAQ (glass) */}
-      <GlassSection>
-        <FAQAccordion
-          sectionHeadline="Frequently Asked Questions"
-          sectionDescription="Everything you need to know about our development services."
-          ctaHeadline="Still Have Questions?"
-          ctaDescription="Every project is different. Let\u2019s talk about yours."
-          ctaLabel="Book a Consultation"
-          ctaUrl="/start"
-          items={DEVELOPMENT_FAQ}
-          highlightedWord="Questions"
-        />
-      </GlassSection>
+      {/* Section 10 — Qualifiers */}
+      {qualifiers && <ServiceQualifiers data={qualifiers} />}
 
-      {/* Section 12 — Industries We Accelerate */}
-      <GlassSection>
-        <IndustriesGrid data={DEVELOPMENT_INDUSTRIES} />
-      </GlassSection>
+      {/* Section 11 — FAQ */}
+      {faq.length > 0 && (
+        <GlassSection>
+          <FAQAccordion
+            sectionHeadline={page.faqSectionHeadline}
+            sectionDescription={page.faqSectionDescription}
+            ctaHeadline={page.faqCtaHeadline}
+            ctaDescription={page.faqCtaDescription}
+            ctaLabel={page.faqCtaLabel}
+            ctaUrl={page.faqCtaUrl}
+            items={faq}
+            highlightedWord={page.faqSectionHighlightedWord}
+          />
+        </GlassSection>
+      )}
+
+      {/* Section 12 — Industries */}
+      {industriesData && (
+        <GlassSection>
+          <IndustriesGrid data={industriesData} />
+        </GlassSection>
+      )}
 
       {/* Section 13 — From The Lab */}
-      <LiveFeed
-        headline="From The Lab"
-        highlightedWord="Lab"
-        description="The latest insights, experiments, and deep dives from our team."
-        items={DEVELOPMENT_LAB_ITEMS}
-        sectionTitle="Latest from The Lab"
-        seeAllLabel="See everything"
-        seeAllUrl="/lab"
-      />
+      {page.labHeadline && labSample.length > 0 && (
+        <LiveFeed
+          headline={page.labHeadline}
+          highlightedWord={page.labHighlightedWord}
+          description={page.labDescription ?? ""}
+          items={labSample}
+          sectionTitle={page.labSectionTitle ?? ""}
+          seeAllLabel={page.labSeeAllLabel ?? ""}
+          seeAllUrl={page.labSeeAllUrl ?? "/lab"}
+        />
+      )}
 
-      {/* Section 14 — Mid CTA Banner */}
-      <CTABanner
-        data={DEVELOPMENT_CTA_MID}
-        presentationMode="inline"
-        colorScheme="light-teal"
-      />
+      {/* Section 14 — Final CTA */}
+      {ctaFinal && <CTABanner data={ctaFinal} presentationMode="section" colorScheme="teal-solid" />}
 
-      {/* Section 15 — Final CTA */}
-      <CTABanner
-        data={DEVELOPMENT_CTA_FINAL}
-        presentationMode="section"
-        colorScheme="teal-solid"
-      />
     </>
   );
 }

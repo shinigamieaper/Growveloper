@@ -87,7 +87,7 @@ export function BeforeAfterCompare({ data, className, ...props }: BeforeAfterCom
                   firstImageClassName="object-cover object-left-top w-full"
                   secondImageClassName="object-cover object-left-top w-full"
                   className="h-[300px] w-full rounded-[22px] sm:h-[400px] md:h-[500px] md:rounded-lg"
-                  slideMode="hover"
+                  slideMode="drag"
                   autoplay={true}
                   autoplayDuration={4000}
                 />

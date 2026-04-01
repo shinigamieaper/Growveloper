@@ -13,15 +13,17 @@ import {
 import { HomeTestimonials } from "@/components/home/Testimonials";
 import { CaseStudiesSection } from "@/components/home/CaseStudies";
 import {
-  ALL_CASE_STUDIES,
   getCaseStudyBySlug,
-  getRelatedCaseStudies,
-} from "@/lib/data/caseStudies";
+  getAllCaseStudies,
+  getSiteSettings,
+  getWorkPage,
+} from "@/lib/sanity/queries";
 import type { CTABannerData, TestimonialData, StatsBandItem } from "@/lib/types";
 
 /* ─── Static params ─── */
-export function generateStaticParams() {
-  return ALL_CASE_STUDIES.map((cs) => ({ slug: cs.slug }));
+export async function generateStaticParams() {
+  const caseStudies = await getAllCaseStudies();
+  return caseStudies.map((cs) => ({ slug: cs.slug }));
 }
 
 /* ─── Metadata ─── */
@@ -31,20 +33,19 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const cs = getCaseStudyBySlug(slug);
-  if (!cs) return { title: "Case Study Not Found — GROWVELOPER" };
+  const [cs, settings] = await Promise.all([
+    getCaseStudyBySlug(slug),
+    getSiteSettings(),
+  ]);
+  if (!cs) return { title: "Case Study Not Found" };
   return {
-    title: `${cs.title} — Case Study — GROWVELOPER`,
+    title: `${cs.title} — Case Study`,
     description: cs.situation,
+    openGraph: settings?.ogImage
+      ? { images: [{ url: settings.ogImage }] }
+      : undefined,
   };
 }
-
-const CTA_SECTION: CTABannerData = {
-  headline: "Ready to become the next case study?",
-  highlightedWord: "next case study",
-  ctaLabel: "Start a project",
-  ctaDestination: "/start",
-};
 
 /* ─── Page ─── */
 export default async function CaseStudyPage({
@@ -53,10 +54,23 @@ export default async function CaseStudyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const cs = getCaseStudyBySlug(slug);
+  const [cs, allCaseStudies, workPage] = await Promise.all([
+    getCaseStudyBySlug(slug),
+    getAllCaseStudies(),
+    getWorkPage(),
+  ]);
   if (!cs) notFound();
 
-  const related = getRelatedCaseStudies(slug, 3);
+  const ctaSection: CTABannerData = {
+    headline: workPage?.ctaSectionHeadline ?? "Ready to become the next case study?",
+    highlightedWord: workPage?.ctaSectionHighlightedWord ?? "next case study",
+    ctaLabel: workPage?.ctaSectionLabel ?? "Start a project",
+    ctaDestination: workPage?.ctaSectionDestination ?? "/start",
+  };
+
+  const related = allCaseStudies
+    .filter((item) => item.slug !== cs.slug)
+    .slice(0, 3);
 
   /* Map metrics to StatsBandItem shape */
   const statItems: StatsBandItem[] = cs.metrics.map((m) => ({
@@ -73,6 +87,23 @@ export default async function CaseStudyPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            name: cs.title,
+            description: cs.situation ?? "",
+            image: cs.heroImage ?? undefined,
+            author: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+            url: `https://growveloper.com/work/${cs.slug}`,
+            about: { "@type": "Thing", name: cs.clientIndustry ?? "" },
+          }),
+        }}
+      />
+
       {/* 01 — Hero */}
       <section className="pt-32 pb-0 md:pt-40">
         <div className="mx-auto max-w-6xl px-6">
@@ -276,7 +307,7 @@ export default async function CaseStudyPage({
 
       {/* Section CTA */}
       <CTABanner
-        data={CTA_SECTION}
+        data={ctaSection}
         presentationMode="section"
         colorScheme="teal-solid"
       />

@@ -9,6 +9,8 @@ import { MovingBorderButton } from "@/components/ui/moving-border";
 import { MagneticElement } from "@/components/animations/MagneticElement";
 import { ScrollFadeUp } from "@/components/animations/ScrollFadeUp";
 import { ScrollCue } from "@/components/shared/ScrollCue";
+import { trackCTAClick } from "@/lib/analytics";
+import { usePathname } from "next/navigation";
 import type { AuditHeroData } from "@/lib/types";
 
 interface AuditHeroProps extends React.ComponentPropsWithoutRef<"section"> {
@@ -17,6 +19,8 @@ interface AuditHeroProps extends React.ComponentPropsWithoutRef<"section"> {
 }
 
 export function AuditHero({ data, scrollCueTargetId, className, ...props }: AuditHeroProps) {
+  const pathname = usePathname();
+
   if (!data) return null;
 
   const {
@@ -77,6 +81,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                     href={primaryCtaUrl}
                     duration={3000}
                     containerClassName="inline-flex w-full sm:w-auto"
+                    onClick={() => trackCTAClick(pathname, primaryCtaLabel, primaryCtaUrl)}
                   >
                     {primaryCtaLabel}
                   </MovingBorderButton>
@@ -86,6 +91,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                   <Link
                     href={secondaryCtaUrl}
                     className="min-h-[44px] inline-flex items-center text-sm text-brand-mid transition-colors hover:text-brand-light"
+                    onClick={() => trackCTAClick(pathname, secondaryCtaText, secondaryCtaUrl)}
                   >
                     {secondaryCtaText}
                   </Link>
@@ -97,9 +103,9 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
       </LampContainer>
 
       {scrollCueTargetId && (
-        <div className="absolute bottom-8 right-6 z-[60] md:right-12">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[60] md:left-auto md:right-12 md:translate-x-0">
           <ScrollCue
-            text="VIEW OUR WORK · VIEW OUR WORK · "
+            text={data.scrollCueText ?? "VIEW OUR WORK \u00b7 VIEW OUR WORK \u00b7 "}
             targetId={scrollCueTargetId}
             className="py-0"
           />

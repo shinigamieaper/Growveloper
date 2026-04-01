@@ -2,10 +2,12 @@
 
 import { useEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
+import { trackVideoPlay } from "@/lib/analytics";
 
 interface VideoModalProps extends React.ComponentPropsWithoutRef<"div"> {
   videoUrl: string | null;
   platform: "youtube" | "tiktok" | null;
+  title?: string;
   onClose: () => void;
 }
 
@@ -25,7 +27,7 @@ function getPlatformLabel(platform: "youtube" | "tiktok"): string {
   return platform === "youtube" ? "YouTube" : "TikTok";
 }
 
-export function VideoModal({ videoUrl, platform, onClose, className, ...props }: VideoModalProps) {
+export function VideoModal({ videoUrl, platform, title, onClose, className, ...props }: VideoModalProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -36,10 +38,14 @@ export function VideoModal({ videoUrl, platform, onClose, className, ...props }:
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
+    if (platform && title) {
+      trackVideoPlay({ title, platform });
+    }
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleKeyDown]);
 
   if (!videoUrl || !platform) return null;

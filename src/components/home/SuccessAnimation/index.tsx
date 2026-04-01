@@ -6,6 +6,7 @@ import { MetricsCounter } from "@/components/animations/MetricsCounter";
 import { ChartClimb } from "@/components/animations/ChartClimb";
 import { WorkflowAnimation } from "@/components/animations/WorkflowAnimation";
 import { CanvasText } from "@/components/ui/canvas-text";
+import type { SuccessMetricItem } from "@/lib/types";
 
 /* ─── State definitions (code-driven, no CMS) ─── */
 
@@ -23,11 +24,23 @@ const STATES: SuccessState[] = [
 
 /* ─── State visuals ─── */
 
-function StateLighthouse() {
+function StateLighthouse({ metrics }: { metrics: SuccessMetricItem[] }) {
+  const score = metrics.find((m) => m.pillar === "lighthouse-score");
+  const loadTime = metrics.find((m) => m.pillar === "load-time");
   return (
     <div className="mx-auto grid max-w-md gap-4 sm:grid-cols-2">
-      <MetricsCounter value={100} label="Lighthouse Score" />
-      <MetricsCounter value={0.9} label="Load Time" suffix="s" decimals={1} />
+      <MetricsCounter
+        value={score?.metricValue ?? 100}
+        label={score?.metricLabel ?? "Lighthouse Score"}
+        suffix={score?.metricSuffix}
+        decimals={score?.decimals}
+      />
+      <MetricsCounter
+        value={loadTime?.metricValue ?? 0.9}
+        label={loadTime?.metricLabel ?? "Load Time"}
+        suffix={loadTime?.metricSuffix ?? "s"}
+        decimals={loadTime?.decimals ?? 1}
+      />
     </div>
   );
 }
@@ -65,13 +78,25 @@ function StateCoreWebVitals() {
   );
 }
 
-function StateTrafficConverts() {
+function StateTrafficConverts({ metrics }: { metrics: SuccessMetricItem[] }) {
+  const roas = metrics.find((m) => m.pillar === "roas");
+  const conversion = metrics.find((m) => m.pillar === "conversion-rate");
   return (
     <div className="mx-auto max-w-md space-y-4">
       <ChartClimb />
       <div className="grid gap-4 sm:grid-cols-2">
-        <MetricsCounter value={3.2} label="ROAS" suffix="×" decimals={1} />
-        <MetricsCounter value={47} label="Conversion Rate" suffix="%" prefix="+" />
+        <MetricsCounter
+          value={roas?.metricValue ?? 3.2}
+          label={roas?.metricLabel ?? "ROAS"}
+          suffix={roas?.metricSuffix ?? "×"}
+          decimals={roas?.decimals ?? 1}
+        />
+        <MetricsCounter
+          value={conversion?.metricValue ?? 47}
+          label={conversion?.metricLabel ?? "Conversion Rate"}
+          suffix={conversion?.metricSuffix ?? "%"}
+          prefix={conversion?.metricPrefix ?? "+"}
+        />
       </div>
     </div>
   );
@@ -104,13 +129,25 @@ function StateWorkflow() {
   );
 }
 
-const STATE_VISUALS = [StateLighthouse, StateCoreWebVitals, StateTrafficConverts, StateAIVisible, StateWorkflow];
+function buildStateVisuals(metrics: SuccessMetricItem[]) {
+  const lhMetrics = metrics.filter((m) => m.stateIndex === 0);
+  const tfMetrics = metrics.filter((m) => m.stateIndex === 2);
+  return [
+    () => <StateLighthouse metrics={lhMetrics} />,
+    () => <StateCoreWebVitals />,
+    () => <StateTrafficConverts metrics={tfMetrics} />,
+    () => <StateAIVisible />,
+    () => <StateWorkflow />,
+  ];
+}
 
 /* ─── Main component ─── */
 
-interface SuccessAnimationProps extends React.ComponentPropsWithoutRef<"section"> {}
+interface SuccessAnimationProps extends React.ComponentPropsWithoutRef<"section"> {
+  successMetrics?: SuccessMetricItem[];
+}
 
-export function SuccessAnimation({ className, ...props }: SuccessAnimationProps) {
+export function SuccessAnimation({ className, successMetrics, ...props }: SuccessAnimationProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeState, setActiveState] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -140,7 +177,8 @@ export function SuccessAnimation({ className, ...props }: SuccessAnimationProps)
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll, isMobile]);
 
-  const ActiveVisual = STATE_VISUALS[activeState];
+  const stateVisuals = buildStateVisuals(successMetrics ?? []);
+  const ActiveVisual = stateVisuals[activeState];
 
   /* ─── Mobile: tabbed interface ─── */
   if (isMobile) {

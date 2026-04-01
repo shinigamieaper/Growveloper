@@ -2,43 +2,57 @@ import type { Metadata } from "next";
 import { GlassSection, CTABanner } from "@/components";
 import { AutomationsCatalogueHero } from "@/components/automations/AutomationsCatalogueHero";
 import { AutomationsCatalogue } from "@/components/automations/AutomationsCatalogue";
-import {
-  ALL_AUTOMATIONS,
-  AUTOMATION_CATEGORIES,
-  AUTOMATIONS_HERO,
-  AUTOMATIONS_CTA,
-} from "@/lib/data/automations";
+import { getAllAutomations, getSiteSettings, getAutomationsPage } from "@/lib/sanity/queries";
+import type { CTABannerData } from "@/lib/types";
 
-export const metadata: Metadata = {
-  title: "Automations Catalogue — GROWVELOPER",
-  description:
-    "Browse pre-built automation workflows ready to deploy in your business. Lead gen, reporting, content, CRM sync, and more.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: "Automations Catalogue",
+    description:
+      settings?.seoDescription ??
+      "Browse pre-built automation workflows ready to deploy in your business. Lead gen, reporting, content, CRM sync, and more.",
+  };
+}
 
-export default function AutomationsPage() {
+export default async function AutomationsPage() {
+  const [automations, page] = await Promise.all([
+    getAllAutomations(),
+    getAutomationsPage(),
+  ]);
+
+  const categories = [...new Set(automations.map((a) => a.category))].map((c) => ({
+    label: c,
+    value: c,
+  }));
+
+  const ctaData: CTABannerData = {
+    headline: page?.ctaHeadline ?? "Need a custom automation built for your business?",
+    highlightedWord: page?.ctaHighlightedWord ?? "custom automation",
+    ctaLabel: page?.ctaLabel ?? "Book a free consultation",
+    ctaDestination: page?.ctaDestination ?? "/start",
+  };
+
   return (
     <>
       {/* 01 — Hero */}
       <AutomationsCatalogueHero
-        headline={AUTOMATIONS_HERO.headline}
-        highlightedWord={AUTOMATIONS_HERO.highlightedWord}
-        subStatement={AUTOMATIONS_HERO.subStatement}
-        scrollCueText={AUTOMATIONS_HERO.scrollCueText}
-        scrollCueTargetId={AUTOMATIONS_HERO.scrollCueTargetId}
+        headline={page?.heroHeadline ?? "Automations that ship"}
+        highlightedWord={page?.heroHighlightedWord ?? "ship"}
+        subStatement={page?.heroSubStatement ?? "Pre-built workflows ready to deploy. Pick one, customise it, and go live in days."}
+        scrollCueText={page?.heroScrollCueText ?? "Browse the catalogue"}
+        scrollCueTargetId="automations-catalogue"
       />
 
       {/* 02 — Catalogue (glass) */}
       <GlassSection id="automations-catalogue">
         <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
-          <AutomationsCatalogue
-            items={ALL_AUTOMATIONS}
-            categories={AUTOMATION_CATEGORIES}
-          />
+          <AutomationsCatalogue items={automations} categories={categories} />
         </div>
       </GlassSection>
 
       {/* 03 — Final CTA */}
-      <CTABanner data={AUTOMATIONS_CTA} />
+      <CTABanner data={ctaData} />
     </>
   );
 }

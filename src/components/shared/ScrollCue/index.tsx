@@ -79,6 +79,9 @@ export function ScrollCue({
     const target = document.getElementById(targetId);
     if (target) {
       target.scrollIntoView({ behavior: "smooth" });
+    } else {
+      // Fallback: navigate to work page if target doesn't exist
+      window.location.href = "/work";
     }
   };
 

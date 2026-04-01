@@ -45,7 +45,7 @@ export function ScrollFadeUp({
         ease: EASE.smooth,
         scrollTrigger: {
           trigger: ref.current,
-          start,
+          start: isMobile ? "top 95%" : start,
           toggleActions: "play none none none",
           once: true,
         },

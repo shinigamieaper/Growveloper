@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { trackCTAClick } from "@/lib/analytics";
 import type { MicroCTAData } from "@/lib/types";
 
 interface MicroCTAProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -7,6 +11,8 @@ interface MicroCTAProps extends React.ComponentPropsWithoutRef<"div"> {
 }
 
 export function MicroCTA({ data, className, ...props }: MicroCTAProps) {
+  const pathname = usePathname();
+
   if (!data) return null;
 
   return (
@@ -21,6 +27,7 @@ export function MicroCTA({ data, className, ...props }: MicroCTAProps) {
       <Link
         href={data.ctaDestination}
         className="inline-flex min-h-[44px] shrink-0 items-center rounded-full bg-brand-dark px-6 py-2.5 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105"
+        onClick={() => trackCTAClick(pathname, data.ctaLabel, data.ctaDestination)}
       >
         {data.ctaLabel}
       </Link>

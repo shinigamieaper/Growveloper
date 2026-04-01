@@ -23,6 +23,8 @@ export interface NavigationData {
   staticLinks: NavLink[];
   ctaLabel: string;
   ctaUrl: string;
+  servicesLabel?: string;
+  industriesLabel?: string;
 }
 
 /* --- Footer --- */
@@ -49,7 +51,12 @@ export interface SiteSettings {
   contactEmail: string;
   whatsappNumber?: string;
   newsletterHeadline?: string;
+  newsletterHighlightedWord?: string;
   newsletterSubCopy?: string;
+  newsletterCtaLabel?: string;
+  newsletterSuccessHeadline?: string;
+  newsletterSuccessSubCopy?: string;
+  newsletterEmailPlaceholder?: string;
 }
 
 /* --- GrowveloperCard --- */
@@ -164,6 +171,7 @@ export interface IndustryCardData {
   name: string;
   hookLine: string;
   slug: string;
+  ctaLabel?: string;
 }
 
 export interface IndustriesGridData {
@@ -223,6 +231,17 @@ export interface TestimonialData {
   industry?: string;
   service?: string;
   featured?: boolean;
+}
+
+/* --- Success Animation Metrics --- */
+export interface SuccessMetricItem {
+  stateIndex: number;
+  pillar: string;
+  metricLabel: string;
+  metricValue: number;
+  metricSuffix?: string;
+  metricPrefix?: string;
+  decimals?: number;
 }
 
 /* --- Stats --- */
@@ -315,18 +334,58 @@ export interface IndustryServiceCard {
   link: string;
 }
 
+export interface IndustryProcessStep {
+  stepNumber: string;
+  heading: string;
+  description: string;
+  lottiePath?: string;
+  fallbackGradient?: string;
+}
+
 export interface IndustryPageData extends IndustryCardData {
   heroHeadline: string;
   heroHighlightedWord?: string;
   heroSubStatement: string;
-  primaryCtaLabel: string;
-  primaryCtaUrl: string;
+  primaryCtaLabel?: string;
+  primaryCtaUrl?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaUrl?: string;
+  scrollCueText?: string;
+  problemHeadline?: string;
+  problemHighlightedWord?: string;
+  howWeHelpHeadline?: string;
+  howWeHelpHighlightedWord?: string;
+  howWeHelpDescription?: string;
+  serviceCardCtaLabel?: string;
+  qualifierHeadline?: string;
+  qualifierHighlightedWord?: string;
+  ctaInlineHeadline?: string;
+  ctaInlineHighlightedWord?: string;
+  ctaInlineLabel?: string;
+  ctaInlineDestination?: string;
+  otherIndustriesHeadline?: string;
+  otherIndustriesHighlightedWord?: string;
+  otherIndustriesDescription?: string;
+  otherIndustriesCtaHeadline?: string;
+  otherIndustriesCtaLabel?: string;
   painPoints: string[];
   serviceCards: IndustryServiceCard[];
   outcomeStats: StatsBandItem[];
   caseStudySlugs: string[];
   testimonials: TestimonialData[];
   faq: FAQItem[];
+  beforeAfterHeadline?: string;
+  beforeAfterHighlightedWord?: string;
+  beforeAfterDescription?: string;
+  beforeAfterPairs?: BeforeAfterPair[];
+  processHeadline?: string;
+  processHighlightedWord?: string;
+  processDescription?: string;
+  processSteps?: IndustryProcessStep[];
+  ctaSectionHeadline?: string;
+  ctaSectionHighlightedWord?: string;
+  ctaSectionLabel?: string;
+  ctaSectionDestination?: string;
 }
 
 /* --- Resource --- */
@@ -337,7 +396,9 @@ export interface ResourceCardData {
   resourceType: "Template" | "Guide" | "Framework" | "Playbook";
   category: string;
   accessType: "free" | "paid";
-  price?: number;
+  priceUSD?: number;
+  priceGBP?: number;
+  priceNGN?: number;
   coverImage?: string;
   featuredToggle?: boolean;
 }
@@ -433,6 +494,7 @@ export interface AuditHeroData {
   primaryCtaUrl: string;
   secondaryCtaText?: string;
   secondaryCtaUrl?: string;
+  scrollCueText?: string;
 }
 
 export interface AuditQualifierData {
@@ -635,6 +697,7 @@ export interface AboutHeroData {
   portraitAlt?: string;
   scrollCueText?: string;
   scrollCueTargetId?: string;
+  namePrefix?: string;
 }
 
 export interface AboutShortVersionData {
@@ -697,6 +760,173 @@ export interface AboutInterestsData {
   headline: string;
   highlightedWord?: string;
   items: AboutInterestItem[];
+}
+
+/* --- Service Page (Sanity CMS raw shape) --- */
+export interface ServicePageCmsData {
+  pageId: string;
+  // Hero
+  heroHeadline?: string;
+  heroHighlightedWord?: string;
+  heroSubStatement?: string;
+  heroPrimaryCtaLabel?: string;
+  heroPrimaryCtaUrl?: string;
+  heroSecondaryCtaLabel?: string;
+  heroSecondaryCtaUrl?: string;
+  heroScrollCueText?: string;
+  heroScrollCueTargetId?: string;
+  // Problem
+  problemHeadline?: string;
+  problemHighlightedWord?: string;
+  problemPainPoints?: string[];
+  // Sub Services
+  subServicesHeadline?: string;
+  subServicesHighlightedWord?: string;
+  subServicesDescription?: string;
+  subServiceItems?: { icon?: string; title: string; description: string }[];
+  // Qualifiers
+  qualifiersHeadline?: string;
+  qualifiersHighlightedWord?: string;
+  qualifiers?: string[];
+  // Process
+  processHeadline?: string;
+  processHighlightedWord?: string;
+  processSteps?: { stepNumber: string; title: string; description: string }[];
+  // CTA Banners
+  ctaBannerMid?: { headline?: string; highlightedWord?: string; ctaLabel?: string; ctaDestination?: string };
+  ctaBannerFinal?: { headline?: string; highlightedWord?: string; ctaLabel?: string; ctaDestination?: string };
+  // Stats
+  statsHeadline?: string;
+  statsHighlightedWord?: string;
+  statsDescription?: string;
+  statsItems?: StatsBandItem[];
+  // Before & After
+  beforeAfterHeadline?: string;
+  beforeAfterHighlightedWord?: string;
+  beforeAfterDescription?: string;
+  beforeAfterPairs?: BeforeAfterPair[];
+  // Case Studies
+  caseStudiesHeadline?: string;
+  caseStudiesHighlightedWord?: string;
+  caseStudiesDescription?: string;
+  featuredCaseStudies?: CaseStudyCardData[];
+  // Testimonials
+  testimonialsHeadline?: string;
+  testimonialsHighlightedWord?: string;
+  testimonialsDescription?: string;
+  featuredTestimonials?: TestimonialData[];
+  // Industries
+  industriesHeadline?: string;
+  industriesHighlightedWord?: string;
+  industriesDescription?: string;
+  industriesCtaHeadline?: string;
+  industriesCtaLabel?: string;
+  industriesCtaUrl?: string;
+  featuredIndustries?: IndustryCardData[];
+  // Featured Automations (AI only)
+  featuredAutomationsHeadline?: string;
+  featuredAutomationsHighlightedWord?: string;
+  featuredAutomationsDescription?: string;
+  featuredAutomationsViewAllLabel?: string;
+  featuredAutomationsViewAllUrl?: string;
+  // Lab
+  labHeadline?: string;
+  labHighlightedWord?: string;
+  labDescription?: string;
+  labSectionTitle?: string;
+  labSeeAllLabel?: string;
+  labSeeAllUrl?: string;
+  // FAQ Section
+  faqSectionHeadline?: string;
+  faqSectionHighlightedWord?: string;
+  faqSectionDescription?: string;
+  faqCtaHeadline?: string;
+  faqCtaDescription?: string;
+  faqCtaLabel?: string;
+  faqCtaUrl?: string;
+}
+
+/* --- About Page CTA Banner shape --- */
+export interface AboutCtaBannerCms {
+  headline?: string;
+  highlightedWord?: string;
+  subCopy?: string;
+  ctaLabel?: string;
+  ctaDestination?: string;
+  colorScheme?: CTABannerColorScheme;
+}
+
+/* --- Automations Page --- */
+export interface AutomationsPageData {
+  heroHeadline?: string;
+  heroHighlightedWord?: string;
+  heroSubStatement?: string;
+  heroScrollCueText?: string;
+  ctaHeadline?: string;
+  ctaHighlightedWord?: string;
+  ctaLabel?: string;
+  ctaDestination?: string;
+}
+
+/* --- Work Page --- */
+export interface WorkPageData {
+  pageHeadline?: string;
+  pageHighlightedWord?: string;
+  pageDescription?: string;
+  emptyStatePrimary?: string;
+  emptyStateFiltered?: string;
+  servicesHeadline?: string;
+  servicesHighlightedWord?: string;
+  servicesDescription?: string;
+  serviceItems?: StickyScrollItem[];
+  processHeadline?: string;
+  processHighlightedWord?: string;
+  processDescription?: string;
+  processSteps?: StickyScrollItem[];
+  beforeAfterHeadline?: string;
+  beforeAfterHighlightedWord?: string;
+  beforeAfterDescription?: string;
+  beforeAfterPairs?: BeforeAfterPair[];
+  industriesHeadline?: string;
+  industriesHighlightedWord?: string;
+  industriesDescription?: string;
+  industries?: IndustryCardData[];
+  industriesCtaHeadline?: string;
+  industriesCtaLabel?: string;
+  industriesCtaUrl?: string;
+  ctaInlineHeadline?: string;
+  ctaInlineHighlightedWord?: string;
+  ctaInlineLabel?: string;
+  ctaInlineDestination?: string;
+  ctaSectionHeadline?: string;
+  ctaSectionHighlightedWord?: string;
+  ctaSectionLabel?: string;
+  ctaSectionDestination?: string;
+}
+
+/* --- Legal Pages --- */
+export interface LegalPageSection {
+  _key?: string;
+  heading: string;
+  body: unknown[];
+}
+
+export interface PrivacyPageData {
+  pageTitle?: string;
+  lastUpdated?: string;
+  contentsLabel?: string;
+  sections: LegalPageSection[];
+  termsLinkLabel?: string;
+  homeLinkLabel?: string;
+}
+
+export interface TermsPageData {
+  pageTitle?: string;
+  lastUpdated?: string;
+  contentsLabel?: string;
+  sections: LegalPageSection[];
+  privacyLinkLabel?: string;
+  homeLinkLabel?: string;
 }
 
 /* --- Lead (form submission) --- */
