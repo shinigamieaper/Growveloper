@@ -1,38 +1,47 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { LogoLoop } from "@/components/ui/logo-loop";
 import { AUTOMATION_TOOL_ICON_MAP } from "@/components/shared/AutomationToolIcons";
 import type { LogoNodeItem } from "@/components/ui/logo-loop";
-import type { AboutSkillsToolsData } from "@/lib/types";
+import type { AboutSkillsToolsData, AboutToolItem } from "@/lib/types";
 
 const ROTATIONS = [-2, 1.5, -1, 2.5, -3, 0.5];
 
-function buildLogoItems(tools: string[]): LogoNodeItem[] {
+function buildLogoItems(tools: AboutToolItem[]): LogoNodeItem[] {
   return tools.map((tool) => {
     const Icon =
-      AUTOMATION_TOOL_ICON_MAP[tool] ??
-      AUTOMATION_TOOL_ICON_MAP[tool.split(" ")[0]];
+      AUTOMATION_TOOL_ICON_MAP[tool.name] ??
+      AUTOMATION_TOOL_ICON_MAP[tool.name.split(" ")[0]];
 
     return {
       node: (
         <span className="inline-flex items-center gap-2.5 rounded-2xl border border-glass-border bg-glass-bg px-5 py-3 backdrop-blur-sm">
-          {Icon ? (
+          {tool.logo ? (
+            <Image
+              src={tool.logo}
+              alt={tool.name}
+              width={20}
+              height={20}
+              className="h-5 w-5 object-contain"
+            />
+          ) : Icon ? (
             <Icon className="h-5 w-5 text-brand-mid" />
           ) : (
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-mid/20 font-mono text-[10px] font-bold text-brand-mid">
-              {tool.charAt(0)}
+              {tool.name.charAt(0)}
             </span>
           )}
           <span className="whitespace-nowrap text-sm text-text-primary">
-            {tool}
+            {tool.name}
           </span>
         </span>
       ),
-      ariaLabel: tool,
+      ariaLabel: tool.name,
     };
   });
 }

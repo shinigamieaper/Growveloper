@@ -23,6 +23,11 @@ export function IndustryCard({ data, className, ...props }: IndustryCardProps) {
       )}
       {...props}
     >
+      {data.icon && (
+        <span className="mb-3 block text-2xl" aria-hidden="true">
+          {data.icon}
+        </span>
+      )}
       <h3 className="heading-font mb-2 text-lg font-bold text-text-primary">
         {data.name}
       </h3>

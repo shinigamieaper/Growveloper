@@ -73,7 +73,14 @@ export default async function AboutPage() {
     ? {
         headline: page.companiesHeadline,
         highlightedWord: page.companiesHighlightedWord,
-        companies: page.companies ?? [],
+        companies: (page.companies ?? []).map(
+          (c: { company: string; role: string; insight: string; logo?: string }) => ({
+            company: c.company,
+            role: c.role,
+            insight: c.insight,
+            logo: c.logo,
+          })
+        ),
       }
     : null;
 
@@ -95,9 +102,9 @@ export default async function AboutPage() {
         headline: page.skillsHeadline,
         highlightedWord: page.skillsHighlightedWord,
         disciplines: (page.disciplines ?? []).map(
-          (d: { name: string; tools?: { name: string }[] }) => ({
+          (d: { name: string; tools?: { name: string; logo?: string }[] }) => ({
             name: d.name,
-            tools: (d.tools ?? []).map((t) => t.name),
+            tools: (d.tools ?? []).map((t) => ({ name: t.name, logo: t.logo })),
           })
         ),
       }

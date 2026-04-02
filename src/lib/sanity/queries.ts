@@ -439,7 +439,7 @@ export async function getAboutPage() {
 
       companiesHeadline,
       companiesHighlightedWord,
-      companies[]{ company, role, insight },
+      companies[]{ company, role, insight, "logo": logo.asset->url },
 
       principlesHeadline,
       principlesHighlightedWord,

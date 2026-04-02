@@ -723,6 +723,7 @@ export interface AboutPastCompany {
   company: string;
   role: string;
   insight: string;
+  logo?: string;
 }
 
 export interface AboutPastCompaniesData {
@@ -742,9 +743,14 @@ export interface AboutHowIWorkData {
   principles: AboutPrincipleItem[];
 }
 
+export interface AboutToolItem {
+  name: string;
+  logo?: string;
+}
+
 export interface AboutDisciplineItem {
   name: string;
-  tools: string[];
+  tools: AboutToolItem[];
 }
 
 export interface AboutSkillsToolsData {

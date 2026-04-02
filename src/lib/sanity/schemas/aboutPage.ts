@@ -136,6 +136,7 @@ export default defineType({
             defineField({ name: "company", title: "Company", type: "string" }),
             defineField({ name: "role", title: "Role", type: "string" }),
             defineField({ name: "insight", title: "Insight", type: "text" }),
+            defineField({ name: "logo", title: "Company Logo", type: "image", options: { hotspot: true } }),
           ],
         }),
       ],

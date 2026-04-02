@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { GrowveloperCard } from "@/components/shared/GrowveloperCard";
 import { StaggerChildren } from "@/components/animations/StaggerChildren";
@@ -30,6 +31,17 @@ export function AboutCompanies({ data }: AboutCompaniesProps) {
               tag={co.role}
               headline={co.company}
               subCopy={co.insight}
+              icon={
+                co.logo ? (
+                  <Image
+                    src={co.logo}
+                    alt={co.company}
+                    width={64}
+                    height={24}
+                    className="h-6 w-auto object-contain opacity-70"
+                  />
+                ) : undefined
+              }
             />
           ))}
         </div>
