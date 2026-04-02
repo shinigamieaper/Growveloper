@@ -1,25 +1,17 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import { generalSans, gambetta, jetbrainsMono } from "./fonts";
 import { Navigation } from "@/components/shared/Navigation";
 import { Footer } from "@/components/shared/Footer";
 import { LayoutGridOverlay } from "@/components/layout/LayoutGridOverlay";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
+import { LayoutClients } from "@/components/layout/LayoutClients";
 import { getNavigation, getFooter, getAllPopupConfigs, getSiteSettings } from "@/lib/sanity/queries";
 import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/jsonld";
 import { JsonLd } from "@/components/shared/JsonLd";
 import type { NavigationData, FooterData } from "@/lib/types";
 import "./globals.css";
-
-// Defer these to client-side only to avoid blocking static prerendering with Cache Components enabled
-const PopupController = dynamic(() => import("@/components/layout/PopupController").then((m) => ({ default: m.PopupController })), {
-  ssr: false,
-});
-const ScrollDepthTracker = dynamic(() => import("@/components/layout/ScrollDepthTracker").then((m) => ({ default: m.ScrollDepthTracker })), {
-  ssr: false,
-});
 
 /* ─── Placeholder data (Rule 3 — structure first, Sanity wiring later) ─── */
 const PLACEHOLDER_NAV: NavigationData = {
@@ -174,11 +166,8 @@ export default async function RootLayout({
         {/* Floating scroll-to-top button */}
         <ScrollToTop />
 
-        {/* Popup system — single controller reads all enabled configs, matches by pathname */}
-        <PopupController configs={popupConfigs} />
-
-        {/* Scroll depth tracker — fires GTM events at 25/50/75/100% */}
-        <ScrollDepthTracker />
+        {/* Client-side layout components (popup + analytics) deferred to avoid prerender blocking */}
+        <LayoutClients popupConfigs={popupConfigs} />
 
         {/* Google Tag Manager — loads after page is interactive */}
         {process.env.NEXT_PUBLIC_GTM_ID && (
