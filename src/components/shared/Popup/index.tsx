@@ -98,8 +98,13 @@ export function Popup({ config, open: controlledOpen, onOpenChange, className, .
   const [errorMessage, setErrorMessage] = useState("");
   const isMobile = useIsMobile();
   const reducedMotion = useReducedMotion();
-  const lastScrollTime = useRef(Date.now());
+  const lastScrollTime = useRef<number>(0);
   const pathname = usePathname();
+
+  // Initialize lastScrollTime on client to avoid SSR/static generation Date.now() errors
+  useEffect(() => {
+    lastScrollTime.current = Date.now();
+  }, []);
 
   // Use controlled state if provided, otherwise use internal state
   const isControlled = controlledOpen !== undefined;
