@@ -89,5 +89,28 @@ export default defineType({
         }),
       ],
     }),
+    defineField({
+      name: "staticLinks",
+      title: "Static Links",
+      description: "Top-level nav links (e.g. Work, The Lab, Resources, About)",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Label",
+              type: "string",
+            }),
+            defineField({
+              name: "url",
+              title: "URL",
+              type: "string",
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
 });

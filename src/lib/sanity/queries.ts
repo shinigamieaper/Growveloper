@@ -87,7 +87,7 @@ export async function getNavigation(): Promise<NavigationData | null> {
       industriesLabel,
       serviceLinks[]{ label, url, highlighted },
       industryLinks[]{ label, url, highlighted },
-      "staticLinks": [],
+      staticLinks[]{ label, url },
       ctaLabel,
       ctaUrl
     }`
