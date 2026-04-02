@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import dynamic from "next/dynamic";
-const SubServicesBento = dynamic(() => import("@/components/marketing/SubServicesBento").then((m) => ({ default: m.SubServicesBento })), { ssr: false });
-const BeforeAfterCompare = dynamic(() => import("@/components/shared/BeforeAfterCompare").then((m) => ({ default: m.BeforeAfterCompare })), { ssr: false });
+import { SubServicesBentoMarketing, BeforeAfterCompareClient } from "@/components/services/ClientDynamicComponents";
 import { ServiceHero } from "@/components/shared/ServiceHero";
 import { AuditProcess } from "@/components/audit/AuditProcess";
 import { CaseStudiesSection } from "@/components/home/CaseStudies";
@@ -185,7 +183,7 @@ export default async function MarketingPage() {
       )}
 
       {/* Section 04 — Sub Services */}
-      {subServices && <SubServicesBento data={subServices} id="sub-services" />}
+      {subServices && <SubServicesBentoMarketing data={subServices} id="sub-services" />}
 
       {/* Section 05 — Process */}
       {process && (
@@ -195,7 +193,7 @@ export default async function MarketingPage() {
       )}
 
       {/* Section 06 — Before vs After */}
-      {beforeAfter && <BeforeAfterCompare data={beforeAfter} />}
+      {beforeAfter && <BeforeAfterCompareClient data={beforeAfter} />}
 
       {/* Section 07 — Mid CTA */}
       {ctaMid && <CTABanner data={ctaMid} presentationMode="inline" colorScheme="light-teal" />}

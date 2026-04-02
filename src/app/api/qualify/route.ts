@@ -84,7 +84,7 @@ async function sendNotificationEmail(lead: LeadPayload): Promise<void> {
   const notificationEmail = process.env.NOTIFICATION_EMAIL || "hello@growveloper.com";
 
   await resend.emails.send({
-    from: "GROWVELOPER <noreply@growveloper.com>",
+    from: "Growveloper <hello@growveloper.com>",
     to: notificationEmail,
     subject: `New Lead: ${lead.name} — ${lead.company}`,
     html: `

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import dynamic from "next/dynamic";
-const SubServicesBento = dynamic(() => import("@/components/ai/SubServicesBento").then((m) => ({ default: m.SubServicesBento })), { ssr: false });
-const BeforeAfterCompare = dynamic(() => import("@/components/shared/BeforeAfterCompare").then((m) => ({ default: m.BeforeAfterCompare })), { ssr: false });
+import { SubServicesBentoAI, BeforeAfterCompareClient } from "@/components/services/ClientDynamicComponents";
 import { ServiceHero } from "@/components/shared/ServiceHero";
 import { AuditProcess } from "@/components/audit/AuditProcess";
 import { CaseStudiesSection } from "@/components/home/CaseStudies";
@@ -207,7 +205,7 @@ export default async function AIPage() {
       )}
 
       {/* Section 04 — Sub Services */}
-      {subServices && <SubServicesBento data={subServices} id="ai-services" />}
+      {subServices && <SubServicesBentoAI data={subServices} id="ai-services" />}
 
       {/* Section 05 — Featured Automations */}
       {automationsSection && (
@@ -222,7 +220,7 @@ export default async function AIPage() {
       {/* Section 07 — Before vs After */}
       {beforeAfter && (
         <GlassSection>
-          <BeforeAfterCompare data={beforeAfter} />
+          <BeforeAfterCompareClient data={beforeAfter} />
         </GlassSection>
       )}
 

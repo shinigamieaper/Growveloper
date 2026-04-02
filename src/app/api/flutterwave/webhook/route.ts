@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: "GROWVELOPER <hello@growveloper.com>",
+      from: "Growveloper <hello@growveloper.com>",
       to: customerEmail,
       subject: "Payment confirmed — GROWVELOPER",
       html: `
