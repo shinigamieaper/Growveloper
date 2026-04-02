@@ -22,6 +22,9 @@ import type { CTABannerData } from "@/lib/types";
 /* ─── Static params — only blog posts have detail pages ─── */
 export async function generateStaticParams() {
   const posts = await getAllBlogPosts();
+  if (posts.length === 0) {
+    return [{ slug: "placeholder" }];
+  }
   return posts.map((post) => ({ slug: post.slug }));
 }
 

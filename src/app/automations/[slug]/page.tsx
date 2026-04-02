@@ -24,6 +24,10 @@ import type { AuditProcessData, ServiceQualifierData, CTABannerData } from "@/li
 
 export async function generateStaticParams() {
   const items = await getAllAutomations();
+  if (items.length === 0) {
+    // Fallback for build-time validation when no automations exist in Sanity
+    return [{ slug: "placeholder" }];
+  }
   return items.map((a) => ({ slug: a.slug }));
 }
 

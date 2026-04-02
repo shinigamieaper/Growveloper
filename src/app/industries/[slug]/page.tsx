@@ -39,6 +39,9 @@ import type {
 /* ─── Static params ─── */
 export async function generateStaticParams() {
   const industries = await getAllIndustries();
+  if (industries.length === 0) {
+    return [{ slug: "placeholder" }];
+  }
   return industries.map((i) => ({ slug: i.slug }));
 }
 

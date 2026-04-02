@@ -9,9 +9,11 @@ import {
 
 export async function generateStaticParams() {
   const resources = await getAllResources();
-  return resources
-    .filter((r) => r.accessType === "paid")
-    .map((r) => ({ slug: r.slug }));
+  const paidResources = resources.filter((r) => r.accessType === "paid");
+  if (paidResources.length === 0) {
+    return [{ slug: "placeholder" }];
+  }
+  return paidResources.map((r) => ({ slug: r.slug }));
 }
 
 export async function generateMetadata({

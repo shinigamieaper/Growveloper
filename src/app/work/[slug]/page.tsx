@@ -23,6 +23,9 @@ import type { CTABannerData, TestimonialData, StatsBandItem } from "@/lib/types"
 /* ─── Static params ─── */
 export async function generateStaticParams() {
   const caseStudies = await getAllCaseStudies();
+  if (caseStudies.length === 0) {
+    return [{ slug: "placeholder" }];
+  }
   return caseStudies.map((cs) => ({ slug: cs.slug }));
 }
 

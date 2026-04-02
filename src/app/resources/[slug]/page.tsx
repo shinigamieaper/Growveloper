@@ -22,6 +22,9 @@ import type { CTABannerData } from "@/lib/types";
 
 export async function generateStaticParams() {
   const resources = await getAllResources();
+  if (resources.length === 0) {
+    return [{ slug: "placeholder" }];
+  }
   return resources.map((r) => ({ slug: r.slug }));
 }
 
