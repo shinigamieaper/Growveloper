@@ -70,9 +70,9 @@ export function Navigation({ data, className, suppressOnStudio, ...props }: Navi
           />
 
           {/* Nav links — always visible, flow naturally in the pill */}
-          <NavDropdown label={data.servicesLabel ?? "Services"} items={data.serviceLinks} />
-          <NavDropdown label={data.industriesLabel ?? "Industries"} items={data.industryLinks} />
-          {data.staticLinks.map((link) => (
+          <NavDropdown label={data.servicesLabel ?? "Services"} items={data.serviceLinks ?? []} />
+          <NavDropdown label={data.industriesLabel ?? "Industries"} items={data.industryLinks ?? []} />
+          {(data.staticLinks ?? []).map((link) => (
             <a
               key={link.url}
               href={link.url}
@@ -150,16 +150,16 @@ export function Navigation({ data, className, suppressOnStudio, ...props }: Navi
             <nav className="flex-1 overflow-y-auto">
               <MobileAccordion
                 label={data.servicesLabel ?? "Services"}
-                items={data.serviceLinks}
+                items={data.serviceLinks ?? []}
                 onItemClick={() => setIsMobileMenuOpen(false)}
               />
               <MobileAccordion
                 label={data.industriesLabel ?? "Industries"}
-                items={data.industryLinks}
+                items={data.industryLinks ?? []}
                 onItemClick={() => setIsMobileMenuOpen(false)}
               />
 
-              {data.staticLinks.map((link) => (
+              {(data.staticLinks ?? []).map((link) => (
                 <a
                   key={link.url}
                   href={link.url}
