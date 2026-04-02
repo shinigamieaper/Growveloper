@@ -68,6 +68,20 @@ export default defineType({
       type: "string",
       fieldset: "hero",
     }),
+    defineField({
+      name: "heroScrollCueText",
+      title: "Hero Scroll Cue Text",
+      type: "string",
+      fieldset: "hero",
+      description: 'Marquee text on the scroll cue button, e.g. "EXPLORE OUR WORK · "',
+    }),
+    defineField({
+      name: "heroScrollCueTargetId",
+      title: "Hero Scroll Cue Target ID",
+      type: "string",
+      fieldset: "hero",
+      description: 'ID of the section to scroll to, e.g. "case-studies"',
+    }),
 
     /* ── Diagnosis ── */
     defineField({

@@ -83,6 +83,8 @@ export async function getNavigation(): Promise<NavigationData | null> {
   "use cache";
   return client.fetch<NavigationData | null>(
     `*[_type == "navigation"][0]{
+      "logo": logo.asset->url,
+      "logoDark": logoDark.asset->url,
       servicesLabel,
       industriesLabel,
       serviceLinks[]{ label, url, highlighted },
@@ -501,6 +503,7 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudyPageDat
       title,
       "slug": slug.current,
       clientIndustry,
+      tags,
       "heroImage": heroImage.asset->url,
       heroVideo,
       "situation": pt::text(situation),

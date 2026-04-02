@@ -37,6 +37,12 @@ export default defineType({
       type: "string",
     }),
     defineField({
+      name: "newsletterHighlightedWord",
+      title: "Newsletter Highlighted Word",
+      type: "string",
+      description: "The word in the headline to highlight with the brand colour",
+    }),
+    defineField({
       name: "newsletterSubCopy",
       title: "Newsletter Sub Copy",
       type: "text",

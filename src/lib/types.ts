@@ -18,6 +18,8 @@ export interface NavDropdownItem {
 }
 
 export interface NavigationData {
+  logo?: string;
+  logoDark?: string;
   serviceLinks: NavDropdownItem[];
   industryLinks: NavDropdownItem[];
   staticLinks: NavLink[];

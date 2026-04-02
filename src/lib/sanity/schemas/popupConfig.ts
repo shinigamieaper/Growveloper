@@ -26,6 +26,7 @@ export default defineType({
           { title: "Scroll Depth", value: "scroll_depth" },
           { title: "Time on Page", value: "time_on_page" },
           { title: "Inactivity", value: "inactivity" },
+          { title: "Manual (triggered by button)", value: "manual" },
         ],
       },
       validation: (rule) => rule.required(),

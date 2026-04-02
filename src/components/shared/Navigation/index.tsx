@@ -55,8 +55,8 @@ export function Navigation({ data, className, suppressOnStudio, ...props }: Navi
 
   const logoSrc =
     theme === "dark"
-      ? "/images/logo/logo-wordmark-dark.png"
-      : "/images/logo/logo-wordmark-light.png";
+      ? (data.logoDark ?? "/images/logo/logo-wordmark-dark.png")
+      : (data.logo ?? "/images/logo/logo-wordmark-light.png");
 
   return (
     <div className={cn("relative w-full", className)} {...props}>
@@ -65,8 +65,8 @@ export function Navigation({ data, className, suppressOnStudio, ...props }: Navi
         <NavBody>
           {/* Logo — slides in from left edge of the pill on scroll */}
           <NavbarLogo
-            darkSrc="/images/logo/logo-wordmark-dark.png"
-            lightSrc="/images/logo/logo-wordmark-light.png"
+            darkSrc={data.logoDark ?? "/images/logo/logo-wordmark-dark.png"}
+            lightSrc={data.logo ?? "/images/logo/logo-wordmark-light.png"}
           />
 
           {/* Nav links — always visible, flow naturally in the pill */}

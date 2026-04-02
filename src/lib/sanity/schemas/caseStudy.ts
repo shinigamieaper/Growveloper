@@ -87,6 +87,13 @@ export default defineType({
       ],
     }),
     defineField({
+      name: "tags",
+      title: "Tags",
+      type: "array",
+      of: [defineArrayMember({ type: "string" })],
+      description: "Displayed as pills on the case study hero, e.g. SEO, PPC, React",
+    }),
+    defineField({
       name: "techStack",
       title: "Tech Stack",
       type: "array",
