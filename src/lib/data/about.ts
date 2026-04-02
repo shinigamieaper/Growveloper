@@ -97,27 +97,27 @@ export const ABOUT_SKILLS_TOOLS: AboutSkillsToolsData = {
   disciplines: [
     {
       name: "Full-Stack Development",
-      tools: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel", "Sanity CMS"],
+      tools: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel", "Sanity CMS"].map((name) => ({ name })),
     },
     {
       name: "Performance Marketing",
-      tools: ["Google Ads", "Meta Ads", "GA4", "Google Sheets"],
+      tools: ["Google Ads", "Meta Ads", "GA4", "Google Sheets"].map((name) => ({ name })),
     },
     {
       name: "AI & Automation",
-      tools: ["Make.com", "n8n", "OpenAI API", "Zapier", "Voiceflow"],
+      tools: ["Make.com", "n8n", "OpenAI API", "Zapier", "Voiceflow"].map((name) => ({ name })),
     },
     {
       name: "Analytics & Attribution",
-      tools: ["GA4", "Google Ads", "Google Sheets", "Notion"],
+      tools: ["GA4", "Google Ads", "Google Sheets", "Notion"].map((name) => ({ name })),
     },
     {
       name: "CRO & Funnel Design",
-      tools: ["Figma", "GA4", "Google Ads", "HubSpot"],
+      tools: ["Figma", "GA4", "Google Ads", "HubSpot"].map((name) => ({ name })),
     },
     {
       name: "Product Architecture",
-      tools: ["Next.js", "TypeScript", "Vercel", "Figma", "Notion"],
+      tools: ["Next.js", "TypeScript", "Vercel", "Figma", "Notion"].map((name) => ({ name })),
     },
   ],
 };
