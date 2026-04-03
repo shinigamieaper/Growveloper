@@ -4,14 +4,45 @@ import type { LucideIcon } from "lucide-react";
 import {
   Zap,
   TrendingDown,
+  TrendingUp,
   Puzzle,
   Bot,
   Target,
   BarChart3,
+  BarChart2,
+  LineChart,
   Code2,
   Megaphone,
   ShieldCheck,
+  Shield,
   Workflow,
+  Clock,
+  DollarSign,
+  Users,
+  UserX,
+  Eye,
+  EyeOff,
+  AlertTriangle,
+  Layers,
+  Link,
+  Unlink,
+  Search,
+  Globe,
+  Gauge,
+  Wrench,
+  Inbox,
+  Mail,
+  MousePointerClick,
+  Repeat,
+  RefreshCw,
+  ArrowDownRight,
+  Flame,
+  Lock,
+  Unlock,
+  Database,
+  Brain,
+  Lightbulb,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/shared/SectionHeader";
@@ -24,16 +55,57 @@ interface DiagnosisCardsProps extends React.ComponentPropsWithoutRef<"section"> 
 }
 
 const ICON_MAP: Record<string, LucideIcon> = {
+  // Performance & growth
   zap: Zap,
+  rocket: Rocket,
+  flame: Flame,
+  "trending-up": TrendingUp,
   "trending-down": TrendingDown,
-  puzzle: Puzzle,
-  bot: Bot,
-  target: Target,
+  "arrow-down-right": ArrowDownRight,
+  gauge: Gauge,
+  // Data & analytics
   "bar-chart": BarChart3,
+  "bar-chart-2": BarChart2,
+  "line-chart": LineChart,
+  database: Database,
+  // Tech & code
   code: Code2,
-  megaphone: Megaphone,
-  shield: ShieldCheck,
+  wrench: Wrench,
+  layers: Layers,
   workflow: Workflow,
+  // Marketing & content
+  megaphone: Megaphone,
+  search: Search,
+  globe: Globe,
+  mail: Mail,
+  inbox: Inbox,
+  "mouse-pointer-click": MousePointerClick,
+  // Automation & AI
+  bot: Bot,
+  brain: Brain,
+  repeat: Repeat,
+  "refresh-cw": RefreshCw,
+  // People & leads
+  users: Users,
+  "user-x": UserX,
+  target: Target,
+  // Trust & visibility
+  shield: ShieldCheck,
+  "shield-plain": Shield,
+  eye: Eye,
+  "eye-off": EyeOff,
+  lock: Lock,
+  unlock: Unlock,
+  // Connectivity & problems
+  puzzle: Puzzle,
+  link: Link,
+  unlink: Unlink,
+  "alert-triangle": AlertTriangle,
+  // Time & cost
+  clock: Clock,
+  "dollar-sign": DollarSign,
+  // Ideas
+  lightbulb: Lightbulb,
 };
 
 const gridClasses: Record<DiagnosisLayoutStyle, string> = {
