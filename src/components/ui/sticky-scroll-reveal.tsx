@@ -147,45 +147,52 @@ function MobileLottieVisual({ lottiePath, item }: { lottiePath: string; item: St
   const animationData = useLottieAnimationData(lottiePath);
   const lottieRef = useRef<LottieRefCurrentProps | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [shouldPlay, setShouldPlay] = useState(false);
-  const [hasPlayed, setHasPlayed] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const hasAutoPlayed = useRef(false);
 
-  const playAnimation = useCallback(() => {
-    if (prefersReduced || hasPlayed) return;
+  // Mark animation as ready once data + lottie player is loaded
+  const handleReady = useCallback(() => setIsReady(true), []);
+
+  // Intersection observer — triggers auto-play once on scroll into view
+  useEffect(() => {
+    if (prefersReduced || !containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setIsInView(true); },
+      { threshold: 0.2 },
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [prefersReduced]);
+
+  // Auto-play once when both ready + in view
+  useEffect(() => {
+    if (!isReady || !isInView || hasAutoPlayed.current || prefersReduced) return;
+    hasAutoPlayed.current = true;
     window.requestAnimationFrame(() => {
       lottieRef.current?.goToAndStop(0, true);
       lottieRef.current?.play();
-      setHasPlayed(true);
     });
-  }, [hasPlayed, prefersReduced]);
+  }, [isReady, isInView, prefersReduced]);
 
-  useEffect(() => {
-    if (prefersReduced || !containerRef.current || hasPlayed) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setShouldPlay(true);
-        observer.disconnect();
-      },
-      { threshold: 0.15 },
-    );
-
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [hasPlayed, prefersReduced]);
-
-  useEffect(() => {
-    if (!animationData || prefersReduced || hasPlayed || !shouldPlay) return;
-    playAnimation();
-  }, [animationData, hasPlayed, playAnimation, prefersReduced, shouldPlay]);
+  // Tap to replay
+  const handleTap = useCallback(() => {
+    if (prefersReduced) return;
+    lottieRef.current?.goToAndStop(0, true);
+    lottieRef.current?.play();
+  }, [prefersReduced]);
 
   if (!animationData || prefersReduced) {
     return <StickyVisualFallback item={item} />;
   }
 
   return (
-    <div ref={containerRef} className="flex min-h-[240px] w-full items-center justify-center">
+    <div
+      ref={containerRef}
+      className="flex min-h-[240px] w-full cursor-pointer items-center justify-center"
+      onClick={handleTap}
+      aria-label="Tap to replay animation"
+    >
       <Lottie
         lottieRef={lottieRef}
         animationData={animationData}
@@ -193,8 +200,7 @@ function MobileLottieVisual({ lottiePath, item }: { lottiePath: string; item: St
         loop={false}
         className="h-full w-full"
         rendererSettings={{ preserveAspectRatio: "xMidYMid meet" }}
-        onDOMLoaded={playAnimation}
-        onDataReady={playAnimation}
+        onDOMLoaded={handleReady}
       />
     </div>
   );

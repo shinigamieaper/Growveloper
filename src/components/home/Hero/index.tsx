@@ -87,11 +87,23 @@ export function Hero({ data, className, ...props }: HeroProps) {
               </MagneticElement>
             )}
           </div>
+
+          {/* ScrollCue — inline flow on mobile so it never overlaps buttons */}
+          {scrollCueTargetId && (
+            <div className="mt-2 block md:hidden">
+              <ScrollCue
+                text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
+                targetId={scrollCueTargetId}
+                className="py-0"
+              />
+            </div>
+          )}
         </motion.div>
       </LampContainer>
 
+      {/* ScrollCue — absolute on desktop only */}
       {scrollCueTargetId && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[60] md:left-auto md:right-12 md:translate-x-0">
+        <div className="absolute bottom-8 right-12 z-[60] hidden md:block">
           <ScrollCue
             text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
             targetId={scrollCueTargetId}

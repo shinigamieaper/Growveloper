@@ -112,7 +112,7 @@ export function LampContainer({ children, className, ...props }: LampContainerPr
       </div>
 
       {/* Content area */}
-      <div className="relative z-[60] flex -translate-y-24 flex-col items-center px-5 sm:-translate-y-32 md:-translate-y-44">
+      <div className="relative z-[60] flex -translate-y-40 flex-col items-center px-5 sm:-translate-y-32 md:-translate-y-44">
         {children}
       </div>
     </div>
