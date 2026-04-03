@@ -70,12 +70,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({
-              name: "icon",
-              title: "Icon Key",
-              type: "string",
-              description: "Development: monitor | gauge | database | code | plug | shield  ·  Marketing: brain | search | megaphone | pen-tool | flask | bar-chart  ·  AI: filter | bar-chart-2 | message-circle | git-branch | database | bell",
-            }),
+            defineField({ name: "icon", title: "Icon", type: "string", description: "Pick the icon that matches your service page (Development / Marketing / AI)", options: { list: [{ title: "── Development ──", value: "" }, { title: "Monitor", value: "monitor" }, { title: "Gauge / Speed", value: "gauge" }, { title: "Database", value: "database" }, { title: "Code", value: "code" }, { title: "Plug / Integrations", value: "plug" }, { title: "Shield", value: "shield" }, { title: "── Marketing ──", value: "" }, { title: "Brain / AI thinking", value: "brain" }, { title: "Search", value: "search" }, { title: "Megaphone", value: "megaphone" }, { title: "Pen Tool / Content", value: "pen-tool" }, { title: "Flask / Experiments", value: "flask" }, { title: "Bar Chart", value: "bar-chart" }, { title: "── AI & Automation ──", value: "" }, { title: "Filter", value: "filter" }, { title: "Bar Chart 2", value: "bar-chart-2" }, { title: "Message Circle", value: "message-circle" }, { title: "Git Branch / Flows", value: "git-branch" }, { title: "Bell / Alerts", value: "bell" }] } }),
             defineField({ name: "title", title: "Title", type: "string" }),
             defineField({ name: "description", title: "Description", type: "text" }),
           ],

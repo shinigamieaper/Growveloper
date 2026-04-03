@@ -111,7 +111,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string" }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: [{ title: "Zap", value: "zap" }, { title: "Trending Down", value: "trending-down" }, { title: "Puzzle", value: "puzzle" }, { title: "Bot", value: "bot" }, { title: "Target", value: "target" }, { title: "Bar Chart", value: "bar-chart" }, { title: "Code", value: "code" }, { title: "Megaphone", value: "megaphone" }, { title: "Shield", value: "shield" }, { title: "Workflow", value: "workflow" }] } }),
             defineField({ name: "headline", title: "Headline", type: "string" }),
             defineField({ name: "body", title: "Body", type: "text" }),
           ],

@@ -127,7 +127,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string" }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: [{ title: "Zap", value: "zap" }, { title: "Bot", value: "bot" }, { title: "Bar Chart", value: "bar-chart" }, { title: "Code", value: "code" }, { title: "Megaphone", value: "megaphone" }, { title: "Shield", value: "shield" }, { title: "Workflow", value: "workflow" }, { title: "Gauge", value: "gauge" }, { title: "Target", value: "target" }, { title: "Brain", value: "brain" }] } }),
             defineField({ name: "heading", title: "Heading", type: "string" }),
             defineField({
               name: "bullets",
@@ -163,7 +163,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string" }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: [{ title: "File / Report", value: "file-text" }, { title: "Presentation / Slides", value: "presentation" }, { title: "Video Recording", value: "video" }, { title: "Roadmap / Plan", value: "map" }] } }),
             defineField({ name: "title", title: "Title", type: "string" }),
             defineField({ name: "description", title: "Description", type: "text" }),
           ],
