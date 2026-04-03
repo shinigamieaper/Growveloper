@@ -188,7 +188,7 @@ export default defineType({
             defineField({ name: "stepNumber", title: "Step Number", type: "string" }),
             defineField({ name: "heading", title: "Heading", type: "string" }),
             defineField({ name: "description", title: "Description", type: "text" }),
-            defineField({ name: "lottiePath", title: "Lottie Path", type: "string" }),
+            defineField({ name: "lottiePath", title: "Lottie Animation", type: "string", options: { list: [{ title: "Chat Bot", value: "/lottie-json/Chat Bot.json" }, { title: "Digital Marketing", value: "/lottie-json/Digital Marketing.json" }, { title: "Web Development", value: "/lottie-json/Web Development.json" }, { title: "Step — Architect", value: "/lottie-json/step-architect.json" }, { title: "Step — Audit", value: "/lottie-json/step-audit.json" }, { title: "Step — Build", value: "/lottie-json/step-build.json" }, { title: "Step — Scale", value: "/lottie-json/step-scale.json" }] } }),
             defineField({ name: "fallbackGradient", title: "Fallback Gradient", type: "string" }),
           ],
         }),
