@@ -466,7 +466,7 @@ export async function getAboutPage() {
 
       principlesHeadline,
       principlesHighlightedWord,
-      principles[]{ title, description },
+      principles[]{ icon, title, description },
 
       skillsHeadline,
       skillsHighlightedWord,
@@ -474,7 +474,7 @@ export async function getAboutPage() {
 
       interestsHeadline,
       interestsHighlightedWord,
-      interests[]{ interest, connection },
+      interests[]{ icon, interest, connection },
 
       ctaHeadline,
       ctaHighlightedWord,

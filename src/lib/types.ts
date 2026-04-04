@@ -738,6 +738,7 @@ export interface AboutPastCompaniesData {
 }
 
 export interface AboutPrincipleItem {
+  icon?: string;
   title: string;
   description: string;
 }
@@ -765,6 +766,7 @@ export interface AboutSkillsToolsData {
 }
 
 export interface AboutInterestItem {
+  icon?: string;
   interest: string;
   connection: string;
 }

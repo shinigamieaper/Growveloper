@@ -10,11 +10,19 @@ interface AboutStatStripProps {
 export function AboutStatStrip({ items }: AboutStatStripProps) {
   if (!items || items.length === 0) return null;
 
+  // Determine optimal column count based on number of items
+  const count = items.length;
+  const mdCols =
+    count <= 2 ? "md:grid-cols-2" :
+    count === 3 ? "md:grid-cols-3" :
+    count === 4 ? "md:grid-cols-4" :
+    "md:grid-cols-5";
+
   return (
     <section className="py-16 md:py-20">
       <div className="mx-auto max-w-5xl px-6">
         <StaggerChildren>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+          <div className={`grid grid-cols-2 gap-4 sm:grid-cols-3 ${mdCols}`}>
             {items.map((stat) => (
               <div
                 key={stat.label}

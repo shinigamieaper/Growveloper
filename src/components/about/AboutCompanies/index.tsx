@@ -38,7 +38,7 @@ export function AboutCompanies({ data }: AboutCompaniesProps) {
                     alt={co.company}
                     width={64}
                     height={24}
-                    className="h-6 w-auto object-contain opacity-70"
+                    className="h-6 w-auto object-contain logo-tint"
                   />
                 ) : undefined
               }

@@ -95,7 +95,8 @@ export default async function AboutPage() {
         headline: page.principlesHeadline,
         highlightedWord: page.principlesHighlightedWord,
         principles: (page.principles ?? []).map(
-          (p: { title: string; description: string }) => ({
+          (p: { icon?: string; title: string; description: string }) => ({
+            icon: p.icon,
             title: p.title,
             description: p.description,
           })
@@ -121,7 +122,8 @@ export default async function AboutPage() {
         headline: page.interestsHeadline,
         highlightedWord: page.interestsHighlightedWord,
         items: (page.interests ?? []).map(
-          (item: { interest: string; connection: string }) => ({
+          (item: { icon?: string; interest: string; connection: string }) => ({
+            icon: item.icon,
             interest: item.interest,
             connection: item.connection,
           })

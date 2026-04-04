@@ -81,7 +81,12 @@ export function CTABanner({ data, colorScheme, presentationMode, variant, classN
     <section className={cn(presentationClasses.section, className)} {...props}>
       <div className={cn(presentationClasses.frame, schemeClasses.frame, presentationClasses.radius, "flex", presentationClasses.layout, presentationClasses.padding)}>
         <div className={presentationClasses.content}>
-          <h2 className={cn("heading-font font-bold tracking-tight", presentationClasses.heading)}>
+          <h2 className={cn(
+            "heading-font font-bold tracking-tight",
+            !data.subCopy && resolvedPresentationMode === "inline"
+              ? "text-xl md:text-3xl"
+              : presentationClasses.heading,
+          )}>
             {data.highlightedWord ? renderHighlightedHeadline(data.headline, data.highlightedWord, schemeClasses.highlight) : data.headline}
           </h2>
           {data.subCopy ? <p className={cn("max-w-2xl leading-relaxed", presentationClasses.body, schemeClasses.subCopy)}>{data.subCopy}</p> : null}
