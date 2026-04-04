@@ -28,17 +28,17 @@ import type {
 } from "@/lib/types";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [page, settings] = await Promise.all([getHomePage(), getSiteSettings()]);
+  const ogImage = page?.ogImage ?? settings?.ogImage;
   return {
     title: {
-      absolute: settings?.seoTitle ?? "GROWVELOPER \u2014 Technical Growth Engine",
+      absolute: page?.seoTitle ?? settings?.seoTitle ?? "GROWVELOPER \u2014 Technical Growth Engine",
     },
     description:
+      page?.seoDescription ??
       settings?.seoDescription ??
       "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
-    openGraph: settings?.ogImage
-      ? { images: [{ url: settings.ogImage }] }
-      : undefined,
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 

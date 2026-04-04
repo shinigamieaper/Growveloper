@@ -39,15 +39,14 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 /* ─── METADATA ─── */
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [audit, settings] = await Promise.all([getAuditPage(), getSiteSettings()]);
+  const ogImage = audit?.ogImage ?? settings?.ogImage;
   return {
-    title: "Growth Audit",
+    title: audit?.seoTitle ?? "Growth Audit",
     description:
-      settings?.seoDescription ??
+      audit?.seoDescription ??
       "A comprehensive audit of your development, marketing, and AI infrastructure \u2014 with a clear roadmap to fix it.",
-    openGraph: settings?.ogImage
-      ? { images: [{ url: settings.ogImage }] }
-      : undefined,
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 
@@ -93,6 +92,7 @@ export default async function AuditPage() {
     secondaryCtaText: page.heroSecondaryCtaText,
     secondaryCtaUrl: page.heroSecondaryCtaUrl,
     scrollCueText: page.heroScrollCueText,
+    scrollCueTargetId: page.heroScrollCueTargetId,
   };
 
   const qualifiers: AuditQualifierData | null =
@@ -169,7 +169,7 @@ export default async function AuditPage() {
       />
 
       {/* ═══ Section 01 — HERO ═══ */}
-      <AuditHero data={hero} scrollCueTargetId="qualifiers" />
+      <AuditHero data={hero} scrollCueTargetId={hero.scrollCueTargetId ?? "qualifiers"} />
 
       {/* ═══ Section 02 — WHO IT'S FOR ═══ */}
       {qualifiers && <AuditQualifiers data={qualifiers} />}

@@ -13,8 +13,14 @@ export default defineType({
     { name: "industries", title: "Industries Section", options: { collapsible: true } },
     { name: "ctaInline", title: "Inline CTA Banner", options: { collapsible: true } },
     { name: "ctaSection", title: "Section CTA Banner", options: { collapsible: true } },
+    { name: "seo", title: "SEO & Metadata", options: { collapsible: true, collapsed: true } },
   ],
   fields: [
+    /* ── SEO ── */
+    defineField({ name: "seoTitle", title: "SEO Title", type: "string", fieldset: "seo", description: "Overrides the default page title in search results" }),
+    defineField({ name: "seoDescription", title: "SEO Description", type: "text", rows: 3, fieldset: "seo", description: "Page description for search engines and social sharing" }),
+    defineField({ name: "ogImage", title: "Social Share Image", type: "image", fieldset: "seo", description: "Image shown when the page is shared on social media" }),
+
     /* ── Hero ── */
     defineField({ name: "pageHeadline", title: "Page Headline", type: "string", fieldset: "hero" }),
     defineField({ name: "pageHighlightedWord", title: "Highlighted Word", type: "string", fieldset: "hero" }),

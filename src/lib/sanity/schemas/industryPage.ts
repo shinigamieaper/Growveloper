@@ -42,6 +42,7 @@ export default defineType({
     defineField({ name: "secondaryCtaLabel", title: "Secondary CTA Label", type: "string", description: 'e.g. "See our work"' }),
     defineField({ name: "secondaryCtaUrl", title: "Secondary CTA URL", type: "string", description: 'e.g. /work' }),
     defineField({ name: "scrollCueText", title: "Scroll Cue Text", type: "string", description: 'e.g. "Scroll to explore"' }),
+    defineField({ name: "scrollCueTargetId", title: "Scroll Cue Target ID", type: "string", description: 'ID of the section to scroll to, e.g. "pain-points"' }),
     defineField({ name: "problemHeadline", title: "Problem Section Headline", type: "string", description: 'e.g. "Sound familiar?"' }),
     defineField({ name: "problemHighlightedWord", title: "Problem Highlighted Word", type: "string" }),
     defineField({ name: "howWeHelpHeadline", title: "How We Help Headline", type: "string", description: 'e.g. "How we help"' }),
@@ -211,6 +212,7 @@ export default defineType({
       title: "SEO Description",
       type: "text",
     }),
+    defineField({ name: "ogImage", title: "Social Share Image", type: "image", description: "Image shown when the page is shared on social media" }),
   ],
   preview: {
     select: {

@@ -57,12 +57,11 @@ export async function generateMetadata({
     getSiteSettings(),
   ]);
   if (!industry) return { title: "Industry Not Found" };
+  const ogImage = industry.ogImage ?? settings?.ogImage;
   return {
-    title: `${industry.name}`,
-    description: industry.heroSubStatement,
-    openGraph: settings?.ogImage
-      ? { images: [{ url: settings.ogImage }] }
-      : undefined,
+    title: industry.seoTitle ?? `${industry.name}`,
+    description: industry.seoDescription ?? industry.heroSubStatement,
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 
@@ -96,7 +95,7 @@ export default async function IndustryPage({
     secondaryCtaLabel: industry.secondaryCtaLabel ?? "See our work",
     secondaryCtaUrl: industry.secondaryCtaUrl ?? "/work",
     scrollCueText: industry.scrollCueText ?? "Scroll to explore",
-    scrollCueTargetId: "pain-points",
+    scrollCueTargetId: industry.scrollCueTargetId ?? "pain-points",
   };
 
   const problemData: ServiceProblemData = {

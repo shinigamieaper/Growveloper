@@ -116,6 +116,11 @@ export async function getHomePage() {
   "use cache";
   return client.fetch(
     `*[_type == "homePage"][0]{
+      // SEO
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
+
       // Hero
       heroHeadline,
       heroHighlightedWord,
@@ -228,6 +233,11 @@ export async function getAuditPage() {
   "use cache";
   return client.fetch(
     `*[_type == "auditPage"][0]{
+      // SEO
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
+
       // Hero
       heroHeadline,
       heroHighlightedWord,
@@ -239,6 +249,7 @@ export async function getAuditPage() {
       heroSecondaryCtaText,
       heroSecondaryCtaUrl,
       heroScrollCueText,
+      heroScrollCueTargetId,
 
       // Qualifiers
       qualifiersHeadline,
@@ -301,6 +312,11 @@ export async function getServicePage(pageId: string): Promise<ServicePageCmsData
   return client.fetch<ServicePageCmsData | null>(
     `*[_type == "servicePage" && pageId == $pageId][0]{
       pageId,
+
+      // SEO
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
 
       // Hero
       heroHeadline,
@@ -421,11 +437,18 @@ export async function getAboutPage() {
   "use cache";
   return client.fetch(
     `*[_type == "aboutPage"][0]{
+      // SEO
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
+
       heroName,
       heroIdentity,
       "portraitImage": portraitImage.asset->url,
       portraitAlt,
       heroNamePrefix,
+      heroScrollCueText,
+      heroScrollCueTargetId,
 
       shortVersionHeadline,
       shortVersionHighlightedWord,
@@ -787,6 +810,10 @@ export async function getIndustryBySlug(slug: string): Promise<IndustryPageData 
       secondaryCtaLabel,
       secondaryCtaUrl,
       scrollCueText,
+      scrollCueTargetId,
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
       problemHeadline,
       problemHighlightedWord,
       howWeHelpHeadline,
@@ -876,6 +903,9 @@ export async function getLabPage() {
   "use cache";
   return client.fetch(
     `*[_type == "labPage"][0]{
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
       pageHeadline,
       pageHighlightedWord,
       pageDescription,
@@ -914,6 +944,9 @@ export async function getWorkPage(): Promise<WorkPageData | null> {
   "use cache";
   return client.fetch<WorkPageData | null>(
     `*[_type == "workPage"][0]{
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
       pageHeadline,
       pageHighlightedWord,
       pageDescription,
@@ -956,10 +989,14 @@ export async function getAutomationsPage(): Promise<AutomationsPageData | null> 
   "use cache";
   return client.fetch<AutomationsPageData | null>(
     `*[_type == "automationsPage"][0]{
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
       heroHeadline,
       heroHighlightedWord,
       heroSubStatement,
       heroScrollCueText,
+      heroScrollCueTargetId,
       ctaHeadline,
       ctaHighlightedWord,
       ctaLabel,
@@ -1006,6 +1043,9 @@ export async function getResourcesPage() {
   "use cache";
   return client.fetch(
     `*[_type == "resourcesPage"][0]{
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
       pageHeadline,
       pageHighlightedWord,
       pageDescription,

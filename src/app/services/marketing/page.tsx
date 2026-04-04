@@ -28,15 +28,17 @@ import type {
 } from "@/lib/types";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [page, settings] = await Promise.all([getServicePage("marketing"), getSiteSettings()]);
+  const ogImage = page?.ogImage ?? settings?.ogImage;
   return {
-    title: "Growth Marketing \u2014 GROWVELOPER",
+    title: page?.seoTitle ?? "Growth Marketing \u2014 GROWVELOPER",
     description:
-      settings?.seoDescription ??
+      page?.seoDescription ??
       "Performance marketing that compounds your growth. AEO, SEO, Paid Ads, Content Strategy, CRO, and Analytics.",
     openGraph: {
-      title: "Growth Marketing \u2014 GROWVELOPER",
+      title: page?.seoTitle ?? "Growth Marketing \u2014 GROWVELOPER",
       url: "/services/marketing",
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
     },
   };
 }

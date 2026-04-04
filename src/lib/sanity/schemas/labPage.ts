@@ -11,8 +11,14 @@ export default defineType({
     { name: "inlineCta", title: "Inline CTA" },
     { name: "sectionCta", title: "Section CTA" },
     { name: "postCta", title: "Lab Post CTAs" },
+    { name: "seo", title: "SEO & Metadata" },
   ],
   fields: [
+    /* ─── SEO ─── */
+    defineField({ name: "seoTitle", title: "SEO Title", type: "string", group: "seo", description: "Overrides the default page title in search results" }),
+    defineField({ name: "seoDescription", title: "SEO Description", type: "text", rows: 3, group: "seo", description: "Page description for search engines and social sharing" }),
+    defineField({ name: "ogImage", title: "Social Share Image", type: "image", group: "seo", description: "Image shown when the page is shared on social media" }),
+
     /* ─── Page Header ─── */
     defineField({ name: "pageHeadline", title: "Page Headline", type: "string", group: "header" }),
     defineField({ name: "pageHighlightedWord", title: "Highlighted Word", type: "string", group: "header" }),

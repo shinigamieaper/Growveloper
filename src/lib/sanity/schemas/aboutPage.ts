@@ -16,8 +16,14 @@ export default defineType({
     { name: "caseStudies", title: "Featured Work", options: { collapsible: true, collapsed: true } },
     { name: "ctaBanners", title: "CTA Banners", options: { collapsible: true, collapsed: true } },
     { name: "cta", title: "Final CTA (legacy)", options: { collapsible: true, collapsed: true } },
+    { name: "seo", title: "SEO & Metadata", options: { collapsible: true, collapsed: true } },
   ],
   fields: [
+    /* ── SEO ── */
+    defineField({ name: "seoTitle", title: "SEO Title", type: "string", fieldset: "seo", description: "Overrides the default page title in search results" }),
+    defineField({ name: "seoDescription", title: "SEO Description", type: "text", rows: 3, fieldset: "seo", description: "Page description for search engines and social sharing" }),
+    defineField({ name: "ogImage", title: "Social Share Image", type: "image", fieldset: "seo", description: "Image shown when the page is shared on social media" }),
+
     /* ── Hero ── */
     defineField({
       name: "heroName",
@@ -51,6 +57,8 @@ export default defineType({
       fieldset: "hero",
       description: 'The greeting before the name, e.g. "Hello, I\'m"',
     }),
+    defineField({ name: "heroScrollCueText", title: "Scroll Cue Text", type: "string", fieldset: "hero", description: 'Marquee text on the scroll cue button, e.g. "EXPLORE · "' }),
+    defineField({ name: "heroScrollCueTargetId", title: "Scroll Cue Target ID", type: "string", fieldset: "hero", description: 'ID of the section to scroll to, e.g. "short-version"' }),
 
     /* ── Short Version ── */
     defineField({

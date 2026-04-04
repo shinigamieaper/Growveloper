@@ -3,12 +3,14 @@ import { LabPageClient } from "./LabPageClient";
 import { getAllLabContent, getSiteSettings, getLabPage } from "@/lib/sanity/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [lab, settings] = await Promise.all([getLabPage(), getSiteSettings()]);
+  const ogImage = lab?.ogImage ?? settings?.ogImage;
   return {
-    title: "The Lab",
+    title: lab?.seoTitle ?? "The Lab",
     description:
-      settings?.seoDescription ??
+      lab?.seoDescription ??
       "Blog posts, breakdowns, and video content on development, marketing, and automation.",
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 

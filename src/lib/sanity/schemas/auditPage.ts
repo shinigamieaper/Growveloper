@@ -14,8 +14,14 @@ export default defineType({
     { name: "pricing", title: "Pricing", options: { collapsible: true } },
     { name: "finalCta", title: "Final CTA", options: { collapsible: true } },
     { name: "newsletter", title: "Newsletter Section", options: { collapsible: true } },
+    { name: "seo", title: "SEO & Metadata", options: { collapsible: true, collapsed: true } },
   ],
   fields: [
+    /* ── SEO ── */
+    defineField({ name: "seoTitle", title: "SEO Title", type: "string", fieldset: "seo", description: "Overrides the default page title in search results" }),
+    defineField({ name: "seoDescription", title: "SEO Description", type: "text", rows: 3, fieldset: "seo", description: "Page description for search engines and social sharing" }),
+    defineField({ name: "ogImage", title: "Social Share Image", type: "image", fieldset: "seo", description: "Image shown when the page is shared on social media" }),
+
     /* ── Hero ── */
     defineField({
       name: "heroHeadline",
@@ -77,6 +83,7 @@ export default defineType({
       type: "string",
       fieldset: "hero",
     }),
+    defineField({ name: "heroScrollCueTargetId", title: "Hero Scroll Cue Target ID", type: "string", fieldset: "hero", description: 'ID of the section to scroll to, e.g. "qualifiers"' }),
 
     /* ── Qualifiers ── */
     defineField({

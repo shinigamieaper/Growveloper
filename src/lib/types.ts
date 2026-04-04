@@ -353,6 +353,10 @@ export interface IndustryPageData extends IndustryCardData {
   secondaryCtaLabel?: string;
   secondaryCtaUrl?: string;
   scrollCueText?: string;
+  scrollCueTargetId?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
   problemHeadline?: string;
   problemHighlightedWord?: string;
   howWeHelpHeadline?: string;
@@ -497,6 +501,7 @@ export interface AuditHeroData {
   secondaryCtaText?: string;
   secondaryCtaUrl?: string;
   scrollCueText?: string;
+  scrollCueTargetId?: string;
 }
 
 export interface AuditQualifierData {
@@ -773,6 +778,10 @@ export interface AboutInterestsData {
 /* --- Service Page (Sanity CMS raw shape) --- */
 export interface ServicePageCmsData {
   pageId: string;
+  // SEO
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
   // Hero
   heroHeadline?: string;
   heroHighlightedWord?: string;
@@ -866,10 +875,14 @@ export interface AboutCtaBannerCms {
 
 /* --- Automations Page --- */
 export interface AutomationsPageData {
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
   heroHeadline?: string;
   heroHighlightedWord?: string;
   heroSubStatement?: string;
   heroScrollCueText?: string;
+  heroScrollCueTargetId?: string;
   ctaHeadline?: string;
   ctaHighlightedWord?: string;
   ctaLabel?: string;
@@ -878,6 +891,9 @@ export interface AutomationsPageData {
 
 /* --- Work Page --- */
 export interface WorkPageData {
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
   pageHeadline?: string;
   pageHighlightedWord?: string;
   pageDescription?: string;

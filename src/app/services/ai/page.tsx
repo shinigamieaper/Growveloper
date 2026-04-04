@@ -36,15 +36,17 @@ import type {
 } from "@/lib/types";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [page, settings] = await Promise.all([getServicePage("ai"), getSiteSettings()]);
+  const ogImage = page?.ogImage ?? settings?.ogImage;
   return {
-    title: "AI & Automation \u2014 GROWVELOPER",
+    title: page?.seoTitle ?? "AI & Automation \u2014 GROWVELOPER",
     description:
-      settings?.seoDescription ??
+      page?.seoDescription ??
       "Done-for-you automation workflows and custom AI infrastructure \u2014 built by a team that understands your funnel, not just your tech stack.",
     openGraph: {
-      title: "AI & Automation \u2014 GROWVELOPER",
+      title: page?.seoTitle ?? "AI & Automation \u2014 GROWVELOPER",
       url: "/services/ai",
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
     },
   };
 }

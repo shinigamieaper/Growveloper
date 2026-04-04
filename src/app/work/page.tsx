@@ -3,10 +3,12 @@ import { WorkPageClient } from "./WorkPageClient";
 import { getAllCaseStudies, getSiteSettings, getWorkPage } from "@/lib/sanity/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [workPage, settings] = await Promise.all([getWorkPage(), getSiteSettings()]);
+  const ogImage = workPage?.ogImage ?? settings?.ogImage;
   return {
-    title: "Our Work",
-    description: settings?.seoDescription ?? "",
+    title: workPage?.seoTitle ?? "Our Work",
+    description: workPage?.seoDescription ?? "Case studies and client work from GROWVELOPER.",
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 

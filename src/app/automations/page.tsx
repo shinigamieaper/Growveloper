@@ -6,12 +6,14 @@ import { getAllAutomations, getSiteSettings, getAutomationsPage } from "@/lib/sa
 import type { CTABannerData } from "@/lib/types";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [page, settings] = await Promise.all([getAutomationsPage(), getSiteSettings()]);
+  const ogImage = page?.ogImage ?? settings?.ogImage;
   return {
-    title: "Automations Catalogue",
+    title: page?.seoTitle ?? "Automations Catalogue",
     description:
-      settings?.seoDescription ??
+      page?.seoDescription ??
       "Browse pre-built automation workflows ready to deploy in your business. Lead gen, reporting, content, CRM sync, and more.",
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 
@@ -41,7 +43,7 @@ export default async function AutomationsPage() {
         highlightedWord={page?.heroHighlightedWord ?? "ship"}
         subStatement={page?.heroSubStatement ?? "Pre-built workflows ready to deploy. Pick one, customise it, and go live in days."}
         scrollCueText={page?.heroScrollCueText ?? "Browse the catalogue"}
-        scrollCueTargetId="automations-catalogue"
+        scrollCueTargetId={page?.heroScrollCueTargetId ?? "automations-catalogue"}
       />
 
       {/* 02 — Catalogue (glass) */}

@@ -3,12 +3,14 @@ import { ResourcesPageClient } from "./ResourcesPageClient";
 import { getAllResources, getSiteSettings, getResourcesPage } from "@/lib/sanity/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [res, settings] = await Promise.all([getResourcesPage(), getSiteSettings()]);
+  const ogImage = res?.ogImage ?? settings?.ogImage;
   return {
-    title: "Resources",
+    title: res?.seoTitle ?? "Resources",
     description:
-      settings?.seoDescription ??
+      res?.seoDescription ??
       "Guides, templates, frameworks, and playbooks for founders who build and market.",
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 

@@ -13,7 +13,7 @@ import {
   ScrollFadeUp,
   LineReveal,
 } from "@/components";
-import { getAboutPage } from "@/lib/sanity/queries";
+import { getAboutPage, getSiteSettings } from "@/lib/sanity/queries";
 import type {
   AboutHeroData,
   AboutShortVersionData,
@@ -26,11 +26,17 @@ import type {
   CTABannerData,
 } from "@/lib/types";
 
-export const metadata: Metadata = {
-  title: "The Brains \u2014 GROWVELOPER",
-  description:
-    "Meet Juwon. The intersection of full-stack development and performance marketing.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [page, settings] = await Promise.all([getAboutPage(), getSiteSettings()]);
+  const ogImage = page?.ogImage ?? settings?.ogImage;
+  return {
+    title: page?.seoTitle ?? "The Brains \u2014 GROWVELOPER",
+    description:
+      page?.seoDescription ??
+      "Meet Juwon. The intersection of full-stack development and performance marketing.",
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
+  };
+}
 
 export default async function AboutPage() {
   const page = await getAboutPage();
@@ -45,8 +51,8 @@ export default async function AboutPage() {
         identity: page.heroIdentity ?? "",
         portraitImage: page.portraitImage ?? "",
         portraitAlt: page.portraitAlt ?? "",
-        scrollCueText: page.scrollCueText,
-        scrollCueTargetId: "short-version",
+        scrollCueText: page.heroScrollCueText,
+        scrollCueTargetId: page.heroScrollCueTargetId ?? "short-version",
         namePrefix: page.heroNamePrefix,
       }
     : null;

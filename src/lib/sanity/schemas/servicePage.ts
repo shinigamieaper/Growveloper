@@ -19,6 +19,7 @@ export default defineType({
     { name: "featuredAutomations", title: "Featured Automations (AI only)", options: { collapsible: true, collapsed: true } },
     { name: "lab", title: "From The Lab", options: { collapsible: true, collapsed: true } },
     { name: "faqSection", title: "FAQ Section", options: { collapsible: true, collapsed: true } },
+    { name: "seo", title: "SEO & Metadata", options: { collapsible: true, collapsed: true } },
   ],
   fields: [
     defineField({
@@ -34,6 +35,11 @@ export default defineType({
       },
       validation: (rule) => rule.required(),
     }),
+
+    /* ── SEO ── */
+    defineField({ name: "seoTitle", title: "SEO Title", type: "string", fieldset: "seo", description: "Overrides the default page title in search results" }),
+    defineField({ name: "seoDescription", title: "SEO Description", type: "text", rows: 3, fieldset: "seo", description: "Page description for search engines and social sharing" }),
+    defineField({ name: "ogImage", title: "Social Share Image", type: "image", fieldset: "seo", description: "Image shown when the page is shared on social media" }),
 
     /* ── Hero ── */
     defineField({ name: "heroHeadline", title: "Hero Headline", type: "string", fieldset: "hero" }),
