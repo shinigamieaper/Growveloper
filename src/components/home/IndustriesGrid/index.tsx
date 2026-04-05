@@ -1,17 +1,7 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
-import {
-  Rocket,
-  Target,
-  Cpu,
-  Landmark,
-  ShoppingCart,
-  Stethoscope,
-  GraduationCap,
-  Building2,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ICON_MAP } from "@/lib/icons";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { GrowveloperCard } from "@/components/shared/GrowveloperCard";
 import { ScrollFadeUp } from "@/components/animations/ScrollFadeUp";
@@ -21,22 +11,26 @@ interface IndustriesGridProps extends React.ComponentPropsWithoutRef<"section"> 
   data: IndustriesGridData | null;
 }
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  rocket: Rocket,
-  target: Target,
-  cpu: Cpu,
-  landmark: Landmark,
-  "shopping-cart": ShoppingCart,
-  stethoscope: Stethoscope,
-  "graduation-cap": GraduationCap,
-  building: Building2,
-};
-
 export function IndustriesGrid({ data, className, ...props }: IndustriesGridProps) {
   if (!data || data.industries.length === 0) return null;
 
   const industryCount = data.industries.length;
-  const ctaSpanClass = industryCount % 3 === 0 ? "lg:col-span-1" : "lg:col-span-2";
+
+  // Fluid grid: adapt columns to industry count
+  const gridCols =
+    industryCount === 1
+      ? "grid-cols-1 max-w-md mx-auto"
+      : industryCount === 2
+        ? "grid-cols-1 md:grid-cols-2"
+        : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+
+  // CTA card spans remaining columns to fill the row
+  const ctaSpanClass =
+    industryCount <= 2
+      ? ""
+      : industryCount % 3 === 0
+        ? "lg:col-span-1"
+        : "lg:col-span-2";
 
   return (
     <section className={cn("py-24", className)} {...props}>
@@ -50,7 +44,7 @@ export function IndustriesGrid({ data, className, ...props }: IndustriesGridProp
 
         <ScrollFadeUp>
           <div className="overflow-hidden rounded-2xl border border-glass-border bg-glass-border">
-            <div className="grid gap-px md:grid-cols-2 lg:grid-cols-3">
+            <div className={cn("grid gap-px", gridCols)}>
               {data.industries.map((industry) => {
                 const IconComponent = ICON_MAP[industry.icon];
                 return (

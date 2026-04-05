@@ -1,4 +1,5 @@
 import { defineType, defineField, defineArrayMember } from "sanity";
+import { ICON_OPTIONS } from "./iconOptions";
 
 export default defineType({
   name: "homePage",
@@ -83,10 +84,19 @@ export default defineType({
     }),
     defineField({
       name: "heroScrollCueTargetId",
-      title: "Hero Scroll Cue Target ID",
+      title: "Hero Scroll Cue Target",
       type: "string",
       fieldset: "hero",
-      description: 'ID of the section to scroll to, e.g. "case-studies"',
+      description: "Section the scroll cue scrolls to",
+      options: {
+        list: [
+          { title: "The Diagnosis", value: "diagnosis" },
+          { title: "Services", value: "services" },
+          { title: "Industries", value: "industries" },
+          { title: "How It Works", value: "process" },
+          { title: "Case Studies", value: "case-studies" },
+        ],
+      },
     }),
 
     /* ── Diagnosis ── */
@@ -121,62 +131,8 @@ export default defineType({
               name: "icon",
               title: "Icon",
               type: "string",
-              description: "Pick the icon that best represents the pain point or problem on this card",
-              options: {
-                list: [
-                  // Performance & Growth
-                  { title: "⚡ Zap — Quick wins, speed, energy", value: "zap" },
-                  { title: "🚀 Rocket — Growth, launch, momentum", value: "rocket" },
-                  { title: "🔥 Flame — Urgency, heat, burning problems", value: "flame" },
-                  { title: "📈 Trending Up — Growth going up, positive momentum", value: "trending-up" },
-                  { title: "📉 Trending Down — Declining results, lost traction", value: "trending-down" },
-                  { title: "↘ Arrow Down Right — Falling numbers, poor performance", value: "arrow-down-right" },
-                  { title: "⏱ Gauge — Speed, performance score, load time", value: "gauge" },
-                  // Data & Analytics
-                  { title: "📊 Bar Chart — Analytics, reporting, data", value: "bar-chart" },
-                  { title: "📊 Bar Chart 2 — Comparison data, grouped stats", value: "bar-chart-2" },
-                  { title: "📈 Line Chart — Trends over time, growth curves", value: "line-chart" },
-                  { title: "🗄 Database — Data storage, CRM, unorganised data", value: "database" },
-                  // Tech & Code
-                  { title: "💻 Code — Tech debt, custom builds, dev work", value: "code" },
-                  { title: "🔧 Wrench — Broken systems, maintenance issues", value: "wrench" },
-                  { title: "🗂 Layers — Stack complexity, too many layers", value: "layers" },
-                  { title: "🔄 Workflow — Automation gaps, process flow", value: "workflow" },
-                  // Marketing & Content
-                  { title: "📣 Megaphone — Marketing, ads, broadcasting", value: "megaphone" },
-                  { title: "🔍 Search — SEO, discoverability, visibility", value: "search" },
-                  { title: "🌐 Globe — Online presence, website, web reach", value: "globe" },
-                  { title: "✉ Mail — Email marketing, outreach", value: "mail" },
-                  { title: "📥 Inbox — Lead capture, unread messages", value: "inbox" },
-                  { title: "🖱 Click — CRO, conversion, user interaction", value: "mouse-pointer-click" },
-                  // Automation & AI
-                  { title: "🤖 Bot — AI, chatbots, automated responses", value: "bot" },
-                  { title: "🧠 Brain — Strategy, thinking, AI intelligence", value: "brain" },
-                  { title: "🔁 Repeat — Repetitive tasks, loops, manual work", value: "repeat" },
-                  { title: "🔃 Refresh — Updating, rebuilding, fresh start", value: "refresh-cw" },
-                  // People & Leads
-                  { title: "👥 Users — Team, audience, customer base", value: "users" },
-                  { title: "🚫 User X — Churn, lost customers, disconnected leads", value: "user-x" },
-                  { title: "🎯 Target — Goals, precision, lead targeting", value: "target" },
-                  // Trust & Visibility
-                  { title: "🛡 Shield Check — Security, trust, compliance", value: "shield" },
-                  { title: "🛡 Shield — Protection, defence, basic security", value: "shield-plain" },
-                  { title: "👁 Eye — Visibility, being seen, impressions", value: "eye" },
-                  { title: "🙈 Eye Off — Hidden, invisible, no organic reach", value: "eye-off" },
-                  { title: "🔒 Lock — Locked growth, barriers, restricted access", value: "lock" },
-                  { title: "🔓 Unlock — Unlocking potential, removing blockers", value: "unlock" },
-                  // Connectivity & Problems
-                  { title: "🧩 Puzzle — Disconnected tools, missing pieces", value: "puzzle" },
-                  { title: "🔗 Link — Integrations, connected systems", value: "link" },
-                  { title: "🔗 Unlink — Broken integrations, siloed tools", value: "unlink" },
-                  { title: "⚠ Alert Triangle — Warnings, critical issues, risk", value: "alert-triangle" },
-                  // Time & Cost
-                  { title: "🕐 Clock — Time wasted, slow processes, delays", value: "clock" },
-                  { title: "💰 Dollar Sign — Budget waste, ROI, revenue problems", value: "dollar-sign" },
-                  // Ideas
-                  { title: "💡 Lightbulb — Insights, ideas, strategy gaps", value: "lightbulb" },
-                ],
-              },
+              description: "Pick the icon that best represents this card",
+              options: { list: ICON_OPTIONS },
             }),
             defineField({ name: "headline", title: "Headline", type: "string" }),
             defineField({ name: "body", title: "Body", type: "text" }),
@@ -226,7 +182,7 @@ export default defineType({
             defineField({ name: "ctaUrl", title: "CTA URL", type: "string" }),
             defineField({ name: "lottiePath", title: "Lottie Animation", type: "string", options: { list: [{ title: "Chat Bot", value: "/lottie-json/Chat Bot.json" }, { title: "Digital Marketing", value: "/lottie-json/Digital Marketing.json" }, { title: "Web Development", value: "/lottie-json/Web Development.json" }, { title: "Step — Architect", value: "/lottie-json/step-architect.json" }, { title: "Step — Audit", value: "/lottie-json/step-audit.json" }, { title: "Step — Build", value: "/lottie-json/step-build.json" }, { title: "Step — Scale", value: "/lottie-json/step-scale.json" }] } }),
             defineField({ name: "fallbackGradient", title: "Fallback Gradient", type: "string" }),
-            defineField({ name: "icon", title: "Icon", type: "string" }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: ICON_OPTIONS } }),
           ],
         }),
       ],

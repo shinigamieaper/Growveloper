@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Check } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { FileText, Presentation, Video, Map } from "lucide-react";
 import { AuditHero } from "@/components/audit/AuditHero";
 import { AuditPricing } from "@/components/audit/AuditPricing";
 import { AuditFindings } from "@/components/audit/AuditFindings";
@@ -17,6 +15,8 @@ import {
   NewsletterCapture,
   AnimatedList,
 } from "@/components";
+import { ICON_MAP } from "@/lib/icons";
+import { fluidGrid } from "@/lib/utils";
 import { getAuditPage, getAuditFAQ, getSiteSettings } from "@/lib/sanity/queries";
 import type {
   AuditHeroData,
@@ -28,14 +28,6 @@ import type {
   AuditPricingData,
   CTABannerData,
 } from "@/lib/types";
-
-/* ─── ICON MAP for deliverables (rendering concern, stays in page) ─── */
-const ICON_MAP: Record<string, LucideIcon> = {
-  "file-text": FileText,
-  presentation: Presentation,
-  video: Video,
-  map: Map,
-};
 
 /* ─── METADATA ─── */
 export async function generateMetadata(): Promise<Metadata> {
@@ -176,27 +168,27 @@ export default async function AuditPage() {
 
       {/* ═══ Section 03 — WHAT WE LOOK AT ═══ */}
       {scope && (
-        <GlassSection>
+        <GlassSection id="scope">
           <AuditScope data={scope} />
         </GlassSection>
       )}
 
       {/* ═══ Section 04 — WHAT YOU GET ═══ */}
-      {deliverables && <AuditDeliverables data={deliverables} />}
+      {deliverables && <AuditDeliverables data={deliverables} id="deliverables" />}
 
       {/* ═══ Section 05 — HOW IT WORKS ═══ */}
       {process && (
-        <GlassSection>
+        <GlassSection id="process">
           <AuditProcess data={process} />
         </GlassSection>
       )}
 
       {/* ═══ Section 06 — WHAT WE'VE FOUND ═══ */}
-      {findings && <AuditFindings data={findings} />}
+      {findings && <AuditFindings data={findings} id="findings" />}
 
       {/* ═══ Section 07 — PRICING ═══ */}
       {pricing && (
-        <GlassSection>
+        <GlassSection id="pricing">
           <AuditPricing data={pricing} />
         </GlassSection>
       )}
@@ -276,13 +268,20 @@ function AuditScope({ data }: { data: AuditScopeData }) {
           highlightedWord={data.highlightedWord}
           description={data.description}
         />
-        <StaggerChildren className="grid gap-6 md:grid-cols-3">
-          {data.columns.map((col) => (
+        <StaggerChildren className={`${fluidGrid(data.columns.length, 3)} gap-6`}>
+          {data.columns.map((col) => {
+            const IconComponent = ICON_MAP[col.icon];
+            return (
             <GrowveloperCard
               key={col.heading}
               variant="diagnosis"
               colorScheme="glass-dark"
               headline={col.heading}
+              icon={
+                IconComponent ? (
+                  <IconComponent className="h-6 w-6" strokeWidth={1.8} aria-hidden />
+                ) : undefined
+              }
               className="items-center text-center"
             >
               {col.lottiePath && (
@@ -299,21 +298,22 @@ function AuditScope({ data }: { data: AuditScopeData }) {
                 ))}
               </ul>
             </GrowveloperCard>
-          ))}
+            );
+          })}
         </StaggerChildren>
       </div>
     </section>
   );
 }
 
-function AuditDeliverables({ data }: { data: AuditDeliverablesData }) {
+function AuditDeliverables({ data, id }: { data: AuditDeliverablesData; id?: string }) {
   if (data.deliverables.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-24">
+    <section id={id} className="py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeader headline={data.headline} highlightedWord={data.highlightedWord} />
-        <StaggerChildren className="grid gap-6 md:grid-cols-2">
+        <StaggerChildren className={`${fluidGrid(data.deliverables.length, 2)} gap-6`}>
           {data.deliverables.map((item) => {
             const IconComponent = ICON_MAP[item.icon];
             return (

@@ -20,7 +20,18 @@ export default defineType({
     defineField({ name: "heroHighlightedWord", title: "Highlighted Word", type: "string", fieldset: "hero" }),
     defineField({ name: "heroSubStatement", title: "Sub-Statement", type: "text", fieldset: "hero" }),
     defineField({ name: "heroScrollCueText", title: "Scroll Cue Text", type: "string", fieldset: "hero" }),
-    defineField({ name: "heroScrollCueTargetId", title: "Scroll Cue Target ID", type: "string", fieldset: "hero", description: 'ID of the section to scroll to, e.g. "catalogue"' }),
+    defineField({
+      name: "heroScrollCueTargetId",
+      title: "Scroll Cue Target",
+      type: "string",
+      fieldset: "hero",
+      description: "Section the scroll cue scrolls to",
+      options: {
+        list: [
+          { title: "Automations Catalogue", value: "automations-catalogue" },
+        ],
+      },
+    }),
 
     /* ── CTA ── */
     defineField({ name: "ctaHeadline", title: "Headline", type: "string", fieldset: "cta" }),

@@ -1,26 +1,20 @@
-import type { LucideIcon } from "lucide-react";
-import { Users, BarChart3, Target, Brain, Zap, ShieldCheck, Wrench, Code2, Search, Lightbulb, Rocket, Workflow, Link, TrendingUp, Bot } from "lucide-react";
+import { ICON_MAP } from "@/lib/icons";
+import { fluidGrid } from "@/lib/utils";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { GrowveloperCard } from "@/components/shared/GrowveloperCard";
 import { StaggerChildren } from "@/components/animations/StaggerChildren";
 import type { AboutHowIWorkData } from "@/lib/types";
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  users: Users, "bar-chart": BarChart3, target: Target, brain: Brain,
-  zap: Zap, shield: ShieldCheck, wrench: Wrench, code: Code2,
-  search: Search, lightbulb: Lightbulb, rocket: Rocket, workflow: Workflow,
-  link: Link, "trending-up": TrendingUp, bot: Bot,
-};
-
 interface AboutPrinciplesProps {
   data: AboutHowIWorkData | null;
+  id?: string;
 }
 
-export function AboutPrinciples({ data }: AboutPrinciplesProps) {
+export function AboutPrinciples({ data, id }: AboutPrinciplesProps) {
   if (!data) return null;
 
   return (
-    <section className="py-16 md:py-24">
+    <section id={id} className="py-16 md:py-24">
       <div className="mx-auto max-w-5xl px-6">
         <SectionHeader
           headline={data.headline}
@@ -31,7 +25,7 @@ export function AboutPrinciples({ data }: AboutPrinciplesProps) {
         />
 
         <StaggerChildren>
-          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className={`${fluidGrid(data.principles.length, 3)} mt-12 gap-6`}>
             {data.principles.map((p, i) => {
               const IconComponent = p.icon ? ICON_MAP[p.icon] : undefined;
               return (

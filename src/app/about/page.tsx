@@ -176,7 +176,7 @@ export default async function AboutPage() {
 
       {/* 03 — The Story (glass) */}
       {story && (
-        <GlassSection>
+        <GlassSection id="the-story">
           <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
             <SectionHeader
               headline={story.headline}
@@ -206,37 +206,37 @@ export default async function AboutPage() {
       )}
 
       {/* 04 — Stat Strip */}
-      {stats.length > 0 && <AboutStatStrip items={stats} />}
+      {stats.length > 0 && <AboutStatStrip items={stats} id="stats" />}
 
       {stats.length > 0 && <LineReveal />}
 
       {/* 05 — Past Companies (glass) */}
       {companies && (
-        <GlassSection>
+        <GlassSection id="companies">
           <AboutCompanies data={companies} />
         </GlassSection>
       )}
 
       {/* 06 — How I Work */}
-      {howIWork && <AboutPrinciples data={howIWork} />}
+      {howIWork && <AboutPrinciples data={howIWork} id="how-i-work" />}
 
       {howIWork && <LineReveal />}
 
       {/* 07 — Skills + Tools (glass) */}
       {skillsTools && (
-        <GlassSection>
+        <GlassSection id="skills-tools">
           <AboutSkillsTools data={skillsTools} />
         </GlassSection>
       )}
 
       {/* 08 — Interests */}
-      {interests && <AboutInterests data={interests} />}
+      {interests && <AboutInterests data={interests} id="interests" />}
 
       {interests && <LineReveal />}
 
       {/* 09 — Featured Work (glass) */}
       {page.caseStudiesHeadline && (page.featuredCaseStudies?.length ?? 0) > 0 && (
-        <GlassSection>
+        <GlassSection id="featured-work">
           <CaseStudiesSection
             headline={page.caseStudiesHeadline}
             highlightedWord={page.caseStudiesHighlightedWord}

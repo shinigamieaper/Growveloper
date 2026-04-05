@@ -565,7 +565,7 @@ export interface AuditPricingTier {
   priceSubtext?: string;
   features: string[];
   ctaLabel: string;
-  ctaUrl: string;
+  ctaUrl?: string;
   highlighted?: boolean;
   badge?: string;
 }

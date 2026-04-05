@@ -1,45 +1,12 @@
 "use client";
 
 import { useRef, useCallback } from "react";
-import type { LucideIcon } from "lucide-react";
-import {
-  Brain,
-  Search,
-  Megaphone,
-  PenTool,
-  FlaskConical,
-  BarChart3,
-  Code2,
-  Zap,
-  Shield,
-  Gauge,
-  Wrench,
-  Bot,
-  Workflow,
-  LineChart,
-} from "lucide-react";
 import { gsap, prefersReducedMotion, EASE, DURATION } from "@/lib/gsap";
-import { cn } from "@/lib/utils";
+import { cn, fluidGrid } from "@/lib/utils";
+import { ICON_MAP } from "@/lib/icons";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { StaggerChildren } from "@/components/animations/StaggerChildren";
 import type { SubServicesData } from "@/lib/types";
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  brain: Brain,
-  search: Search,
-  megaphone: Megaphone,
-  "pen-tool": PenTool,
-  flask: FlaskConical,
-  "bar-chart": BarChart3,
-  code: Code2,
-  zap: Zap,
-  shield: Shield,
-  gauge: Gauge,
-  wrench: Wrench,
-  bot: Bot,
-  workflow: Workflow,
-  "line-chart": LineChart,
-};
 
 interface SubServicesGridProps extends React.ComponentPropsWithoutRef<"section"> {
   data: SubServicesData | null;
@@ -57,7 +24,7 @@ export function SubServicesGrid({ data, className, ...props }: SubServicesGridPr
           description={data.description}
         />
 
-        <StaggerChildren className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerChildren className={`${fluidGrid(data.items.length, 3)} gap-6`}>
           {data.items.map((item) => (
             <SubServiceCard key={item.title} title={item.title} description={item.description} icon={item.icon} />
           ))}

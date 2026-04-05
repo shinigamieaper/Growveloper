@@ -1,6 +1,13 @@
 /* ============================================================
    POST /api/flutterwave/checkout
-   Body: { resourceSlug: string; resourceTitle: string; currency: "USD"|"GBP"|"NGN"; amount: number; email: string }
+   Supports two product types:
+
+   Resource:
+   { productType?: "resource"; resourceSlug: string; resourceTitle: string; currency; amount; email }
+
+   Audit:
+   { productType: "audit"; tierName: string; currency; amount; email }
+
    Returns: { url: string }
    ============================================================ */
 
@@ -18,11 +25,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { resourceSlug, resourceTitle, currency, amount, email } = body as Record<string, unknown>;
+  const { productType, resourceSlug, resourceTitle, tierName, currency, amount, email } =
+    body as Record<string, unknown>;
 
+  /* ── Shared validation ── */
   if (
-    typeof resourceSlug !== "string" || !resourceSlug ||
-    typeof resourceTitle !== "string" || !resourceTitle ||
     typeof currency !== "string" || !VALID_CURRENCIES.has(currency as FlutterwaveCurrency) ||
     typeof amount !== "number" || amount <= 0 ||
     typeof email !== "string" || !email.includes("@")
@@ -30,8 +37,33 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const tx_ref = `growveloper-resource-${resourceSlug}-${Date.now()}`;
-  const redirect_url = `${SITE_URL}/resources/${resourceSlug}/confirmed`;
+  /* ── Product-specific validation + tx_ref / redirect_url ── */
+  let tx_ref: string;
+  let redirect_url: string;
+  let description: string;
+  let meta: Record<string, string>;
+
+  if (productType === "audit") {
+    if (typeof tierName !== "string" || !tierName) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    tx_ref = `growveloper-audit-${Date.now()}`;
+    redirect_url = `${SITE_URL}/audit/confirmed`;
+    description = `Growth Audit \u2014 ${tierName}`;
+    meta = { tier_name: tierName, product_type: "audit" };
+  } else {
+    /* Default: resource checkout (backwards compatible) */
+    if (
+      typeof resourceSlug !== "string" || !resourceSlug ||
+      typeof resourceTitle !== "string" || !resourceTitle
+    ) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    tx_ref = `growveloper-resource-${resourceSlug}-${Date.now()}`;
+    redirect_url = `${SITE_URL}/resources/${resourceSlug}/confirmed`;
+    description = resourceTitle;
+    meta = { resource_slug: resourceSlug, product_type: "resource" };
+  }
 
   try {
     const { url } = await createFlutterwaveCheckout({
@@ -42,12 +74,9 @@ export async function POST(req: NextRequest) {
       customer: { email },
       customizations: {
         title: "GROWVELOPER",
-        description: resourceTitle,
+        description,
       },
-      meta: {
-        resource_slug: resourceSlug,
-        product_type: "resource",
-      },
+      meta,
     });
 
     return NextResponse.json({ url });

@@ -128,7 +128,7 @@ export default async function Home() {
       {/* Section 04 — What We Can Do For You */}
       {services.items.length > 0 && (
         <>
-          <ServicesAlternating data={services} />
+          <ServicesAlternating data={services} id="services" />
           {page.ctaBanner1 && (
             <CTABanner
               data={page.ctaBanner1}
@@ -141,7 +141,7 @@ export default async function Home() {
 
       {/* Section 05 — Who We Work With */}
       {industriesData.industries.length > 0 && (
-        <GlassSection>
+        <GlassSection id="industries">
           <IndustriesGrid data={industriesData} />
         </GlassSection>
       )}
@@ -151,7 +151,7 @@ export default async function Home() {
 
       {/* Section 07 — How It Works */}
       {process.items.length > 0 && (
-        <GlassSection>
+        <GlassSection id="process">
           <ProcessSteps data={process} />
         </GlassSection>
       )}

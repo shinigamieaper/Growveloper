@@ -1,4 +1,5 @@
 import { defineType, defineField, defineArrayMember } from "sanity";
+import { ICON_OPTIONS } from "./iconOptions";
 
 export default defineType({
   name: "auditPage",
@@ -83,7 +84,23 @@ export default defineType({
       type: "string",
       fieldset: "hero",
     }),
-    defineField({ name: "heroScrollCueTargetId", title: "Hero Scroll Cue Target ID", type: "string", fieldset: "hero", description: 'ID of the section to scroll to, e.g. "qualifiers"' }),
+    defineField({
+      name: "heroScrollCueTargetId",
+      title: "Hero Scroll Cue Target",
+      type: "string",
+      fieldset: "hero",
+      description: "Section the scroll cue scrolls to",
+      options: {
+        list: [
+          { title: "Who It\u2019s For", value: "qualifiers" },
+          { title: "What We Look At", value: "scope" },
+          { title: "What You Get", value: "deliverables" },
+          { title: "How It Works", value: "process" },
+          { title: "What We\u2019ve Found", value: "findings" },
+          { title: "Pricing", value: "pricing" },
+        ],
+      },
+    }),
 
     /* ── Qualifiers ── */
     defineField({
@@ -134,7 +151,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string", options: { list: [{ title: "Zap", value: "zap" }, { title: "Bot", value: "bot" }, { title: "Bar Chart", value: "bar-chart" }, { title: "Code", value: "code" }, { title: "Megaphone", value: "megaphone" }, { title: "Shield", value: "shield" }, { title: "Workflow", value: "workflow" }, { title: "Gauge", value: "gauge" }, { title: "Target", value: "target" }, { title: "Brain", value: "brain" }] } }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: ICON_OPTIONS } }),
             defineField({ name: "heading", title: "Heading", type: "string" }),
             defineField({
               name: "bullets",
@@ -170,7 +187,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string", options: { list: [{ title: "File / Report", value: "file-text" }, { title: "Presentation / Slides", value: "presentation" }, { title: "Video Recording", value: "video" }, { title: "Roadmap / Plan", value: "map" }] } }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: ICON_OPTIONS } }),
             defineField({ name: "title", title: "Title", type: "string" }),
             defineField({ name: "description", title: "Description", type: "text" }),
           ],

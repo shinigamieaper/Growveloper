@@ -1,4 +1,5 @@
 import { defineType, defineField, defineArrayMember } from "sanity";
+import { ICON_OPTIONS } from "./iconOptions";
 
 export default defineType({
   name: "aboutPage",
@@ -58,7 +59,25 @@ export default defineType({
       description: 'The greeting before the name, e.g. "Hello, I\'m"',
     }),
     defineField({ name: "heroScrollCueText", title: "Scroll Cue Text", type: "string", fieldset: "hero", description: 'Marquee text on the scroll cue button, e.g. "EXPLORE · "' }),
-    defineField({ name: "heroScrollCueTargetId", title: "Scroll Cue Target ID", type: "string", fieldset: "hero", description: 'ID of the section to scroll to, e.g. "short-version"' }),
+    defineField({
+      name: "heroScrollCueTargetId",
+      title: "Scroll Cue Target",
+      type: "string",
+      fieldset: "hero",
+      description: "Section the scroll cue scrolls to",
+      options: {
+        list: [
+          { title: "The Short Version", value: "short-version" },
+          { title: "The Story", value: "the-story" },
+          { title: "Stats", value: "stats" },
+          { title: "Past Companies", value: "companies" },
+          { title: "How I Work", value: "how-i-work" },
+          { title: "Skills & Tools", value: "skills-tools" },
+          { title: "Interests", value: "interests" },
+          { title: "Featured Work", value: "featured-work" },
+        ],
+      },
+    }),
 
     /* ── Short Version ── */
     defineField({
@@ -172,7 +191,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string", options: { list: [{ title: "👥 Users — Direct work, teamwork", value: "users" }, { title: "📊 Bar Chart — Data-driven", value: "bar-chart" }, { title: "🎯 Target — Customer focus, precision", value: "target" }, { title: "🧠 Brain — Strategy, thinking", value: "brain" }, { title: "⚡ Zap — Speed, efficiency", value: "zap" }, { title: "🛡 Shield — Security, trust", value: "shield" }, { title: "🔧 Wrench — Building, maintenance", value: "wrench" }, { title: "💻 Code — Development", value: "code" }, { title: "🔍 Search — Research, discovery", value: "search" }, { title: "💡 Lightbulb — Ideas, insights", value: "lightbulb" }, { title: "🚀 Rocket — Growth, launch", value: "rocket" }, { title: "🔄 Workflow — Process, systems", value: "workflow" }, { title: "🔗 Link — Integration, connection", value: "link" }, { title: "📈 Trending Up — Growth metrics", value: "trending-up" }, { title: "🤖 Bot — Automation, AI", value: "bot" }] } }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: ICON_OPTIONS } }),
             defineField({ name: "title", title: "Title", type: "string" }),
             defineField({ name: "description", title: "Description", type: "text" }),
           ],
@@ -241,7 +260,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string", options: { list: [{ title: "👗 Fashion — Creative direction", value: "eye" }, { title: "🏀 Basketball — Teamwork, strategy", value: "target" }, { title: "📚 Education — Learning, growth", value: "lightbulb" }, { title: "🎵 Music — Creative outlet", value: "brain" }, { title: "✈ Travel — Exploration", value: "globe" }, { title: "🎮 Gaming — Problem solving", value: "puzzle" }, { title: "📸 Photography — Visual eye", value: "eye" }, { title: "🔬 Science — Research, curiosity", value: "search" }, { title: "🏋 Fitness — Discipline", value: "zap" }, { title: "🍳 Cooking — Creativity", value: "flame" }] } }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: ICON_OPTIONS } }),
             defineField({ name: "interest", title: "Interest", type: "string" }),
             defineField({ name: "connection", title: "Connection", type: "text" }),
           ],

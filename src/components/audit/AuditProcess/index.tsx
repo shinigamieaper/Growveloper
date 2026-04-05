@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, EASE, DURATION } from "@/lib/gsap";
-import { cn } from "@/lib/utils";
+import { cn, fluidGrid } from "@/lib/utils";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import type { AuditProcessData } from "@/lib/types";
 
@@ -129,7 +129,7 @@ function ProcessTimeline({ steps }: { steps: AuditProcessData["steps"] }) {
         aria-hidden
       />
 
-      <div className="grid gap-10 md:grid-cols-3 md:gap-6">
+      <div className={`${fluidGrid(steps.length, 3)} gap-10 md:gap-6`}>
         {steps.map((step) => (
           <div key={step.stepNumber} className="relative flex flex-col items-center text-center">
             <div

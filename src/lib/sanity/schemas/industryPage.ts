@@ -1,4 +1,5 @@
 import { defineType, defineField, defineArrayMember } from "sanity";
+import { ICON_OPTIONS } from "./iconOptions";
 
 export default defineType({
   name: "industryPage",
@@ -22,6 +23,7 @@ export default defineType({
       name: "icon",
       title: "Icon",
       type: "string",
+      options: { list: ICON_OPTIONS },
     }),
     defineField({
       name: "hookLine",
@@ -42,7 +44,20 @@ export default defineType({
     defineField({ name: "secondaryCtaLabel", title: "Secondary CTA Label", type: "string", description: 'e.g. "See our work"' }),
     defineField({ name: "secondaryCtaUrl", title: "Secondary CTA URL", type: "string", description: 'e.g. /work' }),
     defineField({ name: "scrollCueText", title: "Scroll Cue Text", type: "string", description: 'e.g. "Scroll to explore"' }),
-    defineField({ name: "scrollCueTargetId", title: "Scroll Cue Target ID", type: "string", description: 'ID of the section to scroll to, e.g. "pain-points"' }),
+    defineField({
+      name: "scrollCueTargetId",
+      title: "Scroll Cue Target",
+      type: "string",
+      description: "Section the scroll cue scrolls to",
+      options: {
+        list: [
+          { title: "Pain Points", value: "pain-points" },
+          { title: "How We Help", value: "how-we-help" },
+          { title: "Proof", value: "proof" },
+          { title: "FAQ", value: "faq" },
+        ],
+      },
+    }),
     defineField({ name: "problemHeadline", title: "Problem Section Headline", type: "string", description: 'e.g. "Sound familiar?"' }),
     defineField({ name: "problemHighlightedWord", title: "Problem Highlighted Word", type: "string" }),
     defineField({ name: "howWeHelpHeadline", title: "How We Help Headline", type: "string", description: 'e.g. "How we help"' }),
@@ -93,6 +108,7 @@ export default defineType({
               name: "icon",
               title: "Icon",
               type: "string",
+              options: { list: ICON_OPTIONS },
             }),
           ],
         }),

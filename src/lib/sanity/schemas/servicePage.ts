@@ -1,4 +1,5 @@
 import { defineType, defineField, defineArrayMember } from "sanity";
+import { ICON_OPTIONS } from "./iconOptions";
 
 export default defineType({
   name: "servicePage",
@@ -50,7 +51,27 @@ export default defineType({
     defineField({ name: "heroSecondaryCtaLabel", title: "Hero Secondary CTA Label", type: "string", fieldset: "hero" }),
     defineField({ name: "heroSecondaryCtaUrl", title: "Hero Secondary CTA URL", type: "string", fieldset: "hero" }),
     defineField({ name: "heroScrollCueText", title: "Hero Scroll Cue Text", type: "string", fieldset: "hero" }),
-    defineField({ name: "heroScrollCueTargetId", title: "Hero Scroll Cue Target ID", type: "string", fieldset: "hero" }),
+    defineField({
+      name: "heroScrollCueTargetId",
+      title: "Hero Scroll Cue Target",
+      type: "string",
+      fieldset: "hero",
+      description: "Section the scroll cue scrolls to",
+      options: {
+        list: [
+          { title: "Stats", value: "stats" },
+          { title: "The Problem", value: "problem" },
+          { title: "Sub-Services (Dev)", value: "dev-services" },
+          { title: "Sub-Services (Marketing)", value: "sub-services" },
+          { title: "Sub-Services (AI)", value: "ai-services" },
+          { title: "Process", value: "process" },
+          { title: "Before vs After", value: "before-after" },
+          { title: "Case Studies", value: "case-studies" },
+          { title: "Testimonials", value: "testimonials" },
+          { title: "FAQ", value: "faq" },
+        ],
+      },
+    }),
 
     /* ── Problem ── */
     defineField({ name: "problemHeadline", title: "Problem Headline", type: "string", fieldset: "problem" }),
@@ -76,7 +97,7 @@ export default defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon", type: "string", description: "Pick the icon that matches your service page (Development / Marketing / AI)", options: { list: [{ title: "── Development ──", value: "" }, { title: "Monitor", value: "monitor" }, { title: "Gauge / Speed", value: "gauge" }, { title: "Database", value: "database" }, { title: "Code", value: "code" }, { title: "Plug / Integrations", value: "plug" }, { title: "Shield", value: "shield" }, { title: "── Marketing ──", value: "" }, { title: "Brain / AI thinking", value: "brain" }, { title: "Search", value: "search" }, { title: "Megaphone", value: "megaphone" }, { title: "Pen Tool / Content", value: "pen-tool" }, { title: "Flask / Experiments", value: "flask" }, { title: "Bar Chart", value: "bar-chart" }, { title: "── AI & Automation ──", value: "" }, { title: "Filter", value: "filter" }, { title: "Bar Chart 2", value: "bar-chart-2" }, { title: "Message Circle", value: "message-circle" }, { title: "Git Branch / Flows", value: "git-branch" }, { title: "Bell / Alerts", value: "bell" }] } }),
+            defineField({ name: "icon", title: "Icon", type: "string", options: { list: ICON_OPTIONS } }),
             defineField({ name: "title", title: "Title", type: "string" }),
             defineField({ name: "description", title: "Description", type: "text" }),
           ],

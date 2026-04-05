@@ -5,9 +5,10 @@ import type { AboutStatItem } from "@/lib/types";
 
 interface AboutStatStripProps {
   items: AboutStatItem[];
+  id?: string;
 }
 
-export function AboutStatStrip({ items }: AboutStatStripProps) {
+export function AboutStatStrip({ items, id }: AboutStatStripProps) {
   if (!items || items.length === 0) return null;
 
   // Determine optimal column count based on number of items
@@ -19,7 +20,7 @@ export function AboutStatStrip({ items }: AboutStatStripProps) {
     "md:grid-cols-5";
 
   return (
-    <section className="py-16 md:py-20">
+    <section id={id} className="py-16 md:py-20">
       <div className="mx-auto max-w-5xl px-6">
         <StaggerChildren>
           <div className={`grid grid-cols-2 gap-4 sm:grid-cols-3 ${mdCols}`}>

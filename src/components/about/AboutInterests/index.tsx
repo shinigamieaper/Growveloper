@@ -1,24 +1,20 @@
-import type { LucideIcon } from "lucide-react";
-import { Eye, Target, Lightbulb, Brain, Globe, Puzzle, Search, Zap, Flame } from "lucide-react";
+import { ICON_MAP } from "@/lib/icons";
+import { fluidGrid } from "@/lib/utils";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { GrowveloperCard } from "@/components/shared/GrowveloperCard";
 import { StaggerChildren } from "@/components/animations/StaggerChildren";
 import type { AboutInterestsData } from "@/lib/types";
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  eye: Eye, target: Target, lightbulb: Lightbulb, brain: Brain,
-  globe: Globe, puzzle: Puzzle, search: Search, zap: Zap, flame: Flame,
-};
-
 interface AboutInterestsProps {
   data: AboutInterestsData | null;
+  id?: string;
 }
 
-export function AboutInterests({ data }: AboutInterestsProps) {
+export function AboutInterests({ data, id }: AboutInterestsProps) {
   if (!data) return null;
 
   return (
-    <section className="py-16 md:py-24">
+    <section id={id} className="py-16 md:py-24">
       <div className="mx-auto max-w-5xl px-6">
         <SectionHeader
           headline={data.headline}
@@ -29,7 +25,7 @@ export function AboutInterests({ data }: AboutInterestsProps) {
         />
 
         <StaggerChildren>
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className={`${fluidGrid(data.items.length, 3)} mt-10 gap-4`}>
             {data.items.map((item) => {
               const IconComponent = item.icon ? ICON_MAP[item.icon] : undefined;
               return (
