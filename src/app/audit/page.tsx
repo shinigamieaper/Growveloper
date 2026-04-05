@@ -143,12 +143,12 @@ export default async function AuditPage() {
       : null;
 
   const finalCta: CTABannerData | null =
-    page.finalCtaHeadline
+    page.finalCtaHeadline && page.finalCtaUrl
       ? {
           headline: page.finalCtaHeadline,
           highlightedWord: page.finalCtaHighlightedWord,
           subCopy: page.finalCtaSubCopy,
-          ctaLabel: page.finalCtaLabel,
+          ctaLabel: page.finalCtaLabel ?? "",
           ctaDestination: page.finalCtaUrl,
         }
       : null;
