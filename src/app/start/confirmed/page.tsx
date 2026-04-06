@@ -59,7 +59,7 @@ export default async function StartConfirmedPage() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             name: "Consultation Confirmed — GROWVELOPER",
-            description: "Your consultation request has been received.",
+            description: "Your consultation request has been received. Here is what happens next.",
             url: "https://growveloper.com/start/confirmed",
           }),
         }}
