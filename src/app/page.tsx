@@ -115,6 +115,22 @@ export default async function Home() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "GROWVELOPER",
+            url: "https://growveloper.com",
+            description:
+              page.seoDescription ??
+              settings?.seoDescription ??
+              "Technical growth engineering — where clean code meets marketing ROI.",
+          }),
+        }}
+      />
       {/* Section 02 — Hero */}
       <Hero data={hero} />
 
