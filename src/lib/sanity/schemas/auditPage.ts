@@ -14,6 +14,7 @@ export default defineType({
     { name: "findings", title: "Findings", options: { collapsible: true } },
     { name: "pricing", title: "Pricing", options: { collapsible: true } },
     { name: "finalCta", title: "Final CTA", options: { collapsible: true } },
+    { name: "faq", title: "FAQ Section", options: { collapsible: true } },
     { name: "newsletter", title: "Newsletter Section", options: { collapsible: true } },
     { name: "seo", title: "SEO & Metadata", options: { collapsible: true, collapsed: true } },
   ],
@@ -314,6 +315,15 @@ export default defineType({
         }),
       ],
     }),
+
+    /* ── FAQ Section ── */
+    defineField({ name: "faqHeadline", title: "FAQ Headline", type: "string", fieldset: "faq" }),
+    defineField({ name: "faqHighlightedWord", title: "FAQ Highlighted Word", type: "string", fieldset: "faq" }),
+    defineField({ name: "faqDescription", title: "FAQ Description", type: "text", fieldset: "faq" }),
+    defineField({ name: "faqCtaHeadline", title: "FAQ CTA Headline", type: "string", fieldset: "faq" }),
+    defineField({ name: "faqCtaDescription", title: "FAQ CTA Description", type: "text", fieldset: "faq" }),
+    defineField({ name: "faqCtaLabel", title: "FAQ CTA Label", type: "string", fieldset: "faq" }),
+    defineField({ name: "faqCtaUrl", title: "FAQ CTA URL", type: "string", fieldset: "faq" }),
 
     /* ── Newsletter Section ── */
     defineField({ name: "newsletterHeadline", title: "Newsletter Headline", type: "string", fieldset: "newsletter" }),

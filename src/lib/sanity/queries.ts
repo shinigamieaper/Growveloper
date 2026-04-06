@@ -294,6 +294,15 @@ export async function getAuditPage() {
       newsletterSubCopy,
       newsletterCtaLabel,
 
+      // FAQ
+      faqHeadline,
+      faqHighlightedWord,
+      faqDescription,
+      faqCtaHeadline,
+      faqCtaDescription,
+      faqCtaLabel,
+      faqCtaUrl,
+
       // Final CTA
       finalCtaHeadline,
       finalCtaHighlightedWord,
@@ -854,7 +863,25 @@ export async function getIndustryBySlug(slug: string): Promise<IndustryPageData 
       ctaSectionHeadline,
       ctaSectionHighlightedWord,
       ctaSectionLabel,
-      ctaSectionDestination
+      ctaSectionDestination,
+      statsHeadline,
+      statsHighlightedWord,
+      statsDescription,
+      caseStudiesHeadline,
+      caseStudiesHighlightedWord,
+      caseStudiesDescription,
+      testimonialsHeadline,
+      testimonialsHighlightedWord,
+      testimonialCtaHeadline,
+      testimonialCtaLabel,
+      testimonialCtaUrl,
+      faqHeadline,
+      faqHighlightedWord,
+      faqDescription,
+      faqCtaHeadline,
+      faqCtaDescription,
+      faqCtaLabel,
+      faqCtaUrl
     }`,
     { slug }
   );
@@ -984,8 +1011,22 @@ export async function getWorkPage(): Promise<WorkPageData | null> {
       ctaSectionHeadline,
       ctaSectionHighlightedWord,
       ctaSectionLabel,
-      ctaSectionDestination
+      ctaSectionDestination,
+      faqHeadline,
+      faqHighlightedWord,
+      faqDescription,
+      faqCtaHeadline,
+      faqCtaDescription,
+      faqCtaLabel,
+      faqCtaUrl
     }`
+  );
+}
+
+export async function getWorkFAQ(): Promise<FAQItem[]> {
+  "use cache";
+  return client.fetch<FAQItem[]>(
+    `*[_type == "faq" && page == "work"] | order(order asc) { question, answer }`
   );
 }
 

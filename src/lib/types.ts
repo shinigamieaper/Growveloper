@@ -392,6 +392,24 @@ export interface IndustryPageData extends IndustryCardData {
   ctaSectionHighlightedWord?: string;
   ctaSectionLabel?: string;
   ctaSectionDestination?: string;
+  statsHeadline?: string;
+  statsHighlightedWord?: string;
+  statsDescription?: string;
+  caseStudiesHeadline?: string;
+  caseStudiesHighlightedWord?: string;
+  caseStudiesDescription?: string;
+  testimonialsHeadline?: string;
+  testimonialsHighlightedWord?: string;
+  testimonialCtaHeadline?: string;
+  testimonialCtaLabel?: string;
+  testimonialCtaUrl?: string;
+  faqHeadline?: string;
+  faqHighlightedWord?: string;
+  faqDescription?: string;
+  faqCtaHeadline?: string;
+  faqCtaDescription?: string;
+  faqCtaLabel?: string;
+  faqCtaUrl?: string;
 }
 
 /* --- Resource --- */
@@ -931,6 +949,13 @@ export interface WorkPageData {
   ctaSectionHighlightedWord?: string;
   ctaSectionLabel?: string;
   ctaSectionDestination?: string;
+  faqHeadline?: string;
+  faqHighlightedWord?: string;
+  faqDescription?: string;
+  faqCtaHeadline?: string;
+  faqCtaDescription?: string;
+  faqCtaLabel?: string;
+  faqCtaUrl?: string;
 }
 
 /* --- Legal Pages --- */

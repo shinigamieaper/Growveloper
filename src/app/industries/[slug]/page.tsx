@@ -262,9 +262,9 @@ export default async function IndustryPage({
             <div className="mx-auto max-w-6xl px-6">
               <ScrollFadeUp>
                 <SectionHeader
-                  headline="The numbers"
-                  highlightedWord="numbers"
-                  description={`Real outcomes from our work in ${industry.name}.`}
+                  headline={industry.statsHeadline ?? "The numbers"}
+                  highlightedWord={industry.statsHighlightedWord ?? "numbers"}
+                  description={industry.statsDescription ?? `Real outcomes from our work in ${industry.name}.`}
                 />
               </ScrollFadeUp>
             </div>
@@ -279,9 +279,9 @@ export default async function IndustryPage({
           <div className="mx-auto max-w-6xl px-6">
             <ScrollFadeUp>
               <SectionHeader
-                headline="Work in this space"
-                highlightedWord="Work"
-                description="Real projects, real results."
+                headline={industry.caseStudiesHeadline ?? "Work in this space"}
+                highlightedWord={industry.caseStudiesHighlightedWord ?? "Work"}
+                description={industry.caseStudiesDescription ?? "Real projects, real results."}
               />
             </ScrollFadeUp>
             <CaseStudiesSection items={caseStudies} />
@@ -293,12 +293,12 @@ export default async function IndustryPage({
       {industry.testimonials.length > 0 && (
         <GlassSection>
           <HomeTestimonials
-            headline="Clients in this space"
-            highlightedWord="Clients"
+            headline={industry.testimonialsHeadline ?? "Clients in this space"}
+            highlightedWord={industry.testimonialsHighlightedWord ?? "Clients"}
             items={industry.testimonials}
-            ctaHeadline="This could be you\u2026"
-            ctaLabel="Start a project"
-            ctaUrl="/start"
+            ctaHeadline={industry.testimonialCtaHeadline ?? "This could be you\u2026"}
+            ctaLabel={industry.testimonialCtaLabel ?? "Start a project"}
+            ctaUrl={industry.testimonialCtaUrl ?? "/start"}
           />
         </GlassSection>
       )}
@@ -325,13 +325,13 @@ export default async function IndustryPage({
         <GlassSection>
           <FAQAccordion
             items={industry.faq}
-            sectionHeadline="Common questions"
-            highlightedWord="questions"
-            sectionDescription={`Everything you need to know about working with us in ${industry.name}.`}
-            ctaHeadline="Still have questions?"
-            ctaDescription="Every engagement starts with a free consultation. Let\u2019s talk through your specific situation."
-            ctaLabel="Book a Consultation"
-            ctaUrl="/start"
+            sectionHeadline={industry.faqHeadline ?? "Common questions"}
+            highlightedWord={industry.faqHighlightedWord ?? "questions"}
+            sectionDescription={industry.faqDescription ?? `Everything you need to know about working with us in ${industry.name}.`}
+            ctaHeadline={industry.faqCtaHeadline ?? "Still have questions?"}
+            ctaDescription={industry.faqCtaDescription ?? "Every engagement starts with a free consultation. Let\u2019s talk through your specific situation."}
+            ctaLabel={industry.faqCtaLabel ?? "Book a Consultation"}
+            ctaUrl={industry.faqCtaUrl ?? "/start"}
           />
         </GlassSection>
       )}

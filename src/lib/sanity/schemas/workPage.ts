@@ -13,6 +13,7 @@ export default defineType({
     { name: "industries", title: "Industries Section", options: { collapsible: true } },
     { name: "ctaInline", title: "Inline CTA Banner", options: { collapsible: true } },
     { name: "ctaSection", title: "Section CTA Banner", options: { collapsible: true } },
+    { name: "faqSection", title: "FAQ Section", options: { collapsible: true } },
     { name: "seo", title: "SEO & Metadata", options: { collapsible: true, collapsed: true } },
   ],
   fields: [
@@ -127,6 +128,15 @@ export default defineType({
     defineField({ name: "ctaSectionHighlightedWord", title: "Highlighted Word", type: "string", fieldset: "ctaSection" }),
     defineField({ name: "ctaSectionLabel", title: "CTA Label", type: "string", fieldset: "ctaSection" }),
     defineField({ name: "ctaSectionDestination", title: "CTA Destination URL", type: "string", fieldset: "ctaSection" }),
+
+    /* ── FAQ Section ── */
+    defineField({ name: "faqHeadline", title: "FAQ Headline", type: "string", fieldset: "faqSection" }),
+    defineField({ name: "faqHighlightedWord", title: "FAQ Highlighted Word", type: "string", fieldset: "faqSection" }),
+    defineField({ name: "faqDescription", title: "FAQ Description", type: "text", fieldset: "faqSection" }),
+    defineField({ name: "faqCtaHeadline", title: "FAQ CTA Headline", type: "string", fieldset: "faqSection" }),
+    defineField({ name: "faqCtaDescription", title: "FAQ CTA Description", type: "text", fieldset: "faqSection" }),
+    defineField({ name: "faqCtaLabel", title: "FAQ CTA Label", type: "string", fieldset: "faqSection" }),
+    defineField({ name: "faqCtaUrl", title: "FAQ CTA URL", type: "string", fieldset: "faqSection" }),
   ],
   preview: {
     prepare() {

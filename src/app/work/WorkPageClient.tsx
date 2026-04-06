@@ -8,6 +8,7 @@ import {
   ContentFilterBar,
   ScrollFadeUp,
   BeforeAfterCompare,
+  FAQAccordion,
 } from "@/components";
 import { CaseStudiesSection } from "@/components/home/CaseStudies";
 import { ServicesAlternating } from "@/components/home/ServicesAlternating";
@@ -20,14 +21,16 @@ import type {
   IndustriesGridData,
   CTABannerData,
   WorkPageData,
+  FAQItem,
 } from "@/lib/types";
 
 interface WorkPageClientProps {
   caseStudies: CaseStudyCardData[];
   workPageData: WorkPageData | null;
+  faq: FAQItem[];
 }
 
-export function WorkPageClient({ caseStudies, workPageData }: WorkPageClientProps) {
+export function WorkPageClient({ caseStudies, workPageData, faq }: WorkPageClientProps) {
   const industries = useMemo(
     () => [...new Set(caseStudies.map((cs) => (cs as CaseStudyCardData & { clientIndustry?: string }).clientIndustry).filter(Boolean) as string[])],
     [caseStudies],
@@ -173,6 +176,22 @@ export function WorkPageClient({ caseStudies, workPageData }: WorkPageClientProp
       {industriesData && (
         <GlassSection>
           <IndustriesGrid data={industriesData} />
+        </GlassSection>
+      )}
+
+      {/* FAQ */}
+      {faq.length > 0 && (
+        <GlassSection>
+          <FAQAccordion
+            items={faq}
+            sectionHeadline={workPageData.faqHeadline ?? "Frequently asked questions"}
+            highlightedWord={workPageData.faqHighlightedWord ?? "questions"}
+            sectionDescription={workPageData.faqDescription}
+            ctaHeadline={workPageData.faqCtaHeadline}
+            ctaDescription={workPageData.faqCtaDescription}
+            ctaLabel={workPageData.faqCtaLabel}
+            ctaUrl={workPageData.faqCtaUrl}
+          />
         </GlassSection>
       )}
 

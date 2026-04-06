@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { WorkPageClient } from "./WorkPageClient";
-import { getAllCaseStudies, getSiteSettings, getWorkPage } from "@/lib/sanity/queries";
+import { getAllCaseStudies, getSiteSettings, getWorkPage, getWorkFAQ } from "@/lib/sanity/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [workPage, settings] = await Promise.all([getWorkPage(), getSiteSettings()]);
@@ -13,9 +13,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function WorkPage() {
-  const [caseStudies, workPageData] = await Promise.all([
+  const [caseStudies, workPageData, faq] = await Promise.all([
     getAllCaseStudies(),
     getWorkPage(),
+    getWorkFAQ(),
   ]);
   return (
     <>
@@ -33,7 +34,7 @@ export default async function WorkPage() {
           }),
         }}
       />
-      <WorkPageClient caseStudies={caseStudies} workPageData={workPageData} />
+      <WorkPageClient caseStudies={caseStudies} workPageData={workPageData} faq={faq} />
     </>
   );
 }

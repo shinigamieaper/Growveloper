@@ -200,8 +200,13 @@ export default async function AuditPage() {
       {faq.length > 0 && (
         <FAQAccordion
           items={faq}
-          sectionHeadline="Frequently asked questions"
-          highlightedWord="questions"
+          sectionHeadline={page.faqHeadline ?? "Frequently asked questions"}
+          highlightedWord={page.faqHighlightedWord ?? "questions"}
+          sectionDescription={page.faqDescription}
+          ctaHeadline={page.faqCtaHeadline}
+          ctaDescription={page.faqCtaDescription}
+          ctaLabel={page.faqCtaLabel}
+          ctaUrl={page.faqCtaUrl}
         />
       )}
 

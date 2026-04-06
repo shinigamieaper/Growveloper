@@ -218,6 +218,32 @@ export default defineType({
     defineField({ name: "ctaSectionLabel", title: "Section CTA Label", type: "string" }),
     defineField({ name: "ctaSectionDestination", title: "Section CTA Destination URL", type: "string" }),
 
+    /* ── Outcome Stats Header ── */
+    defineField({ name: "statsHeadline", title: "Stats Section Headline", type: "string", description: 'e.g. "The numbers"' }),
+    defineField({ name: "statsHighlightedWord", title: "Stats Highlighted Word", type: "string" }),
+    defineField({ name: "statsDescription", title: "Stats Description", type: "text" }),
+
+    /* ── Case Studies Header ── */
+    defineField({ name: "caseStudiesHeadline", title: "Case Studies Headline", type: "string", description: 'e.g. "Work in this space"' }),
+    defineField({ name: "caseStudiesHighlightedWord", title: "Case Studies Highlighted Word", type: "string" }),
+    defineField({ name: "caseStudiesDescription", title: "Case Studies Description", type: "text" }),
+
+    /* ── Testimonials Header ── */
+    defineField({ name: "testimonialsHeadline", title: "Testimonials Headline", type: "string", description: 'e.g. "Clients in this space"' }),
+    defineField({ name: "testimonialsHighlightedWord", title: "Testimonials Highlighted Word", type: "string" }),
+    defineField({ name: "testimonialCtaHeadline", title: "Testimonials CTA Headline", type: "string", description: 'e.g. "This could be you…"' }),
+    defineField({ name: "testimonialCtaLabel", title: "Testimonials CTA Label", type: "string" }),
+    defineField({ name: "testimonialCtaUrl", title: "Testimonials CTA URL", type: "string" }),
+
+    /* ── FAQ Section Header ── */
+    defineField({ name: "faqHeadline", title: "FAQ Headline", type: "string", description: 'e.g. "Common questions"' }),
+    defineField({ name: "faqHighlightedWord", title: "FAQ Highlighted Word", type: "string" }),
+    defineField({ name: "faqDescription", title: "FAQ Description", type: "text" }),
+    defineField({ name: "faqCtaHeadline", title: "FAQ CTA Headline", type: "string" }),
+    defineField({ name: "faqCtaDescription", title: "FAQ CTA Description", type: "text" }),
+    defineField({ name: "faqCtaLabel", title: "FAQ CTA Label", type: "string" }),
+    defineField({ name: "faqCtaUrl", title: "FAQ CTA URL", type: "string" }),
+
     defineField({
       name: "seoTitle",
       title: "SEO Title",
