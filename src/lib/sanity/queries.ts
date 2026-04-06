@@ -250,6 +250,9 @@ export async function getAuditPage() {
       heroSecondaryCtaUrl,
       heroScrollCueText,
       heroScrollCueTargetId,
+      heroPriceNote,
+      heroCardTagline,
+      heroFeatures,
 
       // Qualifiers
       qualifiersHeadline,

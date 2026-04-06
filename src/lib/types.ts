@@ -502,6 +502,9 @@ export interface AuditHeroData {
   secondaryCtaUrl?: string;
   scrollCueText?: string;
   scrollCueTargetId?: string;
+  heroPriceNote?: string;
+  heroCardTagline?: string;
+  heroFeatures?: string[];
 }
 
 export interface AuditQualifierData {

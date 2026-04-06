@@ -101,6 +101,28 @@ export default defineType({
         ],
       },
     }),
+    defineField({
+      name: "heroPriceNote",
+      title: "Hero Price Note",
+      type: "string",
+      fieldset: "hero",
+      description: "Small text beneath the price (e.g. 'One-time payment · no subscription')",
+    }),
+    defineField({
+      name: "heroCardTagline",
+      title: "Hero Card Tagline",
+      type: "string",
+      fieldset: "hero",
+      description: "Short punchy headline inside the price card (e.g. 'One package. Clear price. No surprises.')",
+    }),
+    defineField({
+      name: "heroFeatures",
+      title: "Hero Card Features",
+      type: "array",
+      fieldset: "hero",
+      description: "Feature list shown in the hero price card (displayed in a 2-column grid)",
+      of: [defineArrayMember({ type: "string" })],
+    }),
 
     /* ── Qualifiers ── */
     defineField({

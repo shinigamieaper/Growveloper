@@ -85,6 +85,9 @@ export default async function AuditPage() {
     secondaryCtaUrl: page.heroSecondaryCtaUrl,
     scrollCueText: page.heroScrollCueText,
     scrollCueTargetId: page.heroScrollCueTargetId,
+    heroPriceNote: page.heroPriceNote,
+    heroCardTagline: page.heroCardTagline,
+    heroFeatures: page.heroFeatures,
   };
 
   const qualifiers: AuditQualifierData | null =
