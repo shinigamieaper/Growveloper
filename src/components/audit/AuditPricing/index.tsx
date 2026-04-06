@@ -90,14 +90,14 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
   };
 
   return (
-    <section className={cn("py-16 md:py-24", className)} {...props}>
+    <section className={cn("pt-16 pb-28 md:pt-24 md:pb-36", className)} {...props}>
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeader
           headline={data.headline}
           highlightedWord={data.highlightedWord}
         />
 
-        <StaggerChildren className={cn(fluidGrid(data.tiers.length, 3), "gap-6 pt-8")}>
+        <StaggerChildren className={cn(fluidGrid(data.tiers.length, 3), "gap-6 pt-8 pb-4")}>
           {data.tiers.map((tier) => {
             const isHighlighted = tier.highlighted === true;
             const parsed = parsePrice(tier.price);
@@ -108,11 +108,11 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
               <SpotlightCard
                 key={tier.name}
                 spotlightColor="rgba(90, 177, 177, 0.15)"
-                className="h-full"
+                className="rounded-2xl"
               >
                 <div
                   className={cn(
-                    "relative flex h-full flex-col rounded-2xl border p-6 pb-8 md:p-10",
+                    "flex flex-col rounded-2xl border p-6 pb-10 md:p-10 md:pb-12",
                     isHighlighted
                       ? "border-brand-mid/40 bg-glass-bg backdrop-blur-md shadow-lg shadow-brand-mid/5 md:-translate-y-4"
                       : "border-glass-border bg-glass-bg backdrop-blur-md",
