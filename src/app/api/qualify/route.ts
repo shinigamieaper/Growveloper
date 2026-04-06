@@ -16,6 +16,12 @@ const sanityWriteClient = process.env.SANITY_API_TOKEN
     })
   : null;
 
+interface DynamicResponse {
+  fieldId: string;
+  label: string;
+  value: string;
+}
+
 interface LeadPayload {
   name: string;
   email: string;
@@ -25,8 +31,9 @@ interface LeadPayload {
   problemStatement: string;
   budgetRange: string;
   timeline: string;
-  preferredContact: "email" | "whatsapp" | "call";
+  preferredContact: string;
   additionalContext?: string;
+  responses?: DynamicResponse[];
   submittedAt: string;
 }
 
@@ -49,19 +56,30 @@ export async function POST(request: Request) {
       );
     }
 
-    const results = await Promise.allSettled([
-      sendNotificationEmail(body),
-      createSanityLead(body),
-    ]);
-
-    const emailResult = results[0];
-    const sanityResult = results[1];
-
-    if (emailResult.status === "rejected") {
-      console.error("[Qualify] Email send failed:", emailResult.reason);
+    // Step 1: Create Sanity document
+    let sanityDocId: string | undefined;
+    try {
+      sanityDocId = await createSanityLead(body);
+    } catch (err) {
+      console.error("[Qualify] Sanity lead creation failed:", err);
     }
-    if (sanityResult.status === "rejected") {
-      console.error("[Qualify] Sanity lead creation failed:", sanityResult.reason);
+
+    // Step 2: Send notification email
+    let emailSent = false;
+    try {
+      await sendNotificationEmail(body);
+      emailSent = true;
+    } catch (err) {
+      console.error("[Qualify] Email send failed:", err);
+    }
+
+    // Step 3: Patch notificationSent on the lead document
+    if (sanityDocId) {
+      try {
+        await patchNotificationSent(sanityDocId, emailSent);
+      } catch (err) {
+        console.error("[Qualify] Failed to patch notificationSent:", err);
+      }
     }
 
     return NextResponse.json({ success: true });
@@ -74,14 +92,58 @@ export async function POST(request: Request) {
   }
 }
 
+async function createSanityLead(lead: LeadPayload): Promise<string> {
+  if (!sanityWriteClient) {
+    console.warn("[Qualify] Sanity write client not configured — skipping lead creation");
+    return "";
+  }
+
+  const doc = await sanityWriteClient.create({
+    _type: "lead",
+    name: lead.name,
+    email: lead.email,
+    company: lead.company,
+    websiteUrl: lead.websiteUrl || undefined,
+    servicesInterested: lead.servicesInterested,
+    problemStatement: lead.problemStatement,
+    budgetRange: lead.budgetRange,
+    timeline: lead.timeline,
+    preferredContact: lead.preferredContact,
+    additionalContext: lead.additionalContext || undefined,
+    submittedAt: lead.submittedAt,
+    status: "new",
+    notificationSent: false,
+    responses: (lead.responses ?? []).map((r) => ({
+      _key: crypto.randomUUID(),
+      fieldId: r.fieldId,
+      label: r.label,
+      value: r.value,
+    })),
+  });
+
+  return doc._id;
+}
+
+async function patchNotificationSent(docId: string, sent: boolean): Promise<void> {
+  if (!sanityWriteClient || !docId) return;
+  await sanityWriteClient.patch(docId).set({ notificationSent: sent }).commit();
+}
+
 async function sendNotificationEmail(lead: LeadPayload): Promise<void> {
   if (!resend) {
     console.warn("[Qualify] Resend not configured — skipping email");
     return;
   }
 
-  const servicesFormatted = lead.servicesInterested.join(", ");
   const notificationEmail = process.env.NOTIFICATION_EMAIL || "hello@growveloper.com";
+  const servicesFormatted = lead.servicesInterested.join(", ");
+
+  const responsesHtml = (lead.responses ?? [])
+    .map(
+      (r) =>
+        `<tr><td style="padding:8px;font-weight:bold;">${r.label}</td><td style="padding:8px;">${r.value}</td></tr>`
+    )
+    .join("");
 
   await resend.emails.send({
     from: "Growveloper <hello@growveloper.com>",
@@ -100,31 +162,9 @@ async function sendNotificationEmail(lead: LeadPayload): Promise<void> {
         <tr><td style="padding:8px;font-weight:bold;">Timeline</td><td style="padding:8px;">${lead.timeline}</td></tr>
         <tr><td style="padding:8px;font-weight:bold;">Contact</td><td style="padding:8px;">${lead.preferredContact}</td></tr>
         ${lead.additionalContext ? `<tr><td style="padding:8px;font-weight:bold;">Notes</td><td style="padding:8px;">${lead.additionalContext}</td></tr>` : ""}
+        ${responsesHtml}
       </table>
       <p style="margin-top:16px;font-size:12px;color:#666;">Submitted ${lead.submittedAt}</p>
     `,
-  });
-}
-
-async function createSanityLead(lead: LeadPayload): Promise<void> {
-  if (!sanityWriteClient) {
-    console.warn("[Qualify] Sanity write client not configured — skipping lead creation");
-    return;
-  }
-
-  await sanityWriteClient.create({
-    _type: "lead",
-    name: lead.name,
-    email: lead.email,
-    company: lead.company,
-    websiteUrl: lead.websiteUrl || undefined,
-    servicesInterested: lead.servicesInterested,
-    problemStatement: lead.problemStatement,
-    budgetRange: lead.budgetRange,
-    timeline: lead.timeline,
-    preferredContact: lead.preferredContact,
-    additionalContext: lead.additionalContext || undefined,
-    submittedAt: lead.submittedAt,
-    status: "new",
   });
 }
