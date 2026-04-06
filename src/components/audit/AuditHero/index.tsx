@@ -9,7 +9,6 @@ import { LampContainer } from "@/components/ui/lamp";
 import { CanvasText } from "@/components/ui/canvas-text";
 import { MovingBorderButton } from "@/components/ui/moving-border";
 import { MagneticElement } from "@/components/animations/MagneticElement";
-import { ScrollFadeUp } from "@/components/animations/ScrollFadeUp";
 import { ScrollCue } from "@/components/shared/ScrollCue";
 import { trackCTAClick } from "@/lib/analytics";
 import { usePathname } from "next/navigation";
@@ -155,9 +154,8 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
         </motion.div>
       </LampContainer>
 
-      {/* Price card — outside LampContainer, pulled up into glow */}
-      <div className="relative z-60 mx-auto -mt-32 flex max-w-md flex-col items-center gap-6 px-6 pb-4">
-        <ScrollFadeUp delay={0.35}>
+      {/* Price card — outside LampContainer, pulled up into glow. No scroll trigger — must be visible on load. */}
+      <div className="relative z-60 mx-auto -mt-48 flex max-w-md flex-col items-center gap-6 px-6 pb-4">
           <div className="w-full rounded-2xl border border-glass-border bg-glass-bg p-6 backdrop-blur-md sm:p-8">
 
             {/* Badge */}
@@ -303,7 +301,6 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
               )}
             </AnimatePresence>
           </div>
-        </ScrollFadeUp>
       </div>
 
       {scrollCueTargetId && (
