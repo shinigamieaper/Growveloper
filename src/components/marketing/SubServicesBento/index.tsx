@@ -97,16 +97,31 @@ function BentoShopifyIcon() {
   );
 }
 
-const MARKETING_LOGO_ITEMS = [
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoGoogleAdsIcon /></span><span className="font-mono text-xs text-text-secondary">Google Ads</span></div>, ariaLabel: "Google Ads" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoMetaIcon /></span><span className="font-mono text-xs text-text-secondary">Meta Ads</span></div>, ariaLabel: "Meta Ads" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoGA4Icon /></span><span className="font-mono text-xs text-text-secondary">GA4</span></div>, ariaLabel: "GA4" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoGTMIcon /></span><span className="font-mono text-xs text-text-secondary">GTM</span></div>, ariaLabel: "GTM" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoHubSpotIcon /></span><span className="font-mono text-xs text-text-secondary">HubSpot</span></div>, ariaLabel: "HubSpot" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoSemrushIcon /></span><span className="font-mono text-xs text-text-secondary">Semrush</span></div>, ariaLabel: "Semrush" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoAhrefsIcon /></span><span className="font-mono text-xs text-text-secondary">Ahrefs</span></div>, ariaLabel: "Ahrefs" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoShopifyIcon /></span><span className="font-mono text-xs text-text-secondary">Shopify</span></div>, ariaLabel: "Shopify" },
-];
+const BENTO_TOOL_ICON_MAP: Record<string, React.ComponentType> = {
+  "Google Ads": BentoGoogleAdsIcon,
+  "Meta Ads": BentoMetaIcon,
+  "GA4": BentoGA4Icon,
+  "GTM": BentoGTMIcon,
+  "HubSpot": BentoHubSpotIcon,
+  "Semrush": BentoSemrushIcon,
+  "Ahrefs": BentoAhrefsIcon,
+  "Shopify": BentoShopifyIcon,
+};
+
+function buildLogoItems(tools: { name: string }[]) {
+  return tools.map((t) => {
+    const Icon = BENTO_TOOL_ICON_MAP[t.name];
+    return {
+      node: (
+        <div className="flex items-center gap-2">
+          {Icon && <span className="text-brand-mid"><Icon /></span>}
+          <span className="font-mono text-xs text-text-secondary">{t.name}</span>
+        </div>
+      ),
+      ariaLabel: t.name,
+    };
+  });
+}
 
 const ICON_MAP: Record<string, LucideIcon> = {
   brain: Brain,
@@ -611,7 +626,7 @@ export function SubServicesBento({ data, className, ...props }: SubServicesBento
               </p>
               <div className="pb-4">
                 <LogoLoop
-                  logos={MARKETING_LOGO_ITEMS}
+                  logos={buildLogoItems(data.tools ?? [])}
                   speed={50}
                   direction="left"
                   pauseOnHover

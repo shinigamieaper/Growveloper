@@ -26,9 +26,18 @@ export function AuditProcess({ data, className, ...props }: AuditProcessProps) {
   );
 }
 
+const ROW_SIZE = 3;
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
+
 function ProcessTimeline({ steps }: { steps: AuditProcessData["steps"] }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const lineRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
@@ -41,22 +50,24 @@ function ProcessTimeline({ steps }: { steps: AuditProcessData["steps"] }) {
 
       const circles = containerRef.current.querySelectorAll("[data-step-circle]");
       const cards = containerRef.current.querySelectorAll("[data-step-card]");
+      const lines = containerRef.current.querySelectorAll("[data-row-line]");
 
       gsap.set(circles, { scale: 0, opacity: 0 });
       gsap.set(cards, { opacity: 0, y: 30 });
 
-      if (lineRef.current && !isMobile) {
-        gsap.set(lineRef.current, { scaleX: 0 });
-
-        gsap.to(lineRef.current, {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 70%",
-            end: "top 40%",
-            scrub: 0.6,
-          },
+      if (!isMobile) {
+        lines.forEach((line) => {
+          gsap.set(line, { scaleX: 0 });
+          gsap.to(line, {
+            scaleX: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: line,
+              start: "top 70%",
+              end: "top 40%",
+              scrub: 0.6,
+            },
+          });
         });
       }
 
@@ -121,43 +132,56 @@ function ProcessTimeline({ steps }: { steps: AuditProcessData["steps"] }) {
     }
   };
 
+  const rows = chunkArray(steps, ROW_SIZE);
+
   return (
-    <div ref={containerRef} className="relative">
-      <div
-        ref={lineRef}
-        className="absolute left-[8.33%] right-[8.33%] top-8 hidden h-0.5 origin-left bg-gradient-to-r from-brand-mid/60 via-brand-mid to-brand-mid/60 md:block"
-        aria-hidden
-      />
-
-      <div className={`${fluidGrid(steps.length, 3)} gap-10 md:gap-6`}>
-        {steps.map((step) => (
-          <div key={step.stepNumber} className="relative flex flex-col items-center text-center">
+    <div ref={containerRef} className="flex flex-col gap-16">
+      {rows.map((row, rowIndex) => (
+        <div key={rowIndex} className="relative">
+          {/* Connecting line — spans from circle 1 centre to circle N centre in this row */}
+          {row.length > 1 && (
             <div
-              data-step-circle
-              className="group relative z-10 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-2 border-brand-mid/40 bg-bg-secondary transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-mid/20"
-              onMouseEnter={handleCircleEnter}
-              onMouseLeave={handleCircleLeave}
-              role="presentation"
-            >
-              <span
-                data-step-number
-                className="heading-font text-2xl font-bold text-brand-mid"
-              >
-                {step.stepNumber}
-              </span>
-            </div>
+              data-row-line
+              className="absolute top-8 hidden h-0.5 origin-left bg-gradient-to-r from-brand-mid/60 via-brand-mid to-brand-mid/60 md:block"
+              style={{
+                left: `${(1 / (2 * row.length)) * 100}%`,
+                right: `${(1 / (2 * row.length)) * 100}%`,
+              }}
+              aria-hidden
+            />
+          )}
 
-            <div data-step-card className="mt-4">
-              <h3 className="heading-font text-lg font-bold text-text-primary">
-                {step.title}
-              </h3>
-              <p className="mt-2 max-w-xs text-sm leading-relaxed text-text-secondary">
-                {step.description}
-              </p>
-            </div>
+          <div className={`${fluidGrid(row.length, 3)} gap-10 md:gap-6`}>
+            {row.map((step) => (
+              <div key={step.stepNumber} className="relative flex flex-col items-center text-center">
+                <div
+                  data-step-circle
+                  className="group relative z-10 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-2 border-brand-mid/40 bg-bg-secondary transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-mid/20"
+                  onMouseEnter={handleCircleEnter}
+                  onMouseLeave={handleCircleLeave}
+                  role="presentation"
+                >
+                  <span
+                    data-step-number
+                    className="heading-font text-2xl font-bold text-brand-mid"
+                  >
+                    {step.stepNumber}
+                  </span>
+                </div>
+
+                <div data-step-card className="mt-4">
+                  <h3 className="heading-font text-lg font-bold text-text-primary">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-text-secondary">
+                    {step.description}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }

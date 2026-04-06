@@ -84,15 +84,30 @@ function BentoGA4Icon() {
   );
 }
 
-const TECH_LOGO_ITEMS = [
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoNextjsIcon /></span><span className="font-mono text-xs text-text-secondary">Next.js</span></div>, ariaLabel: "Next.js" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoVercelIcon /></span><span className="font-mono text-xs text-text-secondary">Vercel</span></div>, ariaLabel: "Vercel" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoTSIcon /></span><span className="font-mono text-xs text-text-secondary">TypeScript</span></div>, ariaLabel: "TypeScript" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoTailwindIcon /></span><span className="font-mono text-xs text-text-secondary">Tailwind CSS</span></div>, ariaLabel: "Tailwind CSS" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoSanityIcon /></span><span className="font-mono text-xs text-text-secondary">Sanity</span></div>, ariaLabel: "Sanity" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoGTMIcon /></span><span className="font-mono text-xs text-text-secondary">GTM</span></div>, ariaLabel: "GTM" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><BentoGA4Icon /></span><span className="font-mono text-xs text-text-secondary">GA4</span></div>, ariaLabel: "GA4" },
-];
+const BENTO_TOOL_ICON_MAP: Record<string, React.ComponentType> = {
+  "Next.js": BentoNextjsIcon,
+  "Vercel": BentoVercelIcon,
+  "TypeScript": BentoTSIcon,
+  "Tailwind CSS": BentoTailwindIcon,
+  "Sanity": BentoSanityIcon,
+  "GTM": BentoGTMIcon,
+  "GA4": BentoGA4Icon,
+};
+
+function buildLogoItems(tools: { name: string }[]) {
+  return tools.map((t) => {
+    const Icon = BENTO_TOOL_ICON_MAP[t.name];
+    return {
+      node: (
+        <div className="flex items-center gap-2">
+          {Icon && <span className="text-brand-mid"><Icon /></span>}
+          <span className="font-mono text-xs text-text-secondary">{t.name}</span>
+        </div>
+      ),
+      ariaLabel: t.name,
+    };
+  });
+}
 
 const ICON_MAP: Record<string, LucideIcon> = {
   monitor: Monitor,
@@ -487,7 +502,7 @@ export function SubServicesBento({
               </p>
               <div className="pb-4">
                 <LogoLoop
-                  logos={TECH_LOGO_ITEMS}
+                  logos={buildLogoItems(data.tools ?? [])}
                   speed={50}
                   direction="left"
                   pauseOnHover

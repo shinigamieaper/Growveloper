@@ -29,23 +29,22 @@ import LogoLoop from "@/components/ui/logo-loop";
 
 /* ─── AI tool icons from shared module ─── */
 
-import {
-  MakeIcon,
-  N8nIcon,
-  VoiceflowIcon,
-  OpenAIIcon,
-  ZapierIcon,
-  HubSpotIcon,
-} from "@/components/shared/AutomationToolIcons";
+import { AUTOMATION_TOOL_ICON_MAP } from "@/components/shared/AutomationToolIcons";
 
-const AI_LOGO_ITEMS = [
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><MakeIcon className="h-5 w-5" /></span><span className="font-mono text-xs text-text-secondary">Make.com</span></div>, ariaLabel: "Make.com" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><N8nIcon className="h-5 w-5" /></span><span className="font-mono text-xs text-text-secondary">n8n</span></div>, ariaLabel: "n8n" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><VoiceflowIcon className="h-5 w-5" /></span><span className="font-mono text-xs text-text-secondary">Voiceflow</span></div>, ariaLabel: "Voiceflow" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><OpenAIIcon className="h-5 w-5" /></span><span className="font-mono text-xs text-text-secondary">OpenAI API</span></div>, ariaLabel: "OpenAI API" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><ZapierIcon className="h-5 w-5" /></span><span className="font-mono text-xs text-text-secondary">Zapier</span></div>, ariaLabel: "Zapier" },
-  { node: <div className="flex items-center gap-2"><span className="text-brand-mid"><HubSpotIcon className="h-5 w-5" /></span><span className="font-mono text-xs text-text-secondary">HubSpot</span></div>, ariaLabel: "HubSpot" },
-];
+function buildLogoItems(tools: { name: string }[]) {
+  return tools.map((t) => {
+    const Icon = AUTOMATION_TOOL_ICON_MAP[t.name];
+    return {
+      node: (
+        <div className="flex items-center gap-2">
+          {Icon && <span className="text-brand-mid"><Icon className="h-5 w-5" /></span>}
+          <span className="font-mono text-xs text-text-secondary">{t.name}</span>
+        </div>
+      ),
+      ariaLabel: t.name,
+    };
+  });
+}
 
 const ICON_MAP: Record<string, LucideIcon> = {
   filter: Filter,
@@ -430,7 +429,7 @@ export function SubServicesBento({ data, className, ...props }: SubServicesBento
               </p>
               <div className="pb-4">
                 <LogoLoop
-                  logos={AI_LOGO_ITEMS}
+                  logos={buildLogoItems(data.tools ?? [])}
                   speed={50}
                   direction="left"
                   pauseOnHover

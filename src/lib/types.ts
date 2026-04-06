@@ -647,6 +647,7 @@ export interface SubServicesData {
   highlightedWord?: string;
   description?: string;
   items: SubServiceItem[];
+  tools?: { name: string }[];
 }
 
 export interface ServiceQualifierData {
@@ -828,6 +829,8 @@ export interface ServicePageCmsData {
   qualifiersHeadline?: string;
   qualifiersHighlightedWord?: string;
   qualifiers?: string[];
+  // Sub Services — Bento Tools
+  bentoTools?: { name: string }[];
   // Process
   processHeadline?: string;
   processHighlightedWord?: string;

@@ -94,6 +94,7 @@ export default async function AIPage() {
           description: item.description,
           icon: item.icon,
         })),
+        tools: page.bentoTools ?? [],
       }
     : null;
 

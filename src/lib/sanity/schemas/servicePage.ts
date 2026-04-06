@@ -105,6 +105,22 @@ export default defineType({
       ],
     }),
 
+    defineField({
+      name: "bentoTools",
+      title: "Bento Tools / Platforms",
+      description: "Tool names shown in the scrolling strip inside the sub-services grid. Use exact names matching your service's icon set.",
+      type: "array",
+      fieldset: "subServices",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({ name: "name", title: "Tool Name", type: "string" }),
+          ],
+        }),
+      ],
+    }),
+
     /* ── Qualifiers ── */
     defineField({ name: "qualifiersHeadline", title: "Qualifiers Headline", type: "string", fieldset: "qualifiers" }),
     defineField({ name: "qualifiersHighlightedWord", title: "Qualifiers Highlighted Word", type: "string", fieldset: "qualifiers" }),
