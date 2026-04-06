@@ -94,15 +94,23 @@ const BENTO_TOOL_ICON_MAP: Record<string, React.ComponentType> = {
   "GA4": BentoGA4Icon,
 };
 
-function buildLogoItems(tools: { name: string }[]) {
+function buildLogoItems(tools: { name: string; logo?: string }[]) {
   return tools.map((t) => {
     const Icon = BENTO_TOOL_ICON_MAP[t.name];
     return {
       node: (
-        <div className="flex items-center gap-2">
-          {Icon && <span className="text-brand-mid"><Icon /></span>}
-          <span className="font-mono text-xs text-text-secondary">{t.name}</span>
-        </div>
+        <span className="inline-flex items-center gap-2.5 rounded-2xl border border-glass-border bg-glass-bg px-5 py-3 backdrop-blur-sm">
+          {t.logo ? (
+            <img src={t.logo} alt={t.name} width={20} height={20} className="h-5 w-5 object-contain logo-tint" aria-hidden />
+          ) : Icon ? (
+            <span className="h-5 w-5 text-brand-mid" aria-hidden><Icon /></span>
+          ) : (
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-mid/20 font-mono text-[10px] font-bold text-brand-mid">
+              {t.name.charAt(0)}
+            </span>
+          )}
+          <span className="whitespace-nowrap text-sm text-text-primary">{t.name}</span>
+        </span>
       ),
       ariaLabel: t.name,
     };

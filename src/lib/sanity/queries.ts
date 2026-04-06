@@ -355,7 +355,7 @@ export async function getServicePage(pageId: string): Promise<ServicePageCmsData
       subServicesDescription,
       subServiceItems[]{ icon, title, description },
       bentoToolsLabel,
-      bentoTools[]{ name },
+      "bentoTools": bentoTools[]->{ name, "logo": logo.asset->url },
 
       // Qualifiers
       qualifiersHeadline,

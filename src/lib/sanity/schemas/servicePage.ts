@@ -115,16 +115,9 @@ export default defineType({
     defineField({
       name: "bentoTools",
       title: "Bento Tools / Platforms",
-      description: "Tool names shown in the scrolling strip inside the sub-services bento grid (e.g. React, Node.js, Figma). Add as many as you need.",
+      description: "Tools shown in the scrolling strip at the bottom of the bento grid. Pick from the Tool Registry — logos and names are pulled automatically.",
       type: "array",
-      of: [
-        defineArrayMember({
-          type: "object",
-          fields: [
-            defineField({ name: "name", title: "Tool Name", type: "string" }),
-          ],
-        }),
-      ],
+      of: [defineArrayMember({ type: "reference", to: [{ type: "toolRegistry" }] })],
     }),
 
     /* ── Qualifiers ── */
