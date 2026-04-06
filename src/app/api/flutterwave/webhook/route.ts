@@ -43,6 +43,8 @@ export async function POST(req: NextRequest) {
   const customerName = customer?.name as string | undefined;
   const amount = data.amount as number | undefined;
   const currency = data.currency as string | undefined;
+
+  const productType = meta?.product_type;
   const resourceSlug = meta?.resource_slug;
 
   if (!customerEmail) {
@@ -50,31 +52,61 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing customer email" }, { status: 400 });
   }
 
-  const confirmationUrl = `${SITE_URL}/resources/${resourceSlug ?? ""}/confirmed`;
-  const amountFormatted = amount != null && currency
-    ? `${currency} ${amount.toLocaleString()}`
-    : undefined;
+  const isAudit = productType === "audit";
+  const confirmationUrl = isAudit
+    ? `${SITE_URL}/audit/confirmed`
+    : `${SITE_URL}/resources/${resourceSlug ?? ""}/confirmed`;
+
+  const amountFormatted =
+    amount != null && currency ? `${currency} ${amount.toLocaleString()}` : undefined;
+
+  const greeting = `Hi${customerName ? ` ${customerName}` : ""}`;
+  const paymentLine = amountFormatted
+    ? ` your payment of <strong>${amountFormatted}</strong> was received.`
+    : " your payment was received.";
+
+  const emailHtml = isAudit
+    ? `
+      <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #0a0a0a;">
+        <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Your Growth Audit is confirmed.</p>
+        <p style="color: #4a4a4a; margin-bottom: 24px;">
+          ${greeting},${paymentLine}
+          Juwon will be in touch within 1–2 business days to kick things off.
+        </p>
+        <a href="${confirmationUrl}" style="display: inline-block; background: #2b7575; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 100px; font-weight: 600; font-size: 14px;">
+          View confirmation
+        </a>
+        <p style="margin-top: 32px; font-size: 12px; color: #7a7a7a;">
+          GROWVELOPER · Questions? Reply to this email.
+        </p>
+      </div>
+    `
+    : `
+      <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #0a0a0a;">
+        <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Payment confirmed.</p>
+        <p style="color: #4a4a4a; margin-bottom: 24px;">
+          ${greeting},${paymentLine}
+          Head to your confirmation page to access your download.
+        </p>
+        <a href="${confirmationUrl}" style="display: inline-block; background: #2b7575; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 100px; font-weight: 600; font-size: 14px;">
+          Get your download
+        </a>
+        <p style="margin-top: 32px; font-size: 12px; color: #7a7a7a;">
+          GROWVELOPER · Questions? Reply to this email.
+        </p>
+      </div>
+    `;
+
+  const emailSubject = isAudit
+    ? "Your Growth Audit is confirmed — GROWVELOPER"
+    : "Payment confirmed — GROWVELOPER";
 
   try {
     await resend.emails.send({
       from: "Growveloper <hello@growveloper.com>",
       to: customerEmail,
-      subject: "Payment confirmed — GROWVELOPER",
-      html: `
-        <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #0a0a0a;">
-          <p style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Payment confirmed.</p>
-          <p style="color: #4a4a4a; margin-bottom: 24px;">
-            Hi${customerName ? ` ${customerName}` : ""},${amountFormatted ? ` your payment of <strong>${amountFormatted}</strong> was received.` : " your payment was received."}
-            Head to your confirmation page to access your download.
-          </p>
-          <a href="${confirmationUrl}" style="display: inline-block; background: #2b7575; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 100px; font-weight: 600; font-size: 14px;">
-            Get your download
-          </a>
-          <p style="margin-top: 32px; font-size: 12px; color: #7a7a7a;">
-            GROWVELOPER · Questions? Reply to this email.
-          </p>
-        </div>
-      `,
+      subject: emailSubject,
+      html: emailHtml,
     });
   } catch (err) {
     console.error("[flw-webhook] Failed to send confirmation email:", err);
