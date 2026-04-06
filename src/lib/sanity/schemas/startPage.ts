@@ -109,8 +109,7 @@ export default defineType({
           ],
           preview: {
             select: { title: "stepTitle", subtitle: "order" },
-            prepare(selection) {
-              const { title, subtitle } = selection as { title: string; subtitle: string };
+            prepare({ title, subtitle }: { title?: string; subtitle?: number }) {
               return { title: title || "Untitled Step", subtitle: `Step ${subtitle}` };
             },
           },
