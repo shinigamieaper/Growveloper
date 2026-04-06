@@ -108,7 +108,7 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
               <SpotlightCard
                 key={tier.name}
                 spotlightColor="rgba(90, 177, 177, 0.15)"
-                className={cn("h-full", isHighlighted && "!overflow-visible")}
+                className="h-full"
               >
                 <div
                   className={cn(
@@ -118,51 +118,54 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
                       : "border-glass-border bg-glass-bg backdrop-blur-md",
                   )}
                 >
+                  {/* Badge — inline centered */}
                   {tier.badge && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-mid px-4 py-1 text-[10px] font-bold uppercase tracking-wider text-base-black">
-                      {tier.badge}
-                    </span>
+                    <div className="mb-4 flex justify-center">
+                      <span className="rounded-full bg-brand-dark px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-base-white">
+                        {tier.badge}
+                      </span>
+                    </div>
                   )}
 
-                  <h3 className="heading-font text-lg font-bold text-text-primary">
-                    {tier.name}
-                  </h3>
-
-                  <div className="mt-3 flex items-baseline gap-1">
-                    <span
-                      className={cn(
-                        "heading-font text-3xl font-bold md:text-4xl",
-                        isHighlighted ? "text-brand-mid" : "text-text-primary",
-                      )}
-                    >
+                  {/* Price hero */}
+                  <div className="mb-1 text-center">
+                    <span className="heading-font text-5xl font-black text-brand-mid sm:text-6xl">
                       {tier.price}
                     </span>
-                    {tier.priceSubtext && (
-                      <span className="text-sm text-text-tertiary">
-                        {tier.priceSubtext}
-                      </span>
-                    )}
                   </div>
+                  {tier.priceSubtext && (
+                    <p className="mb-4 text-center text-xs text-text-tertiary">
+                      {tier.priceSubtext}
+                    </p>
+                  )}
 
-                  <ul className="mt-6 flex flex-1 flex-col gap-3">
-                    {tier.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2.5">
-                        <Check
-                          className={cn(
-                            "mt-0.5 h-4 w-4 shrink-0",
-                            isHighlighted ? "text-brand-mid" : "text-brand-dark",
-                          )}
-                          strokeWidth={2.5}
-                          aria-hidden
-                        />
-                        <span className="text-sm leading-relaxed text-text-secondary">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                  {/* Tier name as card tagline */}
+                  <p className="mb-4 text-center text-sm font-semibold text-text-primary">
+                    {tier.name}
+                  </p>
 
-                  <div className="mt-8">
+                  {/* Divider + 2-col features grid */}
+                  {tier.features.length > 0 && (
+                    <>
+                      <div className="mb-4 border-t border-glass-border" />
+                      <div className="mb-5 grid flex-1 grid-cols-2 gap-x-4 gap-y-2">
+                        {tier.features.map((feature, index) => (
+                          <div key={`${feature}-${index}`} className="flex min-w-0 items-start gap-1.5">
+                            <Check
+                              className="mt-0.5 h-3 w-3 shrink-0 text-brand-mid"
+                              strokeWidth={2.5}
+                              aria-hidden
+                            />
+                            <span className="text-[11px] leading-snug text-text-secondary">
+                              {feature}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  <div className="mt-auto">
                     <AnimatePresence mode="wait">
                       {isCheckoutTier && isActive ? (
                         /* ── Email capture form ── */
