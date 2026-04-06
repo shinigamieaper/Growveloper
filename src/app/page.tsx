@@ -127,7 +127,7 @@ export default async function Home() {
             description:
               page.seoDescription ??
               settings?.seoDescription ??
-              "Technical growth engineering — where clean code meets marketing ROI.",
+              "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
           }),
         }}
       />
