@@ -63,36 +63,35 @@ export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
           <p className="max-w-lg text-center text-base text-text-secondary md:text-lg">
             {subStatement}
           </p>
+
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
+            <MagneticElement strength={0.4}>
+              <MovingBorderButton
+                as={Link}
+                href={primaryCtaUrl}
+                duration={3000}
+                containerClassName="inline-flex w-full sm:w-auto"
+                onClick={() => trackCTAClick(pathname, primaryCtaLabel, primaryCtaUrl)}
+              >
+                {primaryCtaLabel}
+              </MovingBorderButton>
+            </MagneticElement>
+
+            <MagneticElement strength={0.3}>
+              <MovingBorderButton
+                as={Link}
+                href={secondaryCtaUrl}
+                duration={3500}
+                variant="inverted"
+                containerClassName="inline-flex w-full sm:w-auto"
+                onClick={() => trackCTAClick(pathname, secondaryCtaLabel ?? "", secondaryCtaUrl ?? "")}
+              >
+                {secondaryCtaLabel}
+              </MovingBorderButton>
+            </MagneticElement>
+          </div>
         </motion.div>
       </LampContainer>
-
-      {/* CTAs — outside LampContainer, pulled up into glow. No scroll trigger — hero CTAs must be visible on load. */}
-      <div className="relative z-60 mx-auto -mt-32 flex flex-col items-center gap-3 px-6 pb-16 sm:flex-row sm:justify-center sm:gap-4">
-        <MagneticElement strength={0.4}>
-          <MovingBorderButton
-            as={Link}
-            href={primaryCtaUrl}
-            duration={3000}
-            containerClassName="inline-flex w-full sm:w-auto"
-            onClick={() => trackCTAClick(pathname, primaryCtaLabel, primaryCtaUrl)}
-          >
-            {primaryCtaLabel}
-          </MovingBorderButton>
-        </MagneticElement>
-
-        <MagneticElement strength={0.3}>
-          <MovingBorderButton
-            as={Link}
-            href={secondaryCtaUrl}
-            duration={3500}
-            variant="inverted"
-            containerClassName="inline-flex w-full sm:w-auto"
-            onClick={() => trackCTAClick(pathname, secondaryCtaLabel ?? "", secondaryCtaUrl ?? "")}
-          >
-            {secondaryCtaLabel}
-          </MovingBorderButton>
-        </MagneticElement>
-      </div>
 
       {scrollCueTargetId && (
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[60] md:left-auto md:right-12 md:translate-x-0">
