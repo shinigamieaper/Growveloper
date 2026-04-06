@@ -22,6 +22,9 @@ import workPage from "./workPage";
 import privacyPage from "./privacyPage";
 import termsPage from "./termsPage";
 import automationsPage from "./automationsPage";
+import startPage from "./startPage";
+import startConfirmedPage from "./startConfirmedPage";
+import auditConfirmedPage from "./auditConfirmedPage";
 
 export const schemaTypes = [
   toolRegistry,
@@ -48,4 +51,7 @@ export const schemaTypes = [
   privacyPage,
   termsPage,
   automationsPage,
+  startPage,
+  startConfirmedPage,
+  auditConfirmedPage,
 ];

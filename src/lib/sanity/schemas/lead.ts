@@ -81,6 +81,49 @@ export default defineType({
       type: "datetime",
       readOnly: true,
     }),
+    defineField({
+      name: "status",
+      title: "Status",
+      type: "string",
+      description: "Triage leads in Sanity Studio",
+      initialValue: "new",
+      options: {
+        list: [
+          { title: "New", value: "new" },
+          { title: "Contacted", value: "contacted" },
+          { title: "Qualified", value: "qualified" },
+          { title: "Closed", value: "closed" },
+        ],
+        layout: "radio",
+      },
+    }),
+    defineField({
+      name: "notificationSent",
+      title: "Notification Sent",
+      type: "boolean",
+      description: "Whether the notification email was sent successfully",
+      initialValue: false,
+      readOnly: true,
+    }),
+    defineField({
+      name: "responses",
+      title: "Additional Responses",
+      description: "Dynamic form field responses beyond the core fields",
+      type: "array",
+      readOnly: true,
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "response",
+          fields: [
+            defineField({ name: "fieldId", title: "Field ID", type: "string" }),
+            defineField({ name: "label", title: "Label", type: "string" }),
+            defineField({ name: "value", title: "Value", type: "string" }),
+          ],
+          preview: { select: { title: "label", subtitle: "value" } },
+        }),
+      ],
+    }),
   ],
   preview: {
     select: {
