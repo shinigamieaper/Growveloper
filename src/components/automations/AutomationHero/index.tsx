@@ -39,7 +39,7 @@ export function AutomationHero({ data, className, ...props }: AutomationHeroProp
       </LampContainer>
 
       {/* Price card + CTAs — outside LampContainer. No ScrollFadeUp — must be visible on load. */}
-      <div className="relative z-60 mx-auto -mt-48 flex max-w-xl flex-col items-center gap-8 px-6 pb-24">
+      <div className="relative z-60 mx-auto -mt-48 flex max-w-2xl flex-col items-center gap-8 px-6 pb-24">
         <div className="inline-flex flex-col items-center gap-3 rounded-2xl border border-glass-border bg-glass-bg px-8 py-6 backdrop-blur-sm">
           {isFixed ? (
             <>

@@ -35,7 +35,7 @@ export function LampContainer({ children, className, ...props }: LampContainerPr
       )}
       {...props}
     >
-      <div className="pointer-events-none relative z-0 flex w-full flex-1 sm:scale-y-125 items-center justify-center isolate">
+      <div className="pointer-events-none relative z-0 flex w-full flex-1 sm:scale-y-125 items-center justify-center isolate -translate-y-12 md:-translate-y-16">
         {/* Left conic gradient */}
         <motion.div
           initial={{ opacity: 0.5, width: initialWidth }}
@@ -111,8 +111,8 @@ export function LampContainer({ children, className, ...props }: LampContainerPr
         <div className="absolute inset-auto z-40 h-44 w-full max-w-3xl -translate-y-[12.5rem] bg-bg-primary opacity-70 [mask-image:radial-gradient(ellipse_at_center,white_40%,transparent_70%)]" />
       </div>
 
-      {/* Content area */}
-      <div className="relative z-[60] flex -translate-y-40 flex-col items-center px-5 sm:-translate-y-36 md:-translate-y-44">
+      {/* Content area — absolutely anchored just below the glow line, viewport-height-independent */}
+      <div className="absolute inset-x-0 z-60 flex flex-col items-center px-5 top-[calc(50%-8rem)] sm:top-[calc(50%-7rem)] md:top-[calc(50%-6rem)]">
         {children}
       </div>
     </div>

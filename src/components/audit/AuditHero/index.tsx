@@ -155,40 +155,36 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
       </LampContainer>
 
       {/* Price card — outside LampContainer, pulled up into glow. No scroll trigger — must be visible on load. */}
-      <div className="relative z-60 mx-auto -mt-48 flex max-w-md flex-col items-center gap-6 px-6 pb-4">
-          <div className="w-full rounded-2xl border border-glass-border bg-glass-bg p-6 backdrop-blur-md sm:p-8">
+      <div className="relative z-60 mx-auto -mt-64 flex max-w-2xl flex-col items-center gap-6 px-6 pb-4">
+          <div className="w-full rounded-2xl border border-glass-border bg-glass-bg px-6 py-5 backdrop-blur-md sm:px-10 sm:py-6">
 
-            {/* Badge */}
-            {priceLabel && (
-              <div className="mb-4 flex justify-center">
-                <span className="rounded-full bg-brand-dark px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-base-white">
+            {/* Top row: badge + price + note */}
+            <div className="flex flex-col items-center gap-1 sm:flex-row sm:justify-center sm:gap-4">
+              {priceLabel && (
+                <span className="rounded-full bg-brand-dark px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-base-white">
                   {priceLabel}
                 </span>
-              </div>
-            )}
-
-            {/* Price hero */}
-            <div className="mb-1 text-center">
-              <span className="heading-font text-5xl font-black text-brand-mid sm:text-6xl">
+              )}
+              <span className="heading-font text-4xl font-black text-brand-mid sm:text-5xl">
                 {price}
               </span>
+              {heroPriceNote && (
+                <span className="text-xs text-text-tertiary">{heroPriceNote}</span>
+              )}
             </div>
-            {heroPriceNote && (
-              <p className="mb-4 text-center text-xs text-text-tertiary">{heroPriceNote}</p>
-            )}
 
             {/* Card tagline */}
             {heroCardTagline && (
-              <p className="mb-4 text-center text-sm font-semibold text-text-primary">
+              <p className="mt-2 text-center text-sm font-semibold text-text-primary">
                 {heroCardTagline}
               </p>
             )}
 
-            {/* Divider + 2-col features grid */}
+            {/* Divider + features (3-col on sm+) */}
             {heroFeatures && heroFeatures.length > 0 && (
               <>
-                <div className="mb-4 border-t border-glass-border" />
-                <div className="mb-5 grid grid-cols-2 gap-x-4 gap-y-2">
+                <div className="my-3 border-t border-glass-border" />
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-3">
                   {heroFeatures.map((feature, index) => (
                     <div key={`${feature}-${index}`} className="flex min-w-0 items-start gap-1.5">
                       <Check

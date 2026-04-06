@@ -108,9 +108,8 @@ export default defineType({
     defineField({
       name: "bentoTools",
       title: "Bento Tools / Platforms",
-      description: "Tool names shown in the scrolling strip inside the sub-services grid. Use exact names matching your service's icon set.",
+      description: "Tool names shown in the scrolling strip inside the sub-services bento grid (e.g. React, Node.js, Figma). Add as many as you need.",
       type: "array",
-      fieldset: "subServices",
       of: [
         defineArrayMember({
           type: "object",
