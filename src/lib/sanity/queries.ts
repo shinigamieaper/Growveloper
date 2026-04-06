@@ -1098,7 +1098,8 @@ export async function getStartPage(): Promise<StartPageData | null> {
         }
       },
       seoTitle,
-      seoDescription
+      seoDescription,
+      "ogImage": ogImage.asset->url
     }`
   );
 }
@@ -1118,7 +1119,8 @@ export async function getStartConfirmedPage(): Promise<StartConfirmedPageData | 
       secondaryCtaLabel,
       secondaryCtaUrl,
       seoTitle,
-      seoDescription
+      seoDescription,
+      "ogImage": ogImage.asset->url
     }`
   );
 }
@@ -1138,7 +1140,8 @@ export async function getAuditConfirmedPage(): Promise<AuditConfirmedPageData | 
       calendarCtaLabel,
       calendarCtaUrl,
       seoTitle,
-      seoDescription
+      seoDescription,
+      "ogImage": ogImage.asset->url
     }`
   );
 }
