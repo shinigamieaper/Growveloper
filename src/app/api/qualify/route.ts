@@ -6,15 +6,20 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const sanityWriteClient = process.env.SANITY_API_TOKEN
-  ? createClient({
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "",
-      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-      apiVersion: "2024-01-01",
-      token: process.env.SANITY_API_TOKEN,
-      useCdn: false,
-    })
-  : null;
+const sanityWriteClient = (() => {
+  if (!process.env.SANITY_API_TOKEN) return null;
+  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+    console.warn("[Qualify] NEXT_PUBLIC_SANITY_PROJECT_ID not set — Sanity writes disabled");
+    return null;
+  }
+  return createClient({
+    projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+    apiVersion: "2024-01-01",
+    token: process.env.SANITY_API_TOKEN,
+    useCdn: false,
+  });
+})();
 
 interface DynamicResponse {
   fieldId: string;
@@ -35,6 +40,15 @@ interface LeadPayload {
   additionalContext?: string;
   responses?: DynamicResponse[];
   submittedAt: string;
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 export async function POST(request: Request) {
@@ -136,35 +150,35 @@ async function sendNotificationEmail(lead: LeadPayload): Promise<void> {
   }
 
   const notificationEmail = process.env.NOTIFICATION_EMAIL || "hello@growveloper.com";
-  const servicesFormatted = lead.servicesInterested.join(", ");
+  const servicesFormatted = lead.servicesInterested.map(escapeHtml).join(", ");
 
   const responsesHtml = (lead.responses ?? [])
     .map(
       (r) =>
-        `<tr><td style="padding:8px;font-weight:bold;">${r.label}</td><td style="padding:8px;">${r.value}</td></tr>`
+        `<tr><td style="padding:8px;font-weight:bold;">${escapeHtml(r.label)}</td><td style="padding:8px;">${escapeHtml(r.value)}</td></tr>`
     )
     .join("");
 
   await resend.emails.send({
     from: "Growveloper <hello@growveloper.com>",
     to: notificationEmail,
-    subject: `New Lead: ${lead.name} — ${lead.company}`,
+    subject: `New Lead: ${escapeHtml(lead.name)} — ${escapeHtml(lead.company)}`,
     html: `
       <h2>New Consultation Request</h2>
       <table style="border-collapse:collapse;width:100%;max-width:600px;">
-        <tr><td style="padding:8px;font-weight:bold;">Name</td><td style="padding:8px;">${lead.name}</td></tr>
-        <tr><td style="padding:8px;font-weight:bold;">Email</td><td style="padding:8px;">${lead.email}</td></tr>
-        <tr><td style="padding:8px;font-weight:bold;">Company</td><td style="padding:8px;">${lead.company}</td></tr>
-        ${lead.websiteUrl ? `<tr><td style="padding:8px;font-weight:bold;">Website</td><td style="padding:8px;">${lead.websiteUrl}</td></tr>` : ""}
+        <tr><td style="padding:8px;font-weight:bold;">Name</td><td style="padding:8px;">${escapeHtml(lead.name)}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;">Email</td><td style="padding:8px;">${escapeHtml(lead.email)}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;">Company</td><td style="padding:8px;">${escapeHtml(lead.company)}</td></tr>
+        ${lead.websiteUrl ? `<tr><td style="padding:8px;font-weight:bold;">Website</td><td style="padding:8px;">${escapeHtml(lead.websiteUrl)}</td></tr>` : ""}
         <tr><td style="padding:8px;font-weight:bold;">Services</td><td style="padding:8px;">${servicesFormatted}</td></tr>
-        <tr><td style="padding:8px;font-weight:bold;">Problem</td><td style="padding:8px;">${lead.problemStatement}</td></tr>
-        <tr><td style="padding:8px;font-weight:bold;">Budget</td><td style="padding:8px;">${lead.budgetRange}</td></tr>
-        <tr><td style="padding:8px;font-weight:bold;">Timeline</td><td style="padding:8px;">${lead.timeline}</td></tr>
-        <tr><td style="padding:8px;font-weight:bold;">Contact</td><td style="padding:8px;">${lead.preferredContact}</td></tr>
-        ${lead.additionalContext ? `<tr><td style="padding:8px;font-weight:bold;">Notes</td><td style="padding:8px;">${lead.additionalContext}</td></tr>` : ""}
+        <tr><td style="padding:8px;font-weight:bold;">Problem</td><td style="padding:8px;">${escapeHtml(lead.problemStatement)}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;">Budget</td><td style="padding:8px;">${escapeHtml(lead.budgetRange)}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;">Timeline</td><td style="padding:8px;">${escapeHtml(lead.timeline)}</td></tr>
+        <tr><td style="padding:8px;font-weight:bold;">Contact</td><td style="padding:8px;">${escapeHtml(lead.preferredContact)}</td></tr>
+        ${lead.additionalContext ? `<tr><td style="padding:8px;font-weight:bold;">Notes</td><td style="padding:8px;">${escapeHtml(lead.additionalContext)}</td></tr>` : ""}
         ${responsesHtml}
       </table>
-      <p style="margin-top:16px;font-size:12px;color:#666;">Submitted ${lead.submittedAt}</p>
+      <p style="margin-top:16px;font-size:12px;color:#666;">Submitted ${escapeHtml(lead.submittedAt)}</p>
     `,
   });
 }
