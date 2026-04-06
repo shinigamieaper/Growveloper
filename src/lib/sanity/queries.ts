@@ -49,6 +49,9 @@ import type {
   PrivacyPageData,
   TermsPageData,
   AutomationsPageData,
+  StartPageData,
+  StartConfirmedPageData,
+  AuditConfirmedPageData,
 } from "@/lib/types";
 
 /* ============================================================
@@ -1066,6 +1069,76 @@ export async function getResourcesPage() {
       sectionCtaHighlightedWord,
       sectionCtaLabel,
       sectionCtaDestination
+    }`
+  );
+}
+
+// ── Start Page ──
+
+export async function getStartPage(): Promise<StartPageData | null> {
+  "use cache";
+  return client.fetch<StartPageData | null>(
+    `*[_type == "startPage"][0]{
+      pageHeadline,
+      pageHighlightedWord,
+      pageDescription,
+      formSteps[] | order(order asc) {
+        stepTitle,
+        stepDescription,
+        order,
+        fields[] | order(order asc) {
+          fieldId,
+          label,
+          fieldType,
+          placeholder,
+          required,
+          options[] { value, label },
+          showWhen { dependsOnField, hasValue },
+          order
+        }
+      },
+      seoTitle,
+      seoDescription
+    }`
+  );
+}
+
+// ── Start Confirmed Page ──
+
+export async function getStartConfirmedPage(): Promise<StartConfirmedPageData | null> {
+  "use cache";
+  return client.fetch<StartConfirmedPageData | null>(
+    `*[_type == "startConfirmedPage"][0]{
+      headline,
+      highlightedWord,
+      description,
+      nextSteps[] { stepNumber, title, description },
+      ctaLabel,
+      ctaUrl,
+      secondaryCtaLabel,
+      secondaryCtaUrl,
+      seoTitle,
+      seoDescription
+    }`
+  );
+}
+
+// ── Audit Confirmed Page ──
+
+export async function getAuditConfirmedPage(): Promise<AuditConfirmedPageData | null> {
+  "use cache";
+  return client.fetch<AuditConfirmedPageData | null>(
+    `*[_type == "auditConfirmedPage"][0]{
+      headline,
+      highlightedWord,
+      description,
+      intakeCtaLabel,
+      intakeCtaUrl,
+      nextSteps[] { stepNumber, title, description },
+      calendarCtaLabel,
+      calendarCtaUrl,
+      seoTitle,
+      seoDescription
     }`
   );
 }
