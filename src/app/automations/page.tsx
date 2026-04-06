@@ -37,6 +37,26 @@ export default async function AutomationsPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: page?.seoTitle ?? "Automations Catalogue — GROWVELOPER",
+            description:
+              page?.seoDescription ??
+              "Browse pre-built automation workflows ready to deploy in your business.",
+            url: "https://growveloper.com/automations",
+            provider: {
+              "@type": "Organization",
+              name: "GROWVELOPER",
+              url: "https://growveloper.com",
+            },
+          }),
+        }}
+      />
       {/* 01 — Hero */}
       <AutomationsCatalogueHero
         headline={page?.heroHeadline ?? "Automations that ship"}
