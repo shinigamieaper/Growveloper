@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP, prefersReducedMotion, EASE, DURATION } from "@/lib/gsap";
+import { gsap, useGSAP, prefersReducedMotion, EASE, DURATION } from "@/lib/gsap";
 import { cn, fluidGrid } from "@/lib/utils";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import type { AuditProcessData } from "@/lib/types";
@@ -26,14 +26,35 @@ export function AuditProcess({ data, className, ...props }: AuditProcessProps) {
   );
 }
 
-const ROW_SIZE = 3;
+/**
+ * Splits steps into rows, never leaving a single orphan on its own row.
+ * 1–4 steps → one row. 5+ → balanced rows of 3–4.
+ * Lookup covers realistic CMS step counts; generic fallback handles the rest.
+ */
+function getRowSizes(total: number): number[] {
+  const lookup: Record<number, number[]> = {
+    1: [1], 2: [2], 3: [3], 4: [4],
+    5: [3, 2], 6: [3, 3], 7: [4, 3], 8: [4, 4],
+    9: [3, 3, 3], 10: [4, 3, 3], 11: [4, 4, 3], 12: [4, 4, 4],
+  };
+  if (lookup[total]) return lookup[total];
+  // Fallback for >12: rows of 4
+  const rows: number[] = [];
+  let rem = total;
+  while (rem > 4) { rows.push(4); rem -= 4; }
+  if (rem > 0) rows.push(rem);
+  return rows;
+}
 
-function chunkArray<T>(arr: T[], size: number): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    chunks.push(arr.slice(i, i + size));
+function buildRows<T>(items: T[]): T[][] {
+  const sizes = getRowSizes(items.length);
+  const rows: T[][] = [];
+  let offset = 0;
+  for (const size of sizes) {
+    rows.push(items.slice(offset, offset + size));
+    offset += size;
   }
-  return chunks;
+  return rows;
 }
 
 function ProcessTimeline({ steps }: { steps: AuditProcessData["steps"] }) {
@@ -113,9 +134,7 @@ function ProcessTimeline({ steps }: { steps: AuditProcessData["steps"] }) {
       ease: EASE.snap,
     });
     const text = e.currentTarget.querySelector("[data-step-number]");
-    if (text) {
-      gsap.to(text, { scale: 1.1, duration: 0.25, ease: EASE.snap });
-    }
+    if (text) gsap.to(text, { scale: 1.1, duration: 0.25, ease: EASE.snap });
   };
 
   const handleCircleLeave = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -127,61 +146,59 @@ function ProcessTimeline({ steps }: { steps: AuditProcessData["steps"] }) {
       ease: EASE.snap,
     });
     const text = e.currentTarget.querySelector("[data-step-number]");
-    if (text) {
-      gsap.to(text, { scale: 1, duration: 0.25, ease: EASE.snap });
-    }
+    if (text) gsap.to(text, { scale: 1, duration: 0.25, ease: EASE.snap });
   };
 
-  const rows = chunkArray(steps, ROW_SIZE);
+  const rows = buildRows(steps);
 
   return (
     <div ref={containerRef} className="flex flex-col gap-16">
-      {rows.map((row, rowIndex) => (
-        <div key={rowIndex} className="relative">
-          {/* Connecting line — spans from circle 1 centre to circle N centre in this row */}
-          {row.length > 1 && (
-            <div
-              data-row-line
-              className="absolute top-8 hidden h-0.5 origin-left bg-gradient-to-r from-brand-mid/60 via-brand-mid to-brand-mid/60 md:block"
-              style={{
-                left: `${(1 / (2 * row.length)) * 100}%`,
-                right: `${(1 / (2 * row.length)) * 100}%`,
-              }}
-              aria-hidden
-            />
-          )}
+      {rows.map((row, rowIndex) => {
+        const maxCols: 2 | 3 | 4 = row.length === 4 ? 4 : 3;
+        // Show line only at the breakpoint where all cols are side-by-side
+        const lineBreakpoint = row.length === 4 ? "hidden lg:block" : "hidden md:block";
+        const pct = (1 / (2 * row.length)) * 100;
 
-          <div className={`${fluidGrid(row.length, 3)} gap-10 md:gap-6`}>
-            {row.map((step) => (
-              <div key={step.stepNumber} className="relative flex flex-col items-center text-center">
-                <div
-                  data-step-circle
-                  className="group relative z-10 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-2 border-brand-mid/40 bg-bg-secondary transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-mid/20"
-                  onMouseEnter={handleCircleEnter}
-                  onMouseLeave={handleCircleLeave}
-                  role="presentation"
-                >
-                  <span
-                    data-step-number
-                    className="heading-font text-2xl font-bold text-brand-mid"
+        return (
+          <div key={rowIndex} className="relative">
+            {row.length > 1 && (
+              <div
+                data-row-line
+                className={`absolute top-8 h-0.5 origin-left bg-linear-to-r from-brand-mid/60 via-brand-mid to-brand-mid/60 ${lineBreakpoint}`}
+                style={{ left: `${pct}%`, right: `${pct}%` }}
+                aria-hidden
+              />
+            )}
+
+            <div className={`${fluidGrid(row.length, maxCols)} gap-10 md:gap-6`}>
+              {row.map((step) => (
+                <div key={step.stepNumber} className="relative flex flex-col items-center text-center">
+                  <div
+                    data-step-circle
+                    className="group relative z-10 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-2 border-brand-mid/40 bg-bg-secondary transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-mid/20"
+                    onMouseEnter={handleCircleEnter}
+                    onMouseLeave={handleCircleLeave}
+                    role="presentation"
                   >
-                    {step.stepNumber}
-                  </span>
-                </div>
+                    <span data-step-number className="heading-font text-2xl font-bold text-brand-mid">
+                      {step.stepNumber}
+                    </span>
+                  </div>
 
-                <div data-step-card className="mt-4">
-                  <h3 className="heading-font text-lg font-bold text-text-primary">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-text-secondary">
-                    {step.description}
-                  </p>
+                  <div data-step-card className="mt-4">
+                    <h3 className="heading-font text-lg font-bold text-text-primary">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 max-w-xs text-sm leading-relaxed text-text-secondary">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
