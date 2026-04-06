@@ -423,22 +423,24 @@ export function SubServicesBento({ data, className, ...props }: SubServicesBento
                 );
               })}
             </div>
-            <div className="border-t border-glass-border bg-bg-secondary">
-              <p className="px-6 pt-5 pb-3 font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
-                {data.toolsLabel ?? "Integrations"}
-              </p>
-              <div className="pb-6">
-                <LogoLoop
-                  logos={buildLogoItems(data.tools ?? [])}
-                  speed={50}
-                  direction="left"
-                  pauseOnHover
-                  logoHeight={36}
-                  gap={48}
-                  ariaLabel="AI automation tools"
-                />
+            {data.tools && data.tools.length > 0 && (
+              <div className="border-t border-glass-border bg-bg-secondary">
+                <p className="px-6 pt-5 pb-3 font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
+                  {data.toolsLabel ?? "Integrations"}
+                </p>
+                <div className="pb-6">
+                  <LogoLoop
+                    logos={buildLogoItems(data.tools)}
+                    speed={50}
+                    direction="left"
+                    pauseOnHover
+                    logoHeight={36}
+                    gap={48}
+                    ariaLabel="AI automation tools"
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </ScrollFadeUp>
       </div>
