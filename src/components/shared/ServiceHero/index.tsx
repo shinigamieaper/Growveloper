@@ -69,7 +69,7 @@ export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
 
       {/* CTAs — outside LampContainer, pulled up into glow */}
       <ScrollFadeUp delay={0.35}>
-        <div className="relative z-60 mx-auto -mt-32 flex flex-col items-center gap-3 px-6 pb-16 sm:flex-row sm:gap-4">
+        <div className="relative z-60 mx-auto -mt-32 flex flex-col items-center gap-3 px-6 pb-16 sm:flex-row sm:justify-center sm:gap-4">
           <MagneticElement strength={0.4}>
             <MovingBorderButton
               as={Link}
