@@ -175,13 +175,6 @@ function MobileLottieVisual({ lottiePath, item }: { lottiePath: string; item: St
     });
   }, [isReady, isInView, prefersReduced]);
 
-  // Tap to replay
-  const handleTap = useCallback(() => {
-    if (prefersReduced) return;
-    lottieRef.current?.goToAndStop(0, true);
-    lottieRef.current?.play();
-  }, [prefersReduced]);
-
   if (!animationData || prefersReduced) {
     return <StickyVisualFallback item={item} />;
   }
@@ -189,9 +182,7 @@ function MobileLottieVisual({ lottiePath, item }: { lottiePath: string; item: St
   return (
     <div
       ref={containerRef}
-      className="flex min-h-[240px] w-full cursor-pointer items-center justify-center"
-      onClick={handleTap}
-      aria-label="Tap to replay animation"
+      className="flex min-h-[240px] w-full items-center justify-center"
     >
       <Lottie
         lottieRef={lottieRef}
