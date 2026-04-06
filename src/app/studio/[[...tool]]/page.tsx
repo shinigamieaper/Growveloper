@@ -4,5 +4,9 @@ import { NextStudio } from "next-sanity/studio";
 import config from "../../../../sanity.config";
 
 export default function StudioPage() {
-  return <NextStudio config={config} />;
+  return (
+    <div style={{ marginTop: "calc(var(--navbar-height) * -1)" }}>
+      <NextStudio config={config} />
+    </div>
+  );
 }
