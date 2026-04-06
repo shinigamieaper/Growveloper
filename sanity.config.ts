@@ -7,6 +7,9 @@ const singletonTypes = new Set([
   "homePage",
   "auditPage",
   "aboutPage",
+  "startPage",
+  "startConfirmedPage",
+  "auditConfirmedPage",
   "siteSettings",
   "navigation",
   "footer",
@@ -56,6 +59,18 @@ export default defineConfig({
               .title("About Page")
               .id("aboutPage")
               .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
+            S.listItem()
+              .title("Start Page")
+              .id("startPage")
+              .child(S.document().schemaType("startPage").documentId("startPage")),
+            S.listItem()
+              .title("Start Confirmed")
+              .id("startConfirmedPage")
+              .child(S.document().schemaType("startConfirmedPage").documentId("startConfirmedPage")),
+            S.listItem()
+              .title("Audit Confirmed")
+              .id("auditConfirmedPage")
+              .child(S.document().schemaType("auditConfirmedPage").documentId("auditConfirmedPage")),
 
             S.divider(),
 
