@@ -497,17 +497,17 @@ export function SubServicesBento({
               })}
             </div>
             <div className="border-t border-glass-border bg-bg-secondary">
-              <p className="px-6 pt-4 pb-2 font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
-                Built with
+              <p className="px-6 pt-5 pb-3 font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
+                {data.toolsLabel ?? "Built with"}
               </p>
-              <div className="pb-4">
+              <div className="pb-6">
                 <LogoLoop
                   logos={buildLogoItems(data.tools ?? [])}
                   speed={50}
                   direction="left"
                   pauseOnHover
-                  logoHeight={28}
-                  gap={36}
+                  logoHeight={36}
+                  gap={48}
                   ariaLabel="Tech stack"
                 />
               </div>

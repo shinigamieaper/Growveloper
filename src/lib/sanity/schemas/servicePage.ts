@@ -106,6 +106,13 @@ export default defineType({
     }),
 
     defineField({
+      name: "bentoToolsLabel",
+      title: "Bento Tools Strip Label",
+      description: "Small label above the scrolling tools strip (e.g. 'Platforms', 'Built with', 'Integrations'). Defaults to 'Tools' if left blank.",
+      type: "string",
+    }),
+
+    defineField({
       name: "bentoTools",
       title: "Bento Tools / Platforms",
       description: "Tool names shown in the scrolling strip inside the sub-services bento grid (e.g. React, Node.js, Figma). Add as many as you need.",

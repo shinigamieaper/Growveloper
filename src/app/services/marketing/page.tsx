@@ -85,6 +85,7 @@ export default async function MarketingPage() {
           description: item.description,
           icon: item.icon,
         })),
+        toolsLabel: page.bentoToolsLabel,
         tools: page.bentoTools ?? [],
       }
     : null;
