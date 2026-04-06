@@ -8,6 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: page?.pageTitle ? `${page.pageTitle} — GROWVELOPER` : "Terms of Service — GROWVELOPER",
     description: settings?.seoDescription ?? "",
+    openGraph: settings?.ogImage ? { images: [{ url: settings.ogImage }] } : undefined,
   };
 }
 
@@ -16,7 +17,7 @@ export default async function TermsPage() {
   if (!page) return null;
 
   return (
-    <section className="pt-32 pb-24">
+    <section className="pt-16 pb-24 md:pt-20">
       <div className="mx-auto max-w-3xl px-6">
         {/* Header */}
         <div className="mb-12 border-b border-glass-border pb-8">
