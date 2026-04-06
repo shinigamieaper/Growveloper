@@ -87,6 +87,25 @@ export default async function ResourcePage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: resource.title,
+            description: resource.description,
+            ...(resource.publishedAt ? { datePublished: resource.publishedAt } : {}),
+            url: `https://growveloper.com/resources/${resource.slug}`,
+            publisher: {
+              "@type": "Organization",
+              name: "GROWVELOPER",
+              url: "https://growveloper.com",
+            },
+          }),
+        }}
+      />
       {/* 01 — Header */}
       <section className="pt-32 pb-12 md:pt-40 md:pb-16">
         <div className="mx-auto max-w-3xl px-6">
