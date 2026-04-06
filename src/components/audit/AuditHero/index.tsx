@@ -114,6 +114,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
         throw new Error(json.error ?? "Checkout failed");
       }
 
+      setStatus("idle");
       window.location.href = json.url;
     } catch (err) {
       setStatus("error");
@@ -190,8 +191,8 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
               <>
                 <div className="mb-4 border-t border-glass-border" />
                 <div className="mb-5 grid grid-cols-2 gap-x-4 gap-y-2">
-                  {heroFeatures.map((feature) => (
-                    <div key={feature} className="flex min-w-0 items-start gap-1.5">
+                  {heroFeatures.map((feature, index) => (
+                    <div key={`${feature}-${index}`} className="flex min-w-0 items-start gap-1.5">
                       <Check
                         className="mt-0.5 h-3 w-3 shrink-0 text-brand-mid"
                         strokeWidth={2.5}
@@ -264,7 +265,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                   </button>
                 </motion.div>
               ) : (
-                <motion.div key="cta-button" className="flex flex-col items-center gap-3">
+                <motion.div key="cta-button" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3">
                   <MagneticElement strength={0.4}>
                     {isCheckoutEnabled ? (
                       <MovingBorderButton
