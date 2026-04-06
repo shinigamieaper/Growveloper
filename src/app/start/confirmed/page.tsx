@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import { Check, CalendarDays, MessageCircle, ArrowRight } from "lucide-react";
 import { ConfettiBurst } from "@/components";
-
-export const metadata: Metadata = {
-  title: "Consultation Confirmed — GROWVELOPER",
-  description: "Your consultation request has been received. Here is what happens next.",
-};
+import { getStartConfirmedPage } from "@/lib/sanity/queries";
 
 const CALCOM_URL = process.env.NEXT_PUBLIC_CALCOM_URL || "https://cal.com/growveloper";
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
 
-const nextSteps = [
+const FALLBACK_NEXT_STEPS = [
   {
     number: "01",
     title: "We review your submission",
@@ -28,7 +24,30 @@ const nextSteps = [
   },
 ];
 
-export default function StartConfirmedPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getStartConfirmedPage();
+  return {
+    title: data?.seoTitle ?? "Consultation Confirmed — GROWVELOPER",
+    description: data?.seoDescription ?? "Your consultation request has been received. Here is what happens next.",
+  };
+}
+
+export default async function StartConfirmedPage() {
+  const data = await getStartConfirmedPage();
+
+  const headline = data?.headline ?? "You're in. We'll be in touch.";
+  const description =
+    data?.description ??
+    "Your consultation request has been received. Here's what happens next.";
+  const nextSteps =
+    data?.nextSteps && data.nextSteps.length > 0
+      ? data.nextSteps.map((s) => ({ number: s.stepNumber, title: s.title, description: s.description }))
+      : FALLBACK_NEXT_STEPS;
+  const ctaUrl = data?.ctaUrl || CALCOM_URL;
+  const ctaLabel = data?.ctaLabel ?? "Book a time now";
+  const secondaryCtaUrl = data?.secondaryCtaUrl || (WHATSAPP_NUMBER ? `https://wa.me/${WHATSAPP_NUMBER}` : "");
+  const secondaryCtaLabel = data?.secondaryCtaLabel ?? "Message on WhatsApp";
+
   return (
     <>
       <script
@@ -46,97 +65,76 @@ export default function StartConfirmedPage() {
       />
       <ConfettiBurst />
       <section className="min-h-screen px-6 py-16 md:py-24">
-      <div className="mx-auto max-w-2xl">
-        {/* Success icon */}
-        <div className="mb-8 flex justify-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-dark/15">
-            <Check className="h-8 w-8 text-brand-mid" strokeWidth={2.5} />
+        <div className="mx-auto max-w-2xl">
+          <div className="mb-8 flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-dark/15">
+              <Check className="h-8 w-8 text-brand-mid" strokeWidth={2.5} />
+            </div>
           </div>
-        </div>
 
-        {/* Headline */}
-        <div className="mb-12 text-center">
-          <h1 className="heading-font mb-3 text-3xl font-bold md:text-4xl">
-            You&apos;re in. We&apos;ll be in touch.
-          </h1>
-          <p className="text-text-secondary">
-            Your consultation request has been received. Here&apos;s what happens next.
-          </p>
-        </div>
+          <div className="mb-12 text-center">
+            <h1 className="heading-font mb-3 text-3xl font-bold md:text-4xl">{headline}</h1>
+            <p className="text-text-secondary">{description}</p>
+          </div>
 
-        {/* Next steps */}
-        <div className="mb-12 space-y-6">
-          {nextSteps.map((step) => (
-            <div
-              key={step.number}
-              className="flex gap-4 rounded-xl border border-glass-border bg-bg-secondary p-5"
-            >
-              <span className="heading-font shrink-0 text-2xl font-bold text-brand-mid">
-                {step.number}
-              </span>
-              <div>
-                <h3 className="mb-1 text-sm font-semibold text-text-primary">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-text-secondary">
-                  {step.description}
-                </p>
+          <div className="mb-12 space-y-6">
+            {nextSteps.map((step) => (
+              <div
+                key={step.number}
+                className="flex gap-4 rounded-xl border border-glass-border bg-bg-secondary p-5"
+              >
+                <span className="heading-font shrink-0 text-2xl font-bold text-brand-mid">
+                  {step.number}
+                </span>
+                <div>
+                  <h3 className="mb-1 text-sm font-semibold text-text-primary">{step.title}</h3>
+                  <p className="text-sm text-text-secondary">{step.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Action cards */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <a
-            href={CALCOM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-3 rounded-xl border border-glass-border bg-bg-secondary p-5 transition-all hover:border-brand-mid/50"
-          >
-            <CalendarDays className="h-5 w-5 shrink-0 text-brand-mid" />
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-text-primary">
-                Book a time now
-              </p>
-              <p className="text-xs text-text-tertiary">
-                Skip the wait — pick a slot
-              </p>
-            </div>
-            <ArrowRight className="h-4 w-4 text-text-tertiary transition-transform group-hover:translate-x-0.5" />
-          </a>
-
-          {WHATSAPP_NUMBER && (
+          <div className="grid gap-4 sm:grid-cols-2">
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              href={ctaUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-3 rounded-xl border border-glass-border bg-bg-secondary p-5 transition-all hover:border-brand-mid/50"
             >
-              <MessageCircle className="h-5 w-5 shrink-0 text-brand-mid" />
+              <CalendarDays className="h-5 w-5 shrink-0 text-brand-mid" />
               <div className="flex-1">
-                <p className="text-sm font-semibold text-text-primary">
-                  Message on WhatsApp
-                </p>
-                <p className="text-xs text-text-tertiary">
-                  Quick questions? Chat now
-                </p>
+                <p className="text-sm font-semibold text-text-primary">{ctaLabel}</p>
+                <p className="text-xs text-text-tertiary">Skip the wait — pick a slot</p>
               </div>
               <ArrowRight className="h-4 w-4 text-text-tertiary transition-transform group-hover:translate-x-0.5" />
             </a>
-          )}
-        </div>
 
-        {/* Back to home */}
-        <div className="mt-12 text-center">
-          <a
-            href="/"
-            className="text-sm text-text-tertiary underline-offset-4 transition-colors hover:text-brand-mid hover:underline"
-          >
-            Back to homepage
-          </a>
+            {secondaryCtaUrl && (
+              <a
+                href={secondaryCtaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 rounded-xl border border-glass-border bg-bg-secondary p-5 transition-all hover:border-brand-mid/50"
+              >
+                <MessageCircle className="h-5 w-5 shrink-0 text-brand-mid" />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-text-primary">{secondaryCtaLabel}</p>
+                  <p className="text-xs text-text-tertiary">Quick questions? Chat now</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-text-tertiary transition-transform group-hover:translate-x-0.5" />
+              </a>
+            )}
+          </div>
+
+          <div className="mt-12 text-center">
+            <a
+              href="/"
+              className="text-sm text-text-tertiary underline-offset-4 transition-colors hover:text-brand-mid hover:underline"
+            >
+              Back to homepage
+            </a>
+          </div>
         </div>
-      </div>
       </section>
     </>
   );
