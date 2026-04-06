@@ -972,3 +972,75 @@ export interface LeadSubmission {
   additionalContext?: string;
   submittedAt: string;
 }
+
+/* --- Dynamic Form Types --- */
+export interface FormFieldOption {
+  value: string;
+  label: string;
+}
+
+export interface FormFieldShowWhen {
+  dependsOnField: string;
+  hasValue: string[];
+}
+
+export interface FormField {
+  fieldId: string;
+  label: string;
+  fieldType: "text" | "email" | "url" | "textarea" | "select" | "multiselect" | "radio";
+  placeholder?: string;
+  required: boolean;
+  options?: FormFieldOption[];
+  showWhen?: FormFieldShowWhen;
+  order: number;
+}
+
+export interface FormStep {
+  stepTitle: string;
+  stepDescription: string;
+  order: number;
+  fields: FormField[];
+}
+
+/* --- Start Page --- */
+export interface StartPageData {
+  pageHeadline?: string;
+  pageHighlightedWord?: string;
+  pageDescription?: string;
+  formSteps: FormStep[];
+  seoTitle?: string;
+  seoDescription?: string;
+}
+
+/* --- Confirmation Pages --- */
+export interface ConfirmedNextStep {
+  stepNumber: string;
+  title: string;
+  description: string;
+}
+
+export interface StartConfirmedPageData {
+  headline?: string;
+  highlightedWord?: string;
+  description?: string;
+  nextSteps: ConfirmedNextStep[];
+  ctaLabel?: string;
+  ctaUrl?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+}
+
+export interface AuditConfirmedPageData {
+  headline?: string;
+  highlightedWord?: string;
+  description?: string;
+  intakeCtaLabel?: string;
+  intakeCtaUrl?: string;
+  nextSteps: ConfirmedNextStep[];
+  calendarCtaLabel?: string;
+  calendarCtaUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+}
