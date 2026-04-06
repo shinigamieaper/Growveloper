@@ -20,6 +20,7 @@ const singletonActions = new Set(["publish", "discardChanges", "restore"]);
 export default defineConfig({
   name: "growveloper",
   title: "GROWVELOPER CMS",
+  basePath: "/studio",
 
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production",
