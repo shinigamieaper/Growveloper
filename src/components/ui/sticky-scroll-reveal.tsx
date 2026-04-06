@@ -146,12 +146,12 @@ function MobileLottieVisual({ lottiePath, item }: { lottiePath: string; item: St
   const prefersReduced = usePrefersReducedMotion();
   const animationData = useLottieAnimationData(lottiePath);
   const lottieRef = useRef<LottieRefCurrentProps | null>(null);
+  // containerRef is always rendered so the IntersectionObserver attaches immediately
   const containerRef = useRef<HTMLDivElement>(null);
   const isReadyRef = useRef(false);
   const isInViewRef = useRef(false);
   const hasPlayed = useRef(false);
 
-  // Both paths call tryPlay — whichever fires second wins
   const tryPlay = useCallback(() => {
     if (hasPlayed.current || prefersReduced) return;
     if (!isReadyRef.current || !isInViewRef.current) return;
@@ -181,24 +181,23 @@ function MobileLottieVisual({ lottiePath, item }: { lottiePath: string; item: St
     return () => observer.disconnect();
   }, [prefersReduced, tryPlay]);
 
-  if (!animationData || prefersReduced) {
-    return <StickyVisualFallback item={item} />;
-  }
-
+  // Always render the container so the observer is attached from mount.
+  // Show fallback inside until animationData is ready.
   return (
-    <div
-      ref={containerRef}
-      className="flex min-h-[240px] w-full items-center justify-center"
-    >
-      <Lottie
-        lottieRef={lottieRef}
-        animationData={animationData}
-        autoplay={false}
-        loop={false}
-        className="h-full w-full"
-        rendererSettings={{ preserveAspectRatio: "xMidYMid meet" }}
-        onDOMLoaded={handleReady}
-      />
+    <div ref={containerRef} className="flex min-h-60 w-full items-center justify-center">
+      {!animationData || prefersReduced ? (
+        <StickyVisualFallback item={item} />
+      ) : (
+        <Lottie
+          lottieRef={lottieRef}
+          animationData={animationData}
+          autoplay={false}
+          loop={false}
+          className="h-full w-full"
+          rendererSettings={{ preserveAspectRatio: "xMidYMid meet" }}
+          onDOMLoaded={handleReady}
+        />
+      )}
     </div>
   );
 }
@@ -232,6 +231,7 @@ function DesktopStickyScroll({ items, visualContent }: { items: StickyScrollItem
   const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    if (window.innerWidth < 1024) return;
     if (!sectionRef.current || !trackRef.current) return;
 
     const section = sectionRef.current;
@@ -421,27 +421,16 @@ function MobileStickyScroll({ items, visualContent }: { items: StickyScrollItem[
 }
 
 export function StickyScroll({ items, visualContent, bottomCta, className, ...props }: StickyScrollProps) {
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(max-width: 767px)").matches;
-  });
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 767px)");
-    const handleChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
   if (items.length === 0) return null;
 
+  // Render both layouts — CSS handles visibility. Avoids server/client hydration mismatch
+  // from reading window.matchMedia during render.
   return (
     <div className={cn("w-full overflow-hidden", className)} {...props}>
-      {isMobile ? (
+      <div className="lg:hidden">
         <MobileStickyScroll items={items} visualContent={visualContent} />
-      ) : (
-        <DesktopStickyScroll items={items} visualContent={visualContent} />
-      )}
+      </div>
+      <DesktopStickyScroll items={items} visualContent={visualContent} />
       {bottomCta ? <BottomCtaStrip bottomCta={bottomCta} /> : null}
     </div>
   );
