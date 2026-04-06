@@ -1010,6 +1010,7 @@ export interface StartPageData {
   formSteps: FormStep[];
   seoTitle?: string;
   seoDescription?: string;
+  ogImage?: string;
 }
 
 /* --- Confirmation Pages --- */
@@ -1030,6 +1031,7 @@ export interface StartConfirmedPageData {
   secondaryCtaUrl?: string;
   seoTitle?: string;
   seoDescription?: string;
+  ogImage?: string;
 }
 
 export interface AuditConfirmedPageData {
@@ -1043,4 +1045,5 @@ export interface AuditConfirmedPageData {
   calendarCtaUrl?: string;
   seoTitle?: string;
   seoDescription?: string;
+  ogImage?: string;
 }
