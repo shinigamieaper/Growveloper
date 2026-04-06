@@ -7,6 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: data?.seoTitle ?? "Book a Consultation — GROWVELOPER",
     description: data?.seoDescription ?? "Tell us about your project and book a free consultation.",
+    openGraph: data?.ogImage ? { images: [{ url: data.ogImage }] } : undefined,
   };
 }
 

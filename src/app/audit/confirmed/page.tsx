@@ -34,6 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       data?.seoDescription ??
       "Your growth audit is booked. Complete the intake form and we'll get started.",
+    openGraph: data?.ogImage ? { images: [{ url: data.ogImage }] } : undefined,
   };
 }
 
@@ -55,6 +56,19 @@ export default async function AuditConfirmedPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "Audit Confirmed — GROWVELOPER",
+            description: "Your growth audit is booked. Complete the intake form and we'll get started.",
+            url: "https://growveloper.com/audit/confirmed",
+          }),
+        }}
+      />
       <section className="min-h-screen px-6 py-16 md:py-24">
         <div className="mx-auto max-w-2xl">
           <div className="mb-8 flex justify-center">
