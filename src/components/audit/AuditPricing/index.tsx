@@ -112,7 +112,7 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
               >
                 <div
                   className={cn(
-                    "relative flex h-full flex-col rounded-2xl border p-6 md:p-8",
+                    "relative flex h-full flex-col rounded-2xl border p-6 pb-8 md:p-10",
                     isHighlighted
                       ? "border-brand-mid/40 bg-glass-bg backdrop-blur-md shadow-lg shadow-brand-mid/5 md:-translate-y-4"
                       : "border-glass-border bg-glass-bg backdrop-blur-md",
@@ -156,7 +156,7 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
                               strokeWidth={2.5}
                               aria-hidden
                             />
-                            <span className="text-[11px] leading-snug text-text-secondary">
+                            <span className="text-xs leading-snug text-text-secondary">
                               {feature}
                             </span>
                           </div>
@@ -232,14 +232,14 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
                         </motion.div>
                       ) : (
                         /* ── CTA button ── */
-                        <motion.div key="cta-button">
+                        <motion.div key="cta-button" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center">
                           <MagneticElement strength={0.3}>
                             {isCheckoutTier ? (
                               <MovingBorderButton
                                 as="button"
                                 type="button"
                                 duration={isHighlighted ? 3000 : 3500}
-                                containerClassName="inline-flex w-full"
+                                containerClassName="inline-flex w-full sm:w-auto"
                                 variant={isHighlighted ? "default" : "inverted"}
                                 className={isHighlighted ? undefined : "!bg-base-white !text-brand-dark"}
                                 onClick={() => {
@@ -256,7 +256,7 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
                                 as={Link}
                                 href={tier.ctaUrl ?? "/contact"}
                                 duration={isHighlighted ? 3000 : 3500}
-                                containerClassName="inline-flex w-full"
+                                containerClassName="inline-flex w-full sm:w-auto"
                                 variant={isHighlighted ? "default" : "inverted"}
                                 className={isHighlighted ? undefined : "!bg-base-white !text-brand-dark"}
                                 onClick={() =>
