@@ -108,11 +108,11 @@ export function AuditPricing({ data, className, ...props }: AuditPricingProps) {
               <SpotlightCard
                 key={tier.name}
                 spotlightColor="rgba(90, 177, 177, 0.15)"
-                className="rounded-2xl"
+                className="h-full overflow-visible"
               >
                 <div
                   className={cn(
-                    "flex flex-col rounded-2xl border p-6 pb-10 md:p-10 md:pb-12",
+                    "flex h-full flex-col rounded-2xl border p-6 pb-10 md:p-10 md:pb-12",
                     isHighlighted
                       ? "border-brand-mid/40 bg-glass-bg backdrop-blur-md shadow-lg shadow-brand-mid/5 md:-translate-y-4"
                       : "border-glass-border bg-glass-bg backdrop-blur-md",
