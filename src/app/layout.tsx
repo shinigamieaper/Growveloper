@@ -156,7 +156,7 @@ export default async function RootLayout({
         <LayoutGridOverlay />
 
         {/* Main content area — relative z-10 sits above the fixed grid */}
-        <main id="main-content" className="relative z-10">
+        <main id="main-content" className="relative z-10" style={{ paddingTop: 'var(--navbar-height)' }}>
           {children}
         </main>
 

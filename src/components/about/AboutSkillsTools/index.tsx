@@ -27,7 +27,7 @@ function buildLogoItems(tools: AboutToolItem[]): LogoNodeItem[] {
               alt={tool.name}
               width={20}
               height={20}
-              className="h-5 w-5 object-contain"
+              className="h-5 w-5 object-contain logo-tint"
             />
           ) : Icon ? (
             <Icon className="h-5 w-5 text-brand-mid" />

@@ -115,7 +115,7 @@ export function WorkPageClient({ caseStudies, workPageData }: WorkPageClientProp
     <>
       {/* 01 — Hero */}
       {workPageData.pageHeadline && (
-        <section className="pt-32 pb-16 md:pt-40 md:pb-20">
+        <section className="pt-16 pb-16 md:pt-20 md:pb-20">
           <div className="mx-auto max-w-6xl px-6">
             <SectionHeader
               headline={workPageData.pageHeadline}

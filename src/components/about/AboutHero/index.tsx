@@ -33,40 +33,20 @@ export function AboutHero({ data, className, ...props }: AboutHeroProps) {
 
   return (
     <section
-      className={cn("relative flex min-h-screen items-center overflow-hidden", className)}
+      className={cn("relative flex min-h-screen overflow-hidden", className)}
       {...props}
     >
-      {/* Text — left side */}
-      <div className="relative z-20 w-full px-6 md:px-10 lg:px-14">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-          className="max-w-sm"
-        >
-          <p className="font-mono text-xs uppercase tracking-[0.25em] text-text-tertiary">
-            {namePrefix ?? "Hello, I\u2019m"}
-          </p>
-          <h1 className="mt-5 heading-font text-6xl font-extrabold leading-none tracking-tight sm:text-7xl md:text-8xl lg:text-[8rem]">
-            <CanvasText text={name} />
-          </h1>
-          <p className="mt-5 max-w-xs text-base leading-relaxed text-text-secondary md:text-lg">
-            {identity}
-          </p>
-        </motion.div>
-      </div>
-
-      {/* Portrait — right side, GSAP float-up entrance */}
+      {/* Portrait — right half, face aligned to top */}
       {portraitImage && (
         <div
           ref={portraitRef}
-          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[85%] sm:w-[78%] md:w-[68%]"
+          className="pointer-events-none absolute right-0 top-0 z-10 h-[85%] w-[55%] sm:h-full sm:w-[55%] md:w-[58%]"
           style={{
             maskImage:
-              "linear-gradient(to right, transparent 0%, black 22%), linear-gradient(to top, transparent 0%, black 30%)",
+              "linear-gradient(to right, transparent 0%, black 30%), linear-gradient(to top, transparent 0%, black 15%)",
             maskComposite: "intersect",
             WebkitMaskImage:
-              "linear-gradient(to right, transparent 0%, black 22%), linear-gradient(to top, transparent 0%, black 30%)",
+              "linear-gradient(to right, transparent 0%, black 30%), linear-gradient(to top, transparent 0%, black 15%)",
             WebkitMaskComposite: "source-in",
           }}
         >
@@ -75,7 +55,7 @@ export function AboutHero({ data, className, ...props }: AboutHeroProps) {
               src={portraitImage}
               alt={portraitAlt ?? name}
               fill
-              sizes="(max-width: 640px) 85vw, (max-width: 768px) 78vw, 68vw"
+              sizes="(max-width: 640px) 55vw, (max-width: 768px) 55vw, 58vw"
               className="object-cover object-top grayscale"
               priority
             />
@@ -83,9 +63,28 @@ export function AboutHero({ data, className, ...props }: AboutHeroProps) {
         </div>
       )}
 
-      {/* Scroll cue — bottom-left, clear of portrait */}
+      {/* Text — left side, vertically centered in the upper portion */}
+      <div className="relative z-20 flex w-[48%] flex-col justify-start px-5 pt-24 sm:w-[45%] sm:pt-28 md:px-10 md:pt-32 lg:px-14">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
+        >
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-text-tertiary">
+            {namePrefix ?? "Hello, I\u2019m"}
+          </p>
+          <h1 className="mt-3 heading-font text-5xl font-extrabold leading-none tracking-tight sm:text-6xl md:text-7xl lg:text-[8rem]">
+            <CanvasText text={name} />
+          </h1>
+          <p className="mt-4 text-sm leading-relaxed text-text-secondary sm:text-base md:text-lg">
+            {identity}
+          </p>
+        </motion.div>
+      </div>
+
+      {/* ScrollCue — bottom-left, always in the clear zone */}
       {scrollCueTargetId && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 md:left-14 md:translate-x-0">
+        <div className="absolute bottom-25 left-5 z-30 md:bottom-12 md:left-14">
           <ScrollCue
             text={scrollCueText ?? "SCROLL TO LEARN MORE \u00b7 "}
             targetId={scrollCueTargetId}

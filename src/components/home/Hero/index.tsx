@@ -60,56 +60,55 @@ export function Hero({ data, className, ...props }: HeroProps) {
           <p className="max-w-lg text-center text-base text-text-secondary md:text-lg">
             {subStatement}
           </p>
-
-          <div className="flex flex-col items-center gap-4 pt-2 sm:flex-row">
-            <MagneticElement strength={0.4}>
-              <MovingBorderButton
-                as={Link}
-                href={primaryCtaUrl}
-                duration={3000}
-                containerClassName="inline-flex"
-              >
-                {primaryCtaLabel}
-              </MovingBorderButton>
-            </MagneticElement>
-
-            {secondaryCtaLabel && secondaryCtaUrl && (
-              <MagneticElement strength={0.3}>
-                <MovingBorderButton
-                  as={Link}
-                  href={secondaryCtaUrl}
-                  duration={4000}
-                  variant="inverted"
-                  containerClassName="inline-flex"
-                >
-                  {secondaryCtaLabel}
-                </MovingBorderButton>
-              </MagneticElement>
-            )}
-          </div>
-
-          {/* ScrollCue — inline flow on mobile so it never overlaps buttons */}
-          {scrollCueTargetId && (
-            <div className="mt-2 block md:hidden">
-              <ScrollCue
-                text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
-                targetId={scrollCueTargetId}
-                className="py-0"
-              />
-            </div>
-          )}
         </motion.div>
       </LampContainer>
 
-      {/* ScrollCue — absolute on desktop only */}
+      {/* CTAs — outside LampContainer, pulled up into glow */}
+      <div className="relative z-60 mx-auto -mt-32 flex flex-col items-center gap-4 px-6 pb-16 sm:flex-row sm:justify-center">
+        <MagneticElement strength={0.4}>
+          <MovingBorderButton
+            as={Link}
+            href={primaryCtaUrl}
+            duration={3000}
+            containerClassName="inline-flex"
+          >
+            {primaryCtaLabel}
+          </MovingBorderButton>
+        </MagneticElement>
+
+        {secondaryCtaLabel && secondaryCtaUrl && (
+          <MagneticElement strength={0.3}>
+            <MovingBorderButton
+              as={Link}
+              href={secondaryCtaUrl}
+              duration={4000}
+              variant="inverted"
+              containerClassName="inline-flex"
+            >
+              {secondaryCtaLabel}
+            </MovingBorderButton>
+          </MagneticElement>
+        )}
+      </div>
+
+      {/* ScrollCue — mobile inline, desktop absolute */}
       {scrollCueTargetId && (
-        <div className="absolute bottom-8 right-12 z-[60] hidden md:block">
-          <ScrollCue
-            text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
-            targetId={scrollCueTargetId}
-            className="py-0"
-          />
-        </div>
+        <>
+          <div className="relative z-60 mx-auto -mt-8 flex justify-center pb-8 md:hidden">
+            <ScrollCue
+              text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
+              targetId={scrollCueTargetId}
+              className="py-0"
+            />
+          </div>
+          <div className="absolute bottom-8 right-12 z-60 hidden md:block">
+            <ScrollCue
+              text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
+              targetId={scrollCueTargetId}
+              className="py-0"
+            />
+          </div>
+        </>
       )}
     </section>
   );

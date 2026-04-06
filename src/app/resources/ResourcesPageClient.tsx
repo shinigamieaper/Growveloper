@@ -79,7 +79,7 @@ export function ResourcesPageClient({
     <>
       {/* 01 — Hero */}
       {pageHeadline && (
-        <section className="pt-32 pb-16 md:pt-40 md:pb-24">
+        <section className="pt-16 pb-16 md:pt-20 md:pb-24">
           <div className="mx-auto max-w-6xl px-6">
             <SectionHeader
               headline={pageHeadline}

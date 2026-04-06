@@ -30,12 +30,12 @@ export function LampContainer({ children, className, ...props }: LampContainerPr
   return (
     <div
       className={cn(
-        "relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden rounded-md",
+        "relative flex min-h-[calc(100vh-var(--navbar-height))] w-full flex-col items-center justify-center overflow-hidden rounded-md",
         className,
       )}
       {...props}
     >
-      <div className="pointer-events-none relative z-0 flex w-full flex-1 sm:scale-y-125 items-center justify-center pt-20 isolate">
+      <div className="pointer-events-none relative z-0 flex w-full flex-1 sm:scale-y-125 items-center justify-center isolate">
         {/* Left conic gradient */}
         <motion.div
           initial={{ opacity: 0.5, width: initialWidth }}

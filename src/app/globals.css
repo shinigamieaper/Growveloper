@@ -180,6 +180,16 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* --- Navbar clearance token (navbar height + breathing room) --- */
+:root {
+  --navbar-height: 5rem; /* 80px — mobile / tablet (60px nav + 20px gap) */
+}
+@media (min-width: 1024px) {
+  :root {
+    --navbar-height: 4.5rem; /* 72px — desktop (38px pill + 34px gap) */
+  }
+}
+
 /* --- Base styles --- */
 html {
   scroll-behavior: smooth;
@@ -206,8 +216,13 @@ h1, h2, h3, h4, h5, h6, .heading-font {
 
 /* --- Logo tinting — brand-cohesive monochrome treatment --- */
 .logo-tint {
-  filter: brightness(0) invert(1);
-  opacity: 0.7;
+  filter: grayscale(100%);
+  opacity: 0.55;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+.logo-tint:hover {
+  filter: grayscale(0%);
+  opacity: 1;
 }
 
 /* --- GSAP SplitText overflow fix — prevent letter clipping --- */
