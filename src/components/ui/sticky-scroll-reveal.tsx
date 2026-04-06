@@ -147,33 +147,39 @@ function MobileLottieVisual({ lottiePath, item }: { lottiePath: string; item: St
   const animationData = useLottieAnimationData(lottiePath);
   const lottieRef = useRef<LottieRefCurrentProps | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isReady, setIsReady] = useState(false);
-  const [isInView, setIsInView] = useState(false);
-  const hasAutoPlayed = useRef(false);
+  const isReadyRef = useRef(false);
+  const isInViewRef = useRef(false);
+  const hasPlayed = useRef(false);
 
-  // Mark animation as ready once data + lottie player is loaded
-  const handleReady = useCallback(() => setIsReady(true), []);
+  // Both paths call tryPlay — whichever fires second wins
+  const tryPlay = useCallback(() => {
+    if (hasPlayed.current || prefersReduced) return;
+    if (!isReadyRef.current || !isInViewRef.current) return;
+    if (!lottieRef.current) return;
+    hasPlayed.current = true;
+    lottieRef.current.goToAndStop(0, true);
+    lottieRef.current.play();
+  }, [prefersReduced]);
 
-  // Intersection observer — triggers auto-play once on scroll into view
+  const handleReady = useCallback(() => {
+    isReadyRef.current = true;
+    tryPlay();
+  }, [tryPlay]);
+
   useEffect(() => {
     if (prefersReduced || !containerRef.current) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsInView(true); },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          isInViewRef.current = true;
+          tryPlay();
+        }
+      },
       { threshold: 0.2 },
     );
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, [prefersReduced]);
-
-  // Auto-play once when both ready + in view
-  useEffect(() => {
-    if (!isReady || !isInView || hasAutoPlayed.current || prefersReduced) return;
-    hasAutoPlayed.current = true;
-    window.requestAnimationFrame(() => {
-      lottieRef.current?.goToAndStop(0, true);
-      lottieRef.current?.play();
-    });
-  }, [isReady, isInView, prefersReduced]);
+  }, [prefersReduced, tryPlay]);
 
   if (!animationData || prefersReduced) {
     return <StickyVisualFallback item={item} />;
