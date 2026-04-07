@@ -16,21 +16,24 @@ export function IndustriesGrid({ data, className, ...props }: IndustriesGridProp
 
   const industryCount = data.industries.length;
 
-  // Fluid grid: adapt columns to industry count
   const gridCols =
-    industryCount === 1
-      ? "grid-cols-1 max-w-md mx-auto"
+    industryCount < 2
+      ? "grid-cols-1"
       : industryCount === 2
         ? "grid-cols-1 md:grid-cols-2"
         : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
-  // CTA card spans remaining columns to fill the row
-  const ctaSpanClass =
-    industryCount <= 2
+  // CTA spans remaining slots in last row at each breakpoint
+  const ctaColSpan =
+    industryCount < 2
       ? ""
-      : industryCount % 3 === 0
-        ? "lg:col-span-1"
-        : "lg:col-span-2";
+      : industryCount === 2
+        ? "md:col-span-2"
+        : industryCount % 3 === 2
+          ? "md:col-span-2 lg:col-span-1"
+          : industryCount % 3 === 0
+            ? "md:col-span-2 lg:col-span-3"
+            : "md:col-span-2 lg:col-span-2";
 
   return (
     <section className={cn("py-24", className)} {...props}>
@@ -71,7 +74,7 @@ export function IndustriesGrid({ data, className, ...props }: IndustriesGridProp
                 headline={data.ctaHeadline}
                 ctaLabel={data.ctaLabel}
                 ctaHref={data.ctaUrl}
-                className={cn("rounded-none border-0 md:col-span-2", ctaSpanClass)}
+                className={cn("rounded-none border-0", ctaColSpan)}
               />
             </div>
           </div>
