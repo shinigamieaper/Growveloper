@@ -101,14 +101,14 @@ export default async function IndustryPage({
   const problemData: ServiceProblemData = {
     headline: industry.problemHeadline ?? "Sound familiar?",
     highlightedWord: industry.problemHighlightedWord ?? "familiar",
-    painPoints: industry.painPoints,
+    painPoints: industry.painPoints ?? [],
   };
 
   const howWeHelpData: StickyScrollSectionData = {
     headline: industry.howWeHelpHeadline ?? "How we help",
     highlightedWord: industry.howWeHelpHighlightedWord ?? "help",
     description: industry.howWeHelpDescription ?? `Three pillars working together to accelerate ${industry.name} growth.`,
-    items: industry.serviceCards.map((card, i) => ({
+    items: (industry.serviceCards ?? []).map((card, i) => ({
       stepNumber: String(i + 1).padStart(2, "0"),
       heading: card.title,
       description: card.description,
@@ -191,7 +191,7 @@ export default async function IndustryPage({
   const qualifierData: ServiceQualifierData = {
     headline: industry.qualifierHeadline ?? "This is for you if…",
     highlightedWord: industry.qualifierHighlightedWord ?? "for you",
-    qualifiers: industry.painPoints.slice(0, 4).map((p) =>
+    qualifiers: (industry.painPoints ?? []).slice(0, 4).map((p) =>
       p.replace(/^[A-Z]/, (c) => c.toLowerCase()),
     ),
   };
@@ -256,7 +256,7 @@ export default async function IndustryPage({
       <SuccessAnimation />
 
       {/* 06 — Outcome Stats (glass) */}
-      {industry.outcomeStats.length > 0 && (
+      {(industry.outcomeStats ?? []).length > 0 && (
         <GlassSection>
           <div className="py-16 md:py-24">
             <div className="mx-auto max-w-6xl px-6">
@@ -268,7 +268,7 @@ export default async function IndustryPage({
                 />
               </ScrollFadeUp>
             </div>
-            <StatsBand items={industry.outcomeStats} />
+            <StatsBand items={industry.outcomeStats ?? []} />
           </div>
         </GlassSection>
       )}
@@ -290,12 +290,12 @@ export default async function IndustryPage({
       )}
 
       {/* 08 — Testimonials (glass) */}
-      {industry.testimonials.length > 0 && (
+      {(industry.testimonials ?? []).length > 0 && (
         <GlassSection>
           <HomeTestimonials
             headline={industry.testimonialsHeadline ?? "Clients in this space"}
             highlightedWord={industry.testimonialsHighlightedWord ?? "Clients"}
-            items={industry.testimonials}
+            items={industry.testimonials ?? []}
             ctaHeadline={industry.testimonialCtaHeadline ?? "This could be you\u2026"}
             ctaLabel={industry.testimonialCtaLabel ?? "Start a project"}
             ctaUrl={industry.testimonialCtaUrl ?? "/start"}
@@ -321,10 +321,10 @@ export default async function IndustryPage({
       />
 
       {/* 12 — FAQ (glass) */}
-      {industry.faq.length > 0 && (
+      {(industry.faq ?? []).length > 0 && (
         <GlassSection>
           <FAQAccordion
-            items={industry.faq}
+            items={industry.faq ?? []}
             sectionHeadline={industry.faqHeadline ?? "Common questions"}
             highlightedWord={industry.faqHighlightedWord ?? "questions"}
             sectionDescription={industry.faqDescription ?? `Everything you need to know about working with us in ${industry.name}.`}
