@@ -21,10 +21,10 @@ export function AutomationHero({ data, className, ...props }: AutomationHeroProp
     <section className={cn("relative", className)} {...props}>
       <LampContainer>
         <motion.div
-          initial={{ opacity: 0.5, y: 100 }}
+          initial={{ opacity: 0.5, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-          className="flex max-w-4xl flex-col items-center gap-6 text-center"
+          className="flex max-w-4xl flex-col items-center gap-4 sm:gap-6 text-center"
         >
           {/* Title */}
           <h1 className="heading-font text-3xl font-extrabold leading-[1.08] tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl">
@@ -32,14 +32,14 @@ export function AutomationHero({ data, className, ...props }: AutomationHeroProp
           </h1>
 
           {/* Tagline */}
-          <p className="max-w-2xl text-base leading-relaxed text-text-secondary md:text-lg">
+          <p className="max-w-2xl text-base leading-relaxed text-text-secondary md:text-lg [@media(orientation:landscape)_and_(max-height:600px)]:hidden">
             {data.tagline}
           </p>
         </motion.div>
       </LampContainer>
 
       {/* Price card + CTAs — outside LampContainer. No ScrollFadeUp — must be visible on load. */}
-      <div className="relative z-60 mx-auto -mt-48 flex max-w-2xl flex-col items-center gap-8 px-6 pb-24">
+      <div className="relative z-60 mx-auto -mt-48 flex max-w-2xl flex-col items-center gap-6 px-6 pb-12 [@media(orientation:landscape)_and_(max-height:600px)]:-mt-8 [@media(orientation:landscape)_and_(max-height:600px)]:pb-4">
         <div className="inline-flex flex-col items-center gap-3 rounded-2xl border border-glass-border bg-glass-bg px-8 py-6 backdrop-blur-sm">
           {isFixed ? (
             <>

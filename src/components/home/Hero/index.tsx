@@ -48,16 +48,16 @@ export function Hero({ data, className, ...props }: HeroProps) {
     <section className={cn("relative", className)} {...props}>
       <LampContainer>
         <motion.div
-          initial={{ opacity: 0.5, y: 100 }}
+          initial={{ opacity: 0.5, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-          className="flex max-w-4xl flex-col items-center gap-5"
+          className="flex max-w-4xl flex-col items-center gap-4 sm:gap-5"
         >
           <h1 className="heading-font text-center text-3xl font-bold tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl">
             {renderHeadline()}
           </h1>
 
-          <p className="max-w-lg text-center text-base text-text-secondary md:text-lg">
+          <p className="max-w-lg text-center text-base text-text-secondary md:text-lg [@media(orientation:landscape)_and_(max-height:600px)]:hidden">
             {subStatement}
           </p>
 
@@ -90,24 +90,14 @@ export function Hero({ data, className, ...props }: HeroProps) {
         </motion.div>
       </LampContainer>
 
-      {/* ScrollCue — mobile inline, desktop absolute */}
       {scrollCueTargetId && (
-        <>
-          <div className="relative z-60 mx-auto -mt-8 flex justify-center pb-8 md:hidden">
-            <ScrollCue
-              text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
-              targetId={scrollCueTargetId}
-              className="py-0"
-            />
-          </div>
-          <div className="absolute bottom-8 right-12 z-60 hidden md:block">
-            <ScrollCue
-              text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
-              targetId={scrollCueTargetId}
-              className="py-0"
-            />
-          </div>
-        </>
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-60 md:left-auto md:right-12 md:translate-x-0 [@media(orientation:landscape)_and_(max-height:600px)]:hidden">
+          <ScrollCue
+            text={scrollCueText ?? "EXPLORE OUR WORK · EXPLORE OUR WORK · "}
+            targetId={scrollCueTargetId}
+            className="py-0"
+          />
+        </div>
       )}
     </section>
   );
