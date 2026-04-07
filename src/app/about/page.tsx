@@ -10,9 +10,9 @@ import {
   GlassSection,
   CTABanner,
   FAQAccordion,
-  SectionHeader,
   ScrollFadeUp,
   LineReveal,
+  TextReveal,
 } from "@/components";
 import { getAboutPage, getAboutFAQ, getSiteSettings } from "@/lib/sanity/queries";
 import type {
@@ -157,15 +157,16 @@ export default async function AboutPage() {
       {shortVersion && (
         <section id="short-version" className="py-16 md:py-24">
           <div className="mx-auto max-w-3xl px-6">
-            <SectionHeader
-              headline={shortVersion.headline}
+            <TextReveal
+              as="h2"
+              className="heading-font text-3xl font-extrabold leading-snug text-text-primary sm:text-4xl md:text-5xl"
+              splitType="words"
               highlightedWord={shortVersion.highlightedWord}
-              alignment="left"
-              label={null}
-              description={null}
-            />
-            <ScrollFadeUp delay={0.15}>
-              <p className="text-base leading-relaxed text-text-secondary md:text-lg">
+            >
+              {shortVersion.headline}
+            </TextReveal>
+            <ScrollFadeUp delay={0.25}>
+              <p className="mt-6 text-base leading-relaxed text-text-secondary md:text-lg">
                 {shortVersion.body}
               </p>
             </ScrollFadeUp>
@@ -179,19 +180,25 @@ export default async function AboutPage() {
       {story && (
         <GlassSection id="the-story">
           <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
-            <SectionHeader
-              headline={story.headline}
+            <TextReveal
+              as="h2"
+              className="heading-font mb-10 max-w-2xl text-3xl font-bold text-text-primary md:text-4xl lg:text-5xl"
+              splitType="words"
               highlightedWord={story.highlightedWord}
-              alignment="left"
-              label={null}
-              description={null}
-            />
-            <div className="space-y-5">
-              {story.body.map((para, i) => (
-                <ScrollFadeUp key={i} delay={i * 0.1}>
-                  <p className="text-base leading-relaxed text-text-secondary md:text-lg">{para}</p>
-                </ScrollFadeUp>
-              ))}
+            >
+              {story.headline}
+            </TextReveal>
+            <div className="flex gap-6">
+              <div className="w-0.5 shrink-0 rounded bg-gradient-to-b from-brand-mid to-transparent" />
+              <div className="space-y-5">
+                {story.body.map((para, i) => (
+                  <ScrollFadeUp key={i} delay={i * 0.1}>
+                    <p className="text-base leading-relaxed text-text-secondary md:text-lg">
+                      {para}
+                    </p>
+                  </ScrollFadeUp>
+                ))}
+              </div>
             </div>
           </div>
         </GlassSection>
