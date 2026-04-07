@@ -511,10 +511,26 @@ export async function getAboutPage() {
         featured
       },
 
+      // FAQ
+      faqHeadline,
+      faqHighlightedWord,
+      faqDescription,
+      faqCtaHeadline,
+      faqCtaDescription,
+      faqCtaLabel,
+      faqCtaUrl,
+
       // CTA Banners
       inlineCta{ headline, highlightedWord, subCopy, ctaLabel, "ctaDestination": ctaUrl, colorScheme },
       finalCta{ headline, highlightedWord, subCopy, ctaLabel, "ctaDestination": ctaUrl, colorScheme }
     }`
+  );
+}
+
+export async function getAboutFAQ(): Promise<FAQItem[]> {
+  "use cache";
+  return client.fetch<FAQItem[]>(
+    `*[_type == "faq" && page == "about"] | order(order asc) { question, answer }`
   );
 }
 

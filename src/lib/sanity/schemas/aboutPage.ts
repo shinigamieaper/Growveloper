@@ -15,6 +15,7 @@ export default defineType({
     { name: "skills", title: "Skills", options: { collapsible: true } },
     { name: "interests", title: "Interests", options: { collapsible: true } },
     { name: "caseStudies", title: "Featured Work", options: { collapsible: true, collapsed: true } },
+    { name: "faq", title: "FAQ", options: { collapsible: true, collapsed: true } },
     { name: "ctaBanners", title: "CTA Banners", options: { collapsible: true, collapsed: true } },
     { name: "cta", title: "Final CTA (legacy)", options: { collapsible: true, collapsed: true } },
     { name: "seo", title: "SEO & Metadata", options: { collapsible: true, collapsed: true } },
@@ -287,6 +288,52 @@ export default defineType({
       type: "array",
       fieldset: "caseStudies",
       of: [defineArrayMember({ type: "reference", to: [{ type: "caseStudy" }] })],
+    }),
+
+    /* ── FAQ ── */
+    defineField({
+      name: "faqHeadline",
+      title: "FAQ Headline",
+      type: "string",
+      fieldset: "faq",
+    }),
+    defineField({
+      name: "faqHighlightedWord",
+      title: "FAQ Highlighted Word",
+      type: "string",
+      fieldset: "faq",
+    }),
+    defineField({
+      name: "faqDescription",
+      title: "FAQ Description",
+      type: "text",
+      rows: 2,
+      fieldset: "faq",
+    }),
+    defineField({
+      name: "faqCtaHeadline",
+      title: "FAQ CTA Headline",
+      type: "string",
+      fieldset: "faq",
+    }),
+    defineField({
+      name: "faqCtaDescription",
+      title: "FAQ CTA Description",
+      type: "text",
+      rows: 2,
+      fieldset: "faq",
+    }),
+    defineField({
+      name: "faqCtaLabel",
+      title: "FAQ CTA Label",
+      type: "string",
+      fieldset: "faq",
+    }),
+    defineField({
+      name: "faqCtaUrl",
+      title: "FAQ CTA URL",
+      type: "string",
+      fieldset: "faq",
     }),
 
     /* ── CTA Banners ── */

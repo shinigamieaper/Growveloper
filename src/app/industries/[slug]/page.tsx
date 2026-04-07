@@ -81,7 +81,7 @@ export default async function IndustryPage({
 
   /* Resolve case studies from slugs */
   const caseStudies = (
-    await Promise.all(industry.caseStudySlugs.map((s) => getCaseStudyBySlug(s)))
+    await Promise.all((industry.caseStudySlugs ?? []).map((s) => getCaseStudyBySlug(s)))
   ).filter((cs): cs is NonNullable<typeof cs> => cs !== null);
 
   /* Map data into shared component shapes */

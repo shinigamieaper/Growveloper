@@ -9,11 +9,12 @@ import { CaseStudiesSection } from "@/components/home/CaseStudies";
 import {
   GlassSection,
   CTABanner,
+  FAQAccordion,
   SectionHeader,
   ScrollFadeUp,
   LineReveal,
 } from "@/components";
-import { getAboutPage, getSiteSettings } from "@/lib/sanity/queries";
+import { getAboutPage, getAboutFAQ, getSiteSettings } from "@/lib/sanity/queries";
 import type {
   AboutHeroData,
   AboutShortVersionData,
@@ -39,7 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const page = await getAboutPage();
+  const [page, faq] = await Promise.all([getAboutPage(), getAboutFAQ()]);
 
   if (!page) return null;
 
@@ -243,6 +244,20 @@ export default async function AboutPage() {
             items={page.featuredCaseStudies ?? []}
           />
         </GlassSection>
+      )}
+
+      {/* 10 — FAQ */}
+      {faq.length > 0 && (
+        <FAQAccordion
+          items={faq}
+          sectionHeadline={page.faqHeadline ?? "Frequently asked questions"}
+          highlightedWord={page.faqHighlightedWord ?? "questions"}
+          sectionDescription={page.faqDescription}
+          ctaHeadline={page.faqCtaHeadline}
+          ctaDescription={page.faqCtaDescription}
+          ctaLabel={page.faqCtaLabel}
+          ctaUrl={page.faqCtaUrl}
+        />
       )}
 
       {/* CTA C — Section */}
