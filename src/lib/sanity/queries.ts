@@ -493,6 +493,15 @@ export async function getAboutPage() {
       interestsHighlightedWord,
       interests[]{ icon, interest, connection },
 
+      // Industries
+      industriesHeadline,
+      industriesHighlightedWord,
+      industriesDescription,
+      industriesCtaHeadline,
+      industriesCtaLabel,
+      industriesCtaUrl,
+      industryCards[]->{ "icon": icon, "name": industryName, hookLine, "slug": slug.current, ctaLabel },
+
       ctaHeadline,
       ctaHighlightedWord,
       ctaLabel,
