@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { CountUp } from "@/components/animations/CountUp";
 import type { AboutStatItem } from "@/lib/types";
 
 interface AboutStatStripProps {
@@ -16,40 +15,23 @@ function parseStatValue(value: string): { num: number; suffix: string } | null {
 }
 
 function StatItem({ stat }: { stat: AboutStatItem }) {
-  const valueRef = useRef<HTMLSpanElement>(null);
   const parsed = parseStatValue(stat.value);
-
-  useGSAP(() => {
-    if (!valueRef.current || !parsed) return;
-    const obj = { val: 0 };
-    gsap.to(obj, {
-      val: parsed.num,
-      duration: 1.5,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: valueRef.current,
-        start: "top 85%",
-        once: true,
-      },
-      onUpdate() {
-        if (valueRef.current) {
-          const display = Number.isInteger(parsed.num)
-            ? Math.round(obj.val).toString()
-            : obj.val.toFixed(1);
-          valueRef.current.textContent = display + parsed.suffix;
-        }
-      },
-    });
-  }, []);
 
   return (
     <div className="flex flex-col items-center gap-2 px-4 py-6">
-      <span
-        ref={parsed ? valueRef : undefined}
-        className="heading-font text-4xl font-extrabold leading-none text-brand-mid sm:text-5xl"
-      >
-        {stat.value}
-      </span>
+      {parsed ? (
+        <CountUp
+          end={parsed.num}
+          suffix={parsed.suffix}
+          decimals={Number.isInteger(parsed.num) ? 0 : 1}
+          duration={1.5}
+          className="heading-font text-4xl font-extrabold leading-none text-brand-mid sm:text-5xl"
+        />
+      ) : (
+        <span className="heading-font text-4xl font-extrabold leading-none text-brand-mid sm:text-5xl">
+          {stat.value}
+        </span>
+      )}
       <span className="font-mono text-[10px] uppercase tracking-wider text-text-tertiary">
         {stat.label}
       </span>
