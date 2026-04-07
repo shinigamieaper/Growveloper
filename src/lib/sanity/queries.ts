@@ -226,7 +226,7 @@ export async function getHomePage() {
 export async function getHomeFAQ(): Promise<FAQItem[]> {
   "use cache";
   return client.fetch<FAQItem[]>(
-    `*[_type == "faq" && page == "home"] | order(order asc) { question, answer }`
+    `*[_type == "faq" && page->_type == "homePage"] | order(order asc) { question, answer }`
   );
 }
 
@@ -316,7 +316,7 @@ export async function getAuditPage() {
 export async function getAuditFAQ(): Promise<FAQItem[]> {
   "use cache";
   return client.fetch<FAQItem[]>(
-    `*[_type == "faq" && page == "audit"] | order(order asc) { question, answer }`
+    `*[_type == "faq" && page->_type == "auditPage"] | order(order asc) { question, answer }`
   );
 }
 
@@ -443,7 +443,7 @@ export async function getServicePage(pageId: string): Promise<ServicePageCmsData
 export async function getServiceFAQ(pageId: string): Promise<FAQItem[]> {
   "use cache";
   return client.fetch<FAQItem[]>(
-    `*[_type == "faq" && page == $pageId] | order(order asc) { question, answer }`,
+    `*[_type == "faq" && page->_type == "servicePage" && page->pageId == $pageId] | order(order asc) { question, answer }`,
     { pageId }
   );
 }
@@ -530,7 +530,7 @@ export async function getAboutPage() {
 export async function getAboutFAQ(): Promise<FAQItem[]> {
   "use cache";
   return client.fetch<FAQItem[]>(
-    `*[_type == "faq" && page == "about"] | order(order asc) { question, answer }`
+    `*[_type == "faq" && page->_type == "aboutPage"] | order(order asc) { question, answer }`
   );
 }
 
@@ -869,7 +869,7 @@ export async function getIndustryBySlug(slug: string): Promise<IndustryPageData 
       outcomeStats[]{ label, value, prefix, suffix },
       "caseStudySlugs": featuredCaseStudies[]->slug.current,
       "testimonials": featuredTestimonials[]->{ quote, name, role, company, "companyLogo": companyLogo.asset->url, "avatar": avatar.asset->url, rating, industry, service },
-      "faq": *[_type == "faq" && page == "home"] | order(order asc) { question, answer },
+      "faq": *[_type == "faq" && page._ref == ^._id] | order(order asc) { question, answer },
       beforeAfterHeadline,
       beforeAfterHighlightedWord,
       beforeAfterDescription,
@@ -1044,7 +1044,7 @@ export async function getWorkPage(): Promise<WorkPageData | null> {
 export async function getWorkFAQ(): Promise<FAQItem[]> {
   "use cache";
   return client.fetch<FAQItem[]>(
-    `*[_type == "faq" && page == "work"] | order(order asc) { question, answer }`
+    `*[_type == "faq" && page->_type == "workPage"] | order(order asc) { question, answer }`
   );
 }
 

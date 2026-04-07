@@ -20,18 +20,18 @@ export default defineType({
     defineField({
       name: "page",
       title: "Page",
-      type: "string",
-      options: {
-        list: [
-          { title: "Home", value: "home" },
-          { title: "Audit", value: "audit" },
-          { title: "Development", value: "development" },
-          { title: "Marketing", value: "marketing" },
-          { title: "AI", value: "ai" },
-          { title: "About", value: "about" },
-          { title: "Automations", value: "automations" },
-        ],
-      },
+      type: "reference",
+      to: [
+        { type: "homePage" },
+        { type: "auditPage" },
+        { type: "aboutPage" },
+        { type: "workPage" },
+        { type: "servicePage" },
+        { type: "industryPage" },
+        { type: "automationsPage" },
+        { type: "labPage" },
+        { type: "resourcesPage" },
+      ],
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -43,7 +43,7 @@ export default defineType({
   preview: {
     select: {
       title: "question",
-      subtitle: "page",
+      subtitle: "page._type",
     },
   },
 });
