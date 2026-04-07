@@ -14,6 +14,7 @@ export default defineType({
     { name: "principles", title: "Principles", options: { collapsible: true } },
     { name: "skills", title: "Skills", options: { collapsible: true } },
     { name: "interests", title: "Interests", options: { collapsible: true } },
+    { name: "industries", title: "Industries", options: { collapsible: true, collapsed: true } },
     { name: "caseStudies", title: "Featured Work", options: { collapsible: true, collapsed: true } },
     { name: "faq", title: "FAQ", options: { collapsible: true, collapsed: true } },
     { name: "ctaBanners", title: "CTA Banners", options: { collapsible: true, collapsed: true } },
@@ -76,6 +77,7 @@ export default defineType({
           { title: "Skills & Tools", value: "skills-tools" },
           { title: "Interests", value: "interests" },
           { title: "Featured Work", value: "featured-work" },
+          { title: "Industries", value: "industries" },
         ],
       },
     }),
@@ -267,6 +269,21 @@ export default defineType({
           ],
         }),
       ],
+    }),
+
+    /* ── Industries ── */
+    defineField({ name: "industriesHeadline", title: "Industries Headline", type: "string", fieldset: "industries" }),
+    defineField({ name: "industriesHighlightedWord", title: "Industries Highlighted Word", type: "string", fieldset: "industries" }),
+    defineField({ name: "industriesDescription", title: "Industries Description", type: "text", fieldset: "industries" }),
+    defineField({ name: "industriesCtaHeadline", title: "Industries CTA Headline", type: "string", fieldset: "industries" }),
+    defineField({ name: "industriesCtaLabel", title: "Industries CTA Label", type: "string", fieldset: "industries" }),
+    defineField({ name: "industriesCtaUrl", title: "Industries CTA URL", type: "string", fieldset: "industries", description: "e.g. /start" }),
+    defineField({
+      name: "industryCards",
+      title: "Industry Cards",
+      type: "array",
+      fieldset: "industries",
+      of: [defineArrayMember({ type: "reference", to: [{ type: "industryPage" }] })],
     }),
 
     /* ── Featured Work ── */
