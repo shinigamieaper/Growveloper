@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
-import { SectionHeader } from "@/components/shared/SectionHeader";
+import { TextReveal } from "@/components/animations/TextReveal";
 import { LogoLoop } from "@/components/ui/logo-loop";
 import { AUTOMATION_TOOL_ICON_MAP } from "@/components/shared/AutomationToolIcons";
 import type { LogoNodeItem } from "@/components/ui/logo-loop";
@@ -62,13 +62,14 @@ export function AboutSkillsTools({ data }: AboutSkillsToolsProps) {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-16 md:py-24">
-      <SectionHeader
-        headline={data.headline}
+      <TextReveal
+        as="h2"
+        className="heading-font mb-10 md:mb-14 max-w-2xl text-3xl font-bold text-text-primary md:text-4xl lg:text-5xl"
+        splitType="words"
         highlightedWord={data.highlightedWord}
-        alignment="left"
-        label={null}
-        description={null}
-      />
+      >
+        {data.headline}
+      </TextReveal>
 
       {/* Skill pills — clickable */}
       <div className="mt-10 flex flex-wrap gap-3">
