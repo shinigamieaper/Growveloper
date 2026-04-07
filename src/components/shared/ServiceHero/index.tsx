@@ -77,18 +77,20 @@ export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
               </MovingBorderButton>
             </MagneticElement>
 
-            <MagneticElement strength={0.3}>
-              <MovingBorderButton
-                as={Link}
-                href={secondaryCtaUrl}
-                duration={3500}
-                variant="inverted"
-                containerClassName="inline-flex w-full sm:w-auto"
-                onClick={() => trackCTAClick(pathname, secondaryCtaLabel ?? "", secondaryCtaUrl ?? "")}
-              >
-                {secondaryCtaLabel}
-              </MovingBorderButton>
-            </MagneticElement>
+            {secondaryCtaLabel && secondaryCtaUrl && (
+              <MagneticElement strength={0.3}>
+                <MovingBorderButton
+                  as={Link}
+                  href={secondaryCtaUrl}
+                  duration={3500}
+                  variant="inverted"
+                  containerClassName="inline-flex w-full sm:w-auto"
+                  onClick={() => trackCTAClick(pathname, secondaryCtaLabel, secondaryCtaUrl)}
+                >
+                  {secondaryCtaLabel}
+                </MovingBorderButton>
+              </MagneticElement>
+            )}
           </div>
         </motion.div>
       </LampContainer>
