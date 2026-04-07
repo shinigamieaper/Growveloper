@@ -19,7 +19,7 @@ export function AutomationHero({ data, className, ...props }: AutomationHeroProp
 
   return (
     <section className={cn("relative", className)} {...props}>
-      <LampContainer>
+      <LampContainer className="[@media(orientation:landscape)_and_(max-height:600px)]:overflow-visible">
         <motion.div
           initial={{ opacity: 0.5, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -27,7 +27,7 @@ export function AutomationHero({ data, className, ...props }: AutomationHeroProp
           className="flex max-w-4xl flex-col items-center gap-4 sm:gap-6 text-center"
         >
           {/* Title */}
-          <h1 className="heading-font text-3xl font-extrabold leading-[1.08] tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl [@media(orientation:landscape)_and_(max-height:600px)]:text-2xl">
+          <h1 className="heading-font text-3xl font-extrabold leading-[1.08] tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl [@media(orientation:landscape)_and_(max-height:600px)]:text-3xl">
             <CanvasText text={data.title} />
           </h1>
 
