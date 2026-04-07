@@ -1,8 +1,6 @@
 import { ICON_MAP } from "@/lib/icons";
-import { fluidGrid } from "@/lib/utils";
-import { SectionHeader } from "@/components/shared/SectionHeader";
-import { GrowveloperCard } from "@/components/shared/GrowveloperCard";
-import { StaggerChildren } from "@/components/animations/StaggerChildren";
+import { TextReveal } from "@/components/animations/TextReveal";
+import { ScrollFadeUp } from "@/components/animations/ScrollFadeUp";
 import type { AboutHowIWorkData } from "@/lib/types";
 
 interface AboutPrinciplesProps {
@@ -15,37 +13,45 @@ export function AboutPrinciples({ data, id }: AboutPrinciplesProps) {
 
   return (
     <section id={id} className="py-16 md:py-24">
-      <div className="mx-auto max-w-5xl px-6">
-        <SectionHeader
-          headline={data.headline}
+      <div className="mx-auto max-w-3xl px-6">
+        <TextReveal
+          as="h2"
+          className="heading-font mb-12 max-w-2xl text-3xl font-bold text-text-primary md:text-4xl lg:text-5xl"
+          splitType="words"
           highlightedWord={data.highlightedWord}
-          alignment="center"
-          label={null}
-          description={null}
-        />
+        >
+          {data.headline}
+        </TextReveal>
 
-        <StaggerChildren>
-          <div className={`${fluidGrid(data.principles.length, 3)} mt-12 gap-6`}>
-            {data.principles.map((p, i) => {
-              const IconComponent = p.icon ? ICON_MAP[p.icon] : undefined;
-              return (
-                <GrowveloperCard
-                  key={p.title}
-                  variant="diagnosis"
-                  colorScheme="glass-dark"
-                  tag={`0${i + 1}`}
-                  headline={p.title}
-                  subCopy={p.description}
-                  icon={
-                    IconComponent ? (
-                      <IconComponent className="h-6 w-6" strokeWidth={1.8} aria-hidden />
-                    ) : undefined
-                  }
-                />
-              );
-            })}
-          </div>
-        </StaggerChildren>
+        <div className="flex flex-col gap-10">
+          {data.principles.map((p, i) => {
+            const IconComponent = p.icon ? ICON_MAP[p.icon] : undefined;
+            return (
+              <ScrollFadeUp key={p.title} delay={i * 0.1}>
+                <div className="flex items-start gap-6">
+                  <span className="w-14 shrink-0 font-serif text-5xl font-extrabold leading-none text-brand-mid/20">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      {IconComponent && (
+                        <IconComponent
+                          className="h-5 w-5 text-brand-mid"
+                          strokeWidth={1.8}
+                          aria-hidden
+                        />
+                      )}
+                      <h3 className="text-lg font-bold text-text-primary">{p.title}</h3>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                      {p.description}
+                    </p>
+                  </div>
+                </div>
+              </ScrollFadeUp>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
