@@ -6,6 +6,7 @@ import { AboutPrinciples } from "@/components/about/AboutPrinciples";
 import { AboutSkillsTools } from "@/components/about/AboutSkillsTools";
 import { AboutInterests } from "@/components/about/AboutInterests";
 import { CaseStudiesSection } from "@/components/home/CaseStudies";
+import { IndustriesGrid } from "@/components/home/IndustriesGrid";
 import {
   GlassSection,
   CTABanner,
@@ -24,6 +25,7 @@ import type {
   AboutHowIWorkData,
   AboutSkillsToolsData,
   AboutInterestsData,
+  IndustriesGridData,
   CTABannerData,
 } from "@/lib/types";
 
@@ -131,6 +133,19 @@ export default async function AboutPage() {
         ),
       }
     : null;
+
+  const industriesGrid: IndustriesGridData | null =
+    page.industriesHeadline && (page.industryCards?.length ?? 0) > 0
+      ? {
+          headline: page.industriesHeadline,
+          highlightedWord: page.industriesHighlightedWord,
+          description: page.industriesDescription,
+          industries: page.industryCards ?? [],
+          ctaHeadline: page.industriesCtaHeadline ?? "",
+          ctaLabel: page.industriesCtaLabel ?? "",
+          ctaUrl: page.industriesCtaUrl ?? "/start",
+        }
+      : null;
 
   return (
     <>
@@ -241,6 +256,13 @@ export default async function AboutPage() {
       {interests && <AboutInterests data={interests} id="interests" />}
 
       {interests && <LineReveal />}
+
+      {/* 08.5 — Industries */}
+      {industriesGrid && (
+        <GlassSection id="industries">
+          <IndustriesGrid data={industriesGrid} />
+        </GlassSection>
+      )}
 
       {/* 09 — Featured Work (glass) */}
       {page.caseStudiesHeadline && (page.featuredCaseStudies?.length ?? 0) > 0 && (
