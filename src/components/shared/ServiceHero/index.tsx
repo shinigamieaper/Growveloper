@@ -51,16 +51,16 @@ export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
     <section className={cn("relative", className)} {...props}>
       <LampContainer>
         <motion.div
-          initial={{ opacity: 0.5, y: 100 }}
+          initial={{ opacity: 0.5, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-          className="flex max-w-4xl flex-col items-center gap-6"
+          className="flex max-w-4xl flex-col items-center gap-4 sm:gap-6"
         >
-          <h1 className="heading-font text-center text-3xl font-bold tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl">
+          <h1 className="heading-font text-center text-3xl font-bold tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl [@media(orientation:landscape)_and_(max-height:600px)]:text-2xl">
             {renderHeadline()}
           </h1>
 
-          <p className="max-w-lg text-center text-base text-text-secondary md:text-lg">
+          <p className="max-w-lg text-center text-base text-text-secondary md:text-lg [@media(orientation:landscape)_and_(max-height:600px)]:hidden">
             {subStatement}
           </p>
 
@@ -94,7 +94,7 @@ export function ServiceHero({ data, className, ...props }: ServiceHeroProps) {
       </LampContainer>
 
       {scrollCueTargetId && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[60] md:left-auto md:right-12 md:translate-x-0">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[60] md:left-auto md:right-12 md:translate-x-0 [@media(orientation:landscape)_and_(max-height:600px)]:hidden">
           <ScrollCue
             text={scrollCueText ?? "EXPLORE · EXPLORE · EXPLORE · "}
             targetId={scrollCueTargetId}

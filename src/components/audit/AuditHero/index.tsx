@@ -140,23 +140,23 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
     <section className={cn("relative", className)} {...props}>
       <LampContainer>
         <motion.div
-          initial={{ opacity: 0.5, y: 100 }}
+          initial={{ opacity: 0.5, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
-          className="flex max-w-4xl flex-col items-center gap-6"
+          className="flex max-w-4xl flex-col items-center gap-4 sm:gap-6"
         >
-          <h1 className="heading-font text-center text-3xl font-bold tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl">
+          <h1 className="heading-font text-center text-3xl font-bold tracking-tight text-text-primary sm:text-4xl md:text-5xl lg:text-6xl [@media(orientation:landscape)_and_(max-height:600px)]:text-2xl">
             {renderHeadline()}
           </h1>
-          <p className="max-w-lg text-center text-base text-text-secondary md:text-lg">
+          <p className="max-w-lg text-center text-base text-text-secondary md:text-lg [@media(orientation:landscape)_and_(max-height:600px)]:hidden">
             {subStatement}
           </p>
         </motion.div>
       </LampContainer>
 
       {/* Price card — outside LampContainer, pulled up into glow. No scroll trigger — must be visible on load. */}
-      <div className="relative z-60 mx-auto -mt-64 flex max-w-2xl flex-col items-center gap-6 px-6 pb-4">
-          <div className="w-full rounded-2xl border border-glass-border bg-glass-bg px-6 py-5 backdrop-blur-md sm:px-10 sm:py-6">
+      <div className="relative z-60 mx-auto -mt-44 flex max-w-xl flex-col items-center gap-6 px-6 pb-4 [@media(orientation:landscape)_and_(max-height:600px)]:-mt-16 [@media(orientation:landscape)_and_(max-height:600px)]:px-4">
+          <div className="w-full rounded-2xl border border-glass-border bg-glass-bg px-5 py-4 backdrop-blur-md sm:px-8 sm:py-5">
 
             {/* Top row: badge + price + note */}
             <div className="flex flex-col items-center gap-1 sm:flex-row sm:justify-center sm:gap-4">
@@ -180,15 +180,15 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
               </p>
             )}
 
-            {/* Divider + features (3-col on sm+) */}
-            {heroFeatures && heroFeatures.length > 0 && (
+            {/* Divider + features — hidden on mobile & landscape, only shown sm+ portrait/desktop with 3+ items */}
+            {heroFeatures && heroFeatures.length >= 3 && (
               <>
                 <div className="my-3 border-t border-glass-border" />
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-3">
+                <div className="hidden sm:flex flex-wrap justify-center gap-x-6 gap-y-2 [@media(orientation:landscape)_and_(max-height:600px)]:hidden!">
                   {heroFeatures.map((feature, index) => (
-                    <div key={`${feature}-${index}`} className="flex min-w-0 items-start gap-1.5">
+                    <div key={`${feature}-${index}`} className="flex items-center gap-1.5">
                       <Check
-                        className="mt-0.5 h-3 w-3 shrink-0 text-brand-mid"
+                        className="h-3 w-3 shrink-0 text-brand-mid"
                         strokeWidth={2.5}
                         aria-hidden
                       />
@@ -309,8 +309,8 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
               className="py-0"
             />
           </div>
-          {/* Desktop: absolute bottom-right */}
-          <div className="absolute bottom-8 right-12 z-60 hidden md:block">
+          {/* Desktop: absolute bottom-right — hidden on landscape to avoid overlapping price card */}
+          <div className="absolute bottom-8 right-12 z-60 hidden md:block [@media(orientation:landscape)_and_(max-height:600px)]:hidden">
             <ScrollCue
               text={data.scrollCueText ?? "VIEW OUR WORK · VIEW OUR WORK · "}
               targetId={scrollCueTargetId}
