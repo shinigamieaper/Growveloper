@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -79,11 +80,13 @@ const CORE_FIELD_IDS = new Set([
 interface QualifyingFormProps extends React.ComponentPropsWithoutRef<"div"> {
   preSelectedService?: string;
   formSteps?: FormStep[] | null;
+  submitButtonLabel?: string;
 }
 
 export function QualifyingForm({
   preSelectedService,
   formSteps,
+  submitButtonLabel,
   className,
   ...props
 }: QualifyingFormProps) {
@@ -184,6 +187,7 @@ export function QualifyingForm({
         onFinalStepCompleted={handleFinalStep}
         backButtonText="Back"
         nextButtonText="Next"
+        finalButtonText={submitButtonLabel || "Get My Free Strategy Call"}
         disableStepIndicators
         stepCircleContainerClassName="border-glass-border bg-bg-secondary"
         contentClassName="px-8 pb-2"
@@ -204,6 +208,14 @@ export function QualifyingForm({
           </Step>
         ))}
       </Stepper>
+
+      <p className="mt-3 text-center text-xs text-text-tertiary">
+        By submitting, you agree to our{" "}
+        <Link href="/privacy" className="text-brand-mid underline-offset-4 hover:underline">
+          Privacy Policy
+        </Link>
+        .
+      </p>
 
       {submitStatus === "error" && submitError && (
         <p className="mt-4 rounded-lg bg-red-500/10 px-4 py-2 text-sm text-red-500">

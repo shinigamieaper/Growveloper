@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/facom/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/subagent-driven-development/**)",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" status --short src/app/start/page.tsx src/app/start/confirmed/page.tsx src/app/audit/confirmed/page.tsx)",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" add src/app/start/page.tsx src/app/start/confirmed/page.tsx src/app/audit/confirmed/page.tsx)",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" commit -m \"feat: ogImage in metadata + JSON-LD WebPage for start and audit confirmed pages\")",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" add src/app/privacy/page.tsx src/app/terms/page.tsx)",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" commit -m \"feat: ogImage in metadata for privacy and terms pages\")",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" add src/app/page.tsx)",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" commit -m \"fix: align JSON-LD description fallback with generateMetadata on home page\")",
+      "Bash(git -C /c/Users/facom/CascadeProjects/growveloper show ba1153c --stat)",
+      "Bash(git -C /c/Users/facom/CascadeProjects/growveloper show 036e3fb --format=\"%s%n%n%b\" --stat)",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" add src/lib/sanity/schemas/auditPage.ts src/lib/sanity/schemas/workPage.ts src/lib/sanity/schemas/industryPage.ts src/lib/sanity/queries.ts src/lib/types.ts src/app/audit/page.tsx src/app/work/page.tsx src/app/work/WorkPageClient.tsx src/app/industries/[slug]/page.tsx)",
+      "Bash(git -C \"c:/Users/facom/CascadeProjects/growveloper\" commit -m \"feat: CMS FAQ header fields for audit, work pages; CMS stats/case studies/testimonials/FAQ headers for industry pages\")",
+      "Bash(npm dedupe:*)",
+      "Read(//c/Users/facom/.claude/**)",
+      "Read(//c/Users/facom/Downloads/impeccable-style-universal/**)",
+      "Bash(cp -r C:/Users/facom/CascadeProjects/growveloper/.claude/skills/* C:/Users/facom/.claude/skills/)",
+      "Bash(cp -r C:/Users/facom/.agents/skills/design-taste-frontend C:/Users/facom/.claude/skills/)",
+      "Bash(bash \"C:/Users/facom/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh\" --project-dir \"c:/Users/facom/CascadeProjects/growveloper\")",
+      "Bash(xargs cat:*)",
+      "Skill(commit-commands:commit)",
+      "Skill(commit-commands:commit:*)",
+      "Bash(./node_modules/.bin/tsc --noEmit)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\facom\\.claude"
+    ]
+  }
+}

@@ -169,7 +169,32 @@ export default async function RootLayout({
         {/* Client-side layout components (popup + analytics) deferred to avoid prerender blocking */}
         <LayoutClients popupConfigs={popupConfigs} />
 
-        {/* Google Tag Manager — loads after page is interactive */}
+        {/* Google Consent Mode v2 — defaults to denied BEFORE GTM loads.
+            GA4 tag in GTM must be configured to check analytics_storage consent. */}
+        {process.env.NEXT_PUBLIC_GTM_ID && (
+          <Script
+            id="consent-defaults"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer=window.dataLayer||[];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('consent','default',{
+                  'analytics_storage':'denied',
+                  'ad_storage':'denied',
+                  'ad_personalization':'denied',
+                  'ad_user_data':'denied',
+                  'functionality_storage':'granted',
+                  'security_storage':'granted',
+                  'wait_for_update':500
+                });
+              `,
+            }}
+          />
+        )}
+
+        {/* Google Tag Manager — loads after page is interactive.
+            NOTE: GA4 tag in GTM must check analytics_storage consent before firing. */}
         {process.env.NEXT_PUBLIC_GTM_ID && (
           <Script
             id="gtm"
@@ -186,19 +211,15 @@ export default async function RootLayout({
           />
         )}
 
-        {/* Microsoft Clarity — loads after page is interactive */}
+        {/* Microsoft Clarity — loaded conditionally by CookieConsent via consent utility.
+            Clarity ID is passed to the client so the consent utility can inject the script
+            only after the user grants session recording consent. */}
         {process.env.NEXT_PUBLIC_CLARITY_ID && (
           <Script
-            id="clarity"
-            strategy="afterInteractive"
+            id="clarity-id"
+            strategy="beforeInteractive"
             dangerouslySetInnerHTML={{
-              __html: `
-                (function(c,l,a,r,i,t,y){
-                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-                })(window,document,"clarity","script","${process.env.NEXT_PUBLIC_CLARITY_ID}");
-              `,
+              __html: `window.__CLARITY_ID__="${process.env.NEXT_PUBLIC_CLARITY_ID}";`,
             }}
           />
         )}

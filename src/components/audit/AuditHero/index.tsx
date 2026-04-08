@@ -238,6 +238,13 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                   {status === "error" && errorMessage && (
                     <p className="text-xs text-red-500">{errorMessage}</p>
                   )}
+                  <p className="text-center text-xs text-text-tertiary">
+                    By submitting, you agree to our{" "}
+                    <Link href="/privacy" className="text-brand-mid underline-offset-4 hover:underline">
+                      Privacy Policy
+                    </Link>
+                    .
+                  </p>
                   <button
                     type="button"
                     onClick={() => void handleCheckout()}

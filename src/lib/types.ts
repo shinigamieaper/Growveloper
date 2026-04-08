@@ -235,7 +235,7 @@ export interface TestimonialData {
   featured?: boolean;
 }
 
-/* --- Success Animation Metrics --- */
+/* --- Success Animation Metrics (legacy) --- */
 export interface SuccessMetricItem {
   stateIndex: number;
   pillar: string;
@@ -244,6 +244,44 @@ export interface SuccessMetricItem {
   metricSuffix?: string;
   metricPrefix?: string;
   decimals?: number;
+}
+
+/* --- Success Animation States (CMS-driven) --- */
+export interface SuccessStateMetric {
+  label: string;
+  value: number;
+  suffix?: string;
+  prefix?: string;
+  decimals?: number;
+}
+
+export interface SuccessStateVital {
+  metric: string;
+  value: string;
+  threshold: string;
+  pass: boolean;
+}
+
+export interface SuccessStateData {
+  subtitle: string;
+  stateType: "metrics" | "webvitals" | "traffic" | "ai-visible" | "workflow";
+  order?: number;
+  metrics?: SuccessStateMetric[];
+  vitals?: SuccessStateVital[];
+  searchQuery?: string;
+  searchResponse?: string;
+  brandMention?: string;
+  workflowSteps?: string[];
+  workflowStatValue?: number;
+  workflowStatLabel?: string;
+  workflowStatSuffix?: string;
+}
+
+export interface SuccessAnimationData {
+  showSuccessAnimation?: boolean;
+  successHeadline?: string;
+  successHighlightedWord?: string;
+  successStates?: SuccessStateData[];
 }
 
 /* --- Stats --- */
@@ -374,6 +412,10 @@ export interface IndustryPageData extends IndustryCardData {
   otherIndustriesDescription?: string;
   otherIndustriesCtaHeadline?: string;
   otherIndustriesCtaLabel?: string;
+  showSuccessAnimation?: boolean;
+  successHeadline?: string;
+  successHighlightedWord?: string;
+  successStates?: SuccessStateData[];
   painPoints: string[];
   serviceCards: IndustryServiceCard[];
   outcomeStats: StatsBandItem[];
@@ -1038,6 +1080,7 @@ export interface StartPageData {
   pageHighlightedWord?: string;
   pageDescription?: string;
   formSteps: FormStep[];
+  submitButtonLabel?: string;
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: string;
@@ -1076,4 +1119,10 @@ export interface AuditConfirmedPageData {
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: string;
+}
+
+/* --- Cookie Consent --- */
+export interface ConsentState {
+  analytics: boolean;
+  clarity: boolean;
 }

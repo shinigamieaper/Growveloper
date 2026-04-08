@@ -98,6 +98,9 @@ export { AboutPrinciples } from "./about/AboutPrinciples";
 export { AboutSkillsTools } from "./about/AboutSkillsTools";
 export { AboutInterests } from "./about/AboutInterests";
 
+/* ─── Consent ─── */
+export { CookieConsent } from "./shared/CookieConsent";
+
 /* ─── Layout Components ─── */
 export { LayoutGridOverlay } from "./layout/LayoutGridOverlay";
 export { ScrollToTop } from "./layout/ScrollToTop";
