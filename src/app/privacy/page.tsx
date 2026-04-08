@@ -5,10 +5,13 @@ import { getSiteSettings, getPrivacyPage } from "@/lib/sanity/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, page] = await Promise.all([getSiteSettings(), getPrivacyPage()]);
+  const title = page?.seoTitle ?? (page?.pageTitle ? `${page.pageTitle} — GROWVELOPER` : "Privacy Policy — GROWVELOPER");
+  const description = page?.seoDescription ?? settings?.seoDescription ?? "";
+  const ogImage = page?.ogImage ?? settings?.ogImage;
   return {
-    title: page?.pageTitle ? `${page.pageTitle} — GROWVELOPER` : "Privacy Policy — GROWVELOPER",
-    description: settings?.seoDescription ?? "",
-    openGraph: settings?.ogImage ? { images: [{ url: settings.ogImage }] } : undefined,
+    title,
+    description,
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 

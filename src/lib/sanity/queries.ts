@@ -1119,6 +1119,9 @@ export async function getPrivacyPage(): Promise<PrivacyPageData | null> {
   "use cache";
   return client.fetch<PrivacyPageData | null>(
     `*[_type == "privacyPage"][0]{
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
       pageTitle,
       "lastUpdated": lastUpdated,
       contentsLabel,
@@ -1135,6 +1138,9 @@ export async function getTermsPage(): Promise<TermsPageData | null> {
   "use cache";
   return client.fetch<TermsPageData | null>(
     `*[_type == "termsPage"][0]{
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
       pageTitle,
       "lastUpdated": lastUpdated,
       contentsLabel,

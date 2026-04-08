@@ -1019,6 +1019,9 @@ export interface PrivacyPageData {
   sections: LegalPageSection[];
   termsLinkLabel?: string;
   homeLinkLabel?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
 }
 
 export interface TermsPageData {
@@ -1028,6 +1031,9 @@ export interface TermsPageData {
   sections: LegalPageSection[];
   privacyLinkLabel?: string;
   homeLinkLabel?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
 }
 
 /* --- Lead (form submission) --- */
