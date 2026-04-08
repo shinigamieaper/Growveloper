@@ -116,6 +116,13 @@ export default defineType({
         }),
       ],
     }),
+    defineField({
+      name: "submitButtonLabel",
+      title: "Submit Button Label",
+      type: "string",
+      group: "formConfig",
+      description: 'Custom label for the final submit button, e.g. "Get My Free Strategy Call"',
+    }),
     defineField({ name: "seoTitle", title: "SEO Title", type: "string", group: "seo" }),
     defineField({ name: "seoDescription", title: "SEO Description", type: "text", rows: 2, group: "seo" }),
   ],

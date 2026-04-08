@@ -253,7 +253,13 @@ export default async function IndustryPage({
       )}
 
       {/* 06 — What Success Looks Like */}
-      <SuccessAnimation />
+      {industry.showSuccessAnimation !== false && (
+        <SuccessAnimation
+          successStates={industry.successStates}
+          headline={industry.successHeadline}
+          highlightedWord={industry.successHighlightedWord}
+        />
+      )}
 
       {/* 06 — Outcome Stats (glass) */}
       {(industry.outcomeStats ?? []).length > 0 && (

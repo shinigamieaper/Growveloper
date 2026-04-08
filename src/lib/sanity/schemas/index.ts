@@ -25,8 +25,10 @@ import automationsPage from "./automationsPage";
 import startPage from "./startPage";
 import startConfirmedPage from "./startConfirmedPage";
 import auditConfirmedPage from "./auditConfirmedPage";
+import successState from "./successState";
 
 export const schemaTypes = [
+  successState,
   toolRegistry,
   siteSettings,
   navigation,

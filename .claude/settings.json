@@ -22,7 +22,8 @@
       "Bash(xargs cat:*)",
       "Skill(commit-commands:commit)",
       "Skill(commit-commands:commit:*)",
-      "Bash(./node_modules/.bin/tsc --noEmit)"
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(ls c:/Users/facom/CascadeProjects/growveloper/src/components/ui/stepper*)"
     ],
     "additionalDirectories": [
       "C:\\Users\\facom\\.claude"

@@ -8,21 +8,34 @@ import { cn } from "@/lib/utils";
 interface WorkflowAnimationProps extends React.ComponentPropsWithoutRef<"div"> {
   /** ScrollTrigger start position — default "top 85%" */
   start?: string;
+  /** Node labels — defaults to the original hardcoded set */
+  steps?: string[];
+  /** Stat counter value — default 142 */
+  statValue?: number;
+  /** Stat counter label — default "Hours Saved Per Month" */
+  statLabel?: string;
+  /** Stat counter suffix — default "+" */
+  statSuffix?: string;
 }
 
-const NODES = [
+const DEFAULT_NODES = [
   "Lead In",
   "Scored",
   "CRM Entry",
   "Email Sent",
   "Task Created",
-] as const;
+];
 
 export function WorkflowAnimation({
   start = "top 85%",
+  steps,
+  statValue = 142,
+  statLabel = "Hours Saved Per Month",
+  statSuffix = "+",
   className,
   ...props
 }: WorkflowAnimationProps) {
+  const nodes = steps && steps.length > 0 ? steps : DEFAULT_NODES;
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -59,7 +72,7 @@ export function WorkflowAnimation({
         },
       });
 
-      NODES.forEach((_, i) => {
+      nodes.forEach((_, i) => {
         const node = nodeRefs.current[i];
         const pulse = pulseRefs.current[i];
         const line = lineRefs.current[i];
@@ -134,7 +147,7 @@ export function WorkflowAnimation({
     >
       {/* Node row — horizontal on desktop, wraps on mobile */}
       <div className="flex flex-wrap items-center justify-center gap-0 md:flex-nowrap">
-        {NODES.map((label, i) => (
+        {nodes.map((label, i) => (
           <React.Fragment key={label}>
             {/* Node */}
             <div className="flex flex-col items-center gap-2">
@@ -154,13 +167,13 @@ export function WorkflowAnimation({
                   {i + 1}
                 </div>
               </div>
-              <span className="max-w-[80px] text-center text-[11px] font-medium text-text-secondary md:max-w-none md:text-xs">
+              <span className="max-w-20 text-center text-[11px] font-medium text-text-secondary md:max-w-none md:text-xs">
                 {label}
               </span>
             </div>
 
             {/* Connecting line (not after last node) */}
-            {i < NODES.length - 1 && (
+            {i < nodes.length - 1 && (
               <div
                 ref={(el) => { lineRefs.current[i] = el; }}
                 className="mx-1 hidden h-0.5 flex-1 origin-left bg-text-secondary/20 md:block"
@@ -179,9 +192,9 @@ export function WorkflowAnimation({
         style={{ opacity: 0, transform: "translateY(12px)" }}
       >
         <MetricsCounter
-          value={142}
-          label="Hours Saved Per Month"
-          suffix="+"
+          value={statValue}
+          label={statLabel}
+          suffix={statSuffix}
           className="border-none bg-transparent"
         />
       </div>

@@ -163,7 +163,14 @@ export default async function Home() {
       )}
 
       {/* Section 06 — What Success Looks Like */}
-      <SuccessAnimation successMetrics={page.successMetrics ?? []} />
+      {page.showSuccessAnimation !== false && (
+        <SuccessAnimation
+          successStates={page.successStates}
+          successMetrics={page.successMetrics ?? []}
+          headline={page.successHeadline}
+          highlightedWord={page.successHighlightedWord}
+        />
+      )}
 
       {/* Section 07 — How It Works */}
       {process.items.length > 0 && (

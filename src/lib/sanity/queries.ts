@@ -217,7 +217,24 @@ export async function getHomePage() {
       testimonialCtaLabel,
       testimonialCtaUrl,
 
-      // Success Metrics
+      // Success Animation
+      showSuccessAnimation,
+      successHeadline,
+      successHighlightedWord,
+      successStates[] | order(order asc) {
+        subtitle,
+        stateType,
+        order,
+        metrics[]{ label, value, suffix, prefix, decimals },
+        vitals[]{ metric, value, threshold, pass },
+        searchQuery,
+        searchResponse,
+        brandMention,
+        workflowSteps,
+        workflowStatValue,
+        workflowStatLabel,
+        workflowStatSuffix
+      },
       successMetrics[]{ stateIndex, pillar, metricLabel, metricValue, metricSuffix, metricPrefix, decimals }
     }`
   );
@@ -875,6 +892,23 @@ export async function getIndustryBySlug(slug: string): Promise<IndustryPageData 
       otherIndustriesCtaLabel,
       painPoints,
       serviceCards[]{ title, description, "link": linkUrl, icon },
+      showSuccessAnimation,
+      successHeadline,
+      successHighlightedWord,
+      successStates[] | order(order asc) {
+        subtitle,
+        stateType,
+        order,
+        metrics[]{ label, value, suffix, prefix, decimals },
+        vitals[]{ metric, value, threshold, pass },
+        searchQuery,
+        searchResponse,
+        brandMention,
+        workflowSteps,
+        workflowStatValue,
+        workflowStatLabel,
+        workflowStatSuffix
+      },
       outcomeStats[]{ label, value, prefix, suffix },
       "caseStudySlugs": featuredCaseStudies[]->slug.current,
       "testimonials": featuredTestimonials[]->{ quote, name, role, company, "companyLogo": companyLogo.asset->url, "avatar": avatar.asset->url, rating, industry, service },
@@ -1165,6 +1199,7 @@ export async function getStartPage(): Promise<StartPageData | null> {
           order
         }
       },
+      submitButtonLabel,
       seoTitle,
       seoDescription,
       "ogImage": ogImage.asset->url

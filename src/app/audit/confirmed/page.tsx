@@ -34,11 +34,17 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       data?.seoDescription ??
       "Your growth audit is booked. Complete the intake form and we'll get started.",
+    robots: { index: false, follow: false },
     openGraph: data?.ogImage ? { images: [{ url: data.ogImage }] } : undefined,
   };
 }
 
-export default async function AuditConfirmedPage() {
+export default async function AuditConfirmedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; tx_ref?: string; transaction_id?: string }>;
+}) {
+  const params = await searchParams;
   const data = await getAuditConfirmedPage();
 
   const headline = data?.headline ?? "Your audit is booked.";
@@ -82,7 +88,22 @@ export default async function AuditConfirmedPage() {
               {headline}
             </h1>
             <p className="text-text-secondary">{description}</p>
+            {params.status === "successful" && (
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-400">
+                <Check className="h-3 w-3" />
+                Payment successful
+              </span>
+            )}
+            {params.tx_ref && (
+              <p className="mt-2 text-xs text-text-tertiary">
+                Reference: {params.tx_ref}
+              </p>
+            )}
           </div>
+
+          <p className="mb-8 text-center text-sm font-medium text-brand-mid">
+            Your audit covers website performance, marketing channels, and automation opportunities — with a prioritized roadmap showing exactly what to fix first.
+          </p>
 
           <div className="mb-12 space-y-4">
             {nextSteps.map((step) => (
@@ -124,11 +145,24 @@ export default async function AuditConfirmedPage() {
             >
               <CalendarDays className="h-5 w-5 shrink-0 text-brand-mid" />
               <div className="flex-1">
-                <p className="text-sm font-semibold text-text-primary">{calendarLabel}</p>
-                <p className="text-xs text-text-tertiary">Pick a slot in advance</p>
+                <p className="text-sm font-semibold text-text-primary">Open in new tab</p>
+                <p className="text-xs text-text-tertiary">If the calendar doesn't load below</p>
               </div>
               <ArrowRight className="h-4 w-4 text-text-tertiary transition-transform group-hover:translate-x-0.5" />
             </a>
+          </div>
+
+          <div className="mt-8 overflow-hidden rounded-xl border border-glass-border">
+            <div className="flex items-center gap-2 border-b border-glass-border bg-bg-secondary px-5 py-3">
+              <CalendarDays className="h-4 w-4 text-brand-mid" />
+              <p className="text-sm font-semibold text-text-primary">{calendarLabel}</p>
+            </div>
+            <iframe
+              src={calendarUrl}
+              className="h-150 w-full border-0 bg-bg-primary"
+              loading="lazy"
+              title="Book your walkthrough call"
+            />
           </div>
 
           <div className="mt-12 text-center">

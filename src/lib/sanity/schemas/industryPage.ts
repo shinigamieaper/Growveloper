@@ -115,6 +115,32 @@ export default defineType({
       ],
     }),
     defineField({
+      name: "showSuccessAnimation",
+      title: "Show Success Animation",
+      type: "boolean",
+      description: "Toggle the animated 'What Success Looks Like' section on or off.",
+      initialValue: true,
+    }),
+    defineField({
+      name: "successHeadline",
+      title: "Success Section Headline",
+      type: "string",
+      description: 'e.g. "What Success Looks Like"',
+    }),
+    defineField({
+      name: "successHighlightedWord",
+      title: "Success Highlighted Word",
+      type: "string",
+      description: 'The word rendered with the brand canvas effect, e.g. "Success"',
+    }),
+    defineField({
+      name: "successStates",
+      title: "Success States",
+      type: "array",
+      description: "Each state is a tab/scroll-stop with its own visual. Ordered by the Order field.",
+      of: [defineArrayMember({ type: "successState" })],
+    }),
+    defineField({
       name: "outcomeStats",
       title: "Outcome Stats",
       type: "array",

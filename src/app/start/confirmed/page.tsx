@@ -29,6 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: data?.seoTitle ?? "Consultation Confirmed — GROWVELOPER",
     description: data?.seoDescription ?? "Your consultation request has been received. Here is what happens next.",
+    robots: { index: false, follow: false },
     openGraph: data?.ogImage ? { images: [{ url: data.ogImage }] } : undefined,
   };
 }
@@ -95,6 +96,26 @@ export default async function StartConfirmedPage() {
             ))}
           </div>
 
+          <div className="mb-8 rounded-xl border border-glass-border bg-bg-secondary/50 p-4 text-center">
+            <p className="text-sm text-text-secondary">
+              <span className="font-medium text-text-primary">Before your call:</span>{" "}
+              Have your current website URL and a rough idea of your growth goals ready.
+            </p>
+          </div>
+
+          <div className="mb-8 overflow-hidden rounded-xl border border-glass-border">
+            <div className="flex items-center gap-2 border-b border-glass-border bg-bg-secondary px-5 py-3">
+              <CalendarDays className="h-4 w-4 text-brand-mid" />
+              <p className="text-sm font-semibold text-text-primary">{ctaLabel}</p>
+            </div>
+            <iframe
+              src={ctaUrl}
+              className="h-150 w-full border-0 bg-bg-primary"
+              loading="lazy"
+              title="Book a strategy call"
+            />
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <a
               href={ctaUrl}
@@ -104,8 +125,8 @@ export default async function StartConfirmedPage() {
             >
               <CalendarDays className="h-5 w-5 shrink-0 text-brand-mid" />
               <div className="flex-1">
-                <p className="text-sm font-semibold text-text-primary">{ctaLabel}</p>
-                <p className="text-xs text-text-tertiary">Skip the wait — pick a slot</p>
+                <p className="text-sm font-semibold text-text-primary">Open in new tab</p>
+                <p className="text-xs text-text-tertiary">If the calendar doesn't load above</p>
               </div>
               <ArrowRight className="h-4 w-4 text-text-tertiary transition-transform group-hover:translate-x-0.5" />
             </a>

@@ -42,6 +42,7 @@ interface StepperProps extends React.ComponentPropsWithoutRef<"div"> {
   onBeforeNext?: (currentStep: number) => Promise<boolean> | boolean;
   backButtonText?: string;
   nextButtonText?: string;
+  finalButtonText?: string;
   disableStepIndicators?: boolean;
   renderStepIndicator?: (props: StepIndicatorRenderProps) => ReactNode;
   stepCircleContainerClassName?: string;
@@ -71,6 +72,7 @@ export default function Stepper({
   nextButtonProps = {},
   backButtonText = "Back",
   nextButtonText = "Continue",
+  finalButtonText = "Complete",
   disableStepIndicators = false,
   renderStepIndicator,
   className,
@@ -211,7 +213,7 @@ export default function Stepper({
                 className="min-h-[44px] rounded-xl bg-brand-dark px-5 py-2 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105 active:scale-95"
                 {...nextButtonProps}
               >
-                {isLastStep ? "Complete" : nextButtonText}
+                {isLastStep ? finalButtonText : nextButtonText}
               </button>
             </div>
           </div>

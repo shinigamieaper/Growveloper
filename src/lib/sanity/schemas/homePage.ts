@@ -454,23 +454,54 @@ export default defineType({
       ],
     }),
 
-    /* ── Success Metrics ── */
+    /* ── Success Animation Section ── */
     defineField({
-      name: "successMetrics",
-      title: "Success Metrics",
+      name: "showSuccessAnimation",
+      title: "Show Success Animation",
+      type: "boolean",
+      fieldset: "successMetrics",
+      description: "Toggle the animated 'What Success Looks Like' section on or off.",
+      initialValue: true,
+    }),
+    defineField({
+      name: "successHeadline",
+      title: "Success Section Headline",
+      type: "string",
+      fieldset: "successMetrics",
+      description: 'e.g. "What Success Looks Like"',
+    }),
+    defineField({
+      name: "successHighlightedWord",
+      title: "Success Highlighted Word",
+      type: "string",
+      fieldset: "successMetrics",
+      description: 'The word rendered with the brand canvas effect, e.g. "Success"',
+    }),
+    defineField({
+      name: "successStates",
+      title: "Success States",
       type: "array",
       fieldset: "successMetrics",
-      description: "Metrics shown in the animated Success section. State 0 = Lighthouse (index 0: Score, index 1: Load Time). State 2 = Traffic (index 0: ROAS, index 1: Conversion Rate).",
+      description: "Each state is a tab/scroll-stop with its own visual. Ordered by the Order field.",
+      of: [defineArrayMember({ type: "successState" })],
+    }),
+    defineField({
+      name: "successMetrics",
+      title: "Success Metrics (legacy)",
+      type: "array",
+      fieldset: "successMetrics",
+      description: "DEPRECATED — use Success States above instead. Kept for backwards compatibility.",
+      hidden: true,
       of: [
         defineArrayMember({
           type: "object",
           fields: [
             defineField({ name: "stateIndex", title: "State Index (0-4)", type: "number" }),
-            defineField({ name: "pillar", title: "Pillar ID", type: "string", description: "e.g. lighthouse-score, load-time, roas, conversion-rate" }),
+            defineField({ name: "pillar", title: "Pillar ID", type: "string" }),
             defineField({ name: "metricLabel", title: "Label", type: "string" }),
             defineField({ name: "metricValue", title: "Value", type: "number" }),
-            defineField({ name: "metricSuffix", title: "Suffix", type: "string", description: "e.g. s, ×, %" }),
-            defineField({ name: "metricPrefix", title: "Prefix", type: "string", description: "e.g. +" }),
+            defineField({ name: "metricSuffix", title: "Suffix", type: "string" }),
+            defineField({ name: "metricPrefix", title: "Prefix", type: "string" }),
             defineField({ name: "decimals", title: "Decimal Places", type: "number" }),
           ],
         }),
