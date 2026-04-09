@@ -74,17 +74,19 @@ export default async function CaseStudyPage({
     .filter((item) => item.slug !== cs.slug)
     .slice(0, 3);
 
-  /* Map metrics to StatsBandItem shape */
+  /* Map metrics to StatsBandItem shape.
+     Only use the animated counter for simple numeric values (e.g. "13", "100+", "$16K").
+     Anything with spaces, slashes, or words becomes a text-only displayValue. */
   const statItems: StatsBandItem[] = cs.metrics
     .filter((m) => m.value && m.value !== "0")
     .map((m) => {
-      const numericMatch = m.value.match(/^([£$€]?)([\d.]+)(.*)$/);
-      if (numericMatch) {
-        const [, prefix, num, suffix] = numericMatch;
+      const simple = m.value.match(/^([£$€]?)([\d.]+)([%xK+]*)$/);
+      if (simple) {
+        const [, prefix, num, suffix] = simple;
         return {
           value: parseFloat(num),
           prefix: prefix || undefined,
-          suffix: suffix.trim() || undefined,
+          suffix: suffix || undefined,
           label: m.label,
         };
       }
