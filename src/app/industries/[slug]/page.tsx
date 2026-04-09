@@ -92,10 +92,10 @@ export default async function IndustryPage({
     subStatement: industry.heroSubStatement,
     primaryCtaLabel: industry.primaryCtaLabel ?? "Book a free consultation",
     primaryCtaUrl: industry.primaryCtaUrl ?? "/start",
-    secondaryCtaLabel: industry.secondaryCtaLabel ?? "See our work",
-    secondaryCtaUrl: industry.secondaryCtaUrl ?? "/work",
-    scrollCueText: industry.scrollCueText ?? "Scroll to explore",
-    scrollCueTargetId: industry.scrollCueTargetId ?? "pain-points",
+    secondaryCtaLabel: industry.secondaryCtaLabel,
+    secondaryCtaUrl: industry.secondaryCtaUrl,
+    scrollCueText: industry.scrollCueText,
+    scrollCueTargetId: industry.scrollCueTargetId,
   };
 
   const problemData: ServiceProblemData = {
