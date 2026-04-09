@@ -568,7 +568,41 @@ export async function getAllCaseStudies(): Promise<CaseStudyCardData[]> {
     `*[_type == "caseStudy"] | order(publishedAt desc) {
       title,
       "slug": slug.current,
+      clientName,
+      clientIndustry,
+      role,
+      duration,
+      liveUrl,
+      services,
+      beforeState,
+      tags,
       "heroImage": heroImage.asset->url,
+      "gallery": gallery[].asset->url,
+      "situation": pt::text(situation),
+      "resultHeadline": metrics[0].label + " " + metrics[0].value,
+      "techStack": techStack[]->name,
+      "techStackLogos": techStack[]->{ name, "logo": logo.asset->url },
+      featured
+    }`
+  );
+}
+
+export async function getFeaturedCaseStudies(): Promise<CaseStudyCardData[]> {
+  "use cache";
+  return client.fetch<CaseStudyCardData[]>(
+    `*[_type == "caseStudy" && featured == true] | order(publishedAt desc) {
+      title,
+      "slug": slug.current,
+      clientName,
+      clientIndustry,
+      role,
+      duration,
+      liveUrl,
+      services,
+      beforeState,
+      tags,
+      "heroImage": heroImage.asset->url,
+      "gallery": gallery[].asset->url,
       "situation": pt::text(situation),
       "resultHeadline": metrics[0].label + " " + metrics[0].value,
       "techStack": techStack[]->name,
@@ -584,10 +618,17 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudyPageDat
     `*[_type == "caseStudy" && slug.current == $slug][0]{
       title,
       "slug": slug.current,
+      clientName,
       clientIndustry,
+      role,
+      duration,
+      liveUrl,
+      services,
+      beforeState,
       tags,
       "heroImage": heroImage.asset->url,
       heroVideo,
+      "gallery": gallery[].asset->url,
       "situation": pt::text(situation),
       "situationDetail": pt::text(situation),
       "approach": pt::text(approach),
@@ -599,7 +640,10 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudyPageDat
       "techStackLogos": techStack[]->{ name, "logo": logo.asset->url },
       testimonial->{ quote, name, role, company },
       featured,
-      publishedAt
+      publishedAt,
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url
     }`,
     { slug }
   );
@@ -950,25 +994,37 @@ export async function getIndustryBySlug(slug: string): Promise<IndustryPageData 
 
 // ── Popup Config ──
 
-export async function getPopupConfig(page: string): Promise<PopupConfig | null> {
+export async function getPopupConfigs(page: string): Promise<PopupConfig[]> {
   "use cache";
-  return client.fetch<PopupConfig | null>(
-    `*[_type == "popupConfig" && pageReference == $page && enabled == true][0]{
+  return client.fetch<PopupConfig[]>(
+    `*[_type == "popupConfig" && pageReference == $page && enabled == true] | order(variant asc) {
       "id": _id,
       pageReference,
       enabled,
+      variant,
       triggerType,
       triggerValue,
+      mobileTriggerValue,
       offerType,
       headline,
       subCopy,
       ctaLabel,
       ctaDestination,
       downloadUrl,
-      resourceTitle
+      resourceTitle,
+      dismissText,
+      socialProofLine,
+      dismissalDays,
+      format
     }`,
     { page }
   );
+}
+
+export async function getPopupConfig(page: string): Promise<PopupConfig | null> {
+  "use cache";
+  const configs = await getPopupConfigs(page);
+  return configs[0] || null;
 }
 
 export async function getAllPopupConfigs(): Promise<PopupConfig[]> {
@@ -978,15 +1034,21 @@ export async function getAllPopupConfigs(): Promise<PopupConfig[]> {
       "id": _id,
       pageReference,
       enabled,
+      variant,
       triggerType,
       triggerValue,
+      mobileTriggerValue,
       offerType,
       headline,
       subCopy,
       ctaLabel,
       ctaDestination,
       downloadUrl,
-      resourceTitle
+      resourceTitle,
+      dismissText,
+      socialProofLine,
+      dismissalDays,
+      format
     }`
   );
 }

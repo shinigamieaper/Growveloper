@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, Clock, Briefcase } from "lucide-react";
 import {
   GlassSection,
   CTABanner,
@@ -41,12 +41,11 @@ export async function generateMetadata({
     getSiteSettings(),
   ]);
   if (!cs) return { title: "Case Study Not Found" };
+  const ogImage = cs.ogImage ?? settings?.ogImage;
   return {
-    title: `${cs.title} — Case Study`,
-    description: cs.situation,
-    openGraph: settings?.ogImage
-      ? { images: [{ url: settings.ogImage }] }
-      : undefined,
+    title: cs.seoTitle ?? `${cs.title} — Case Study`,
+    description: cs.seoDescription ?? cs.situation,
+    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
   };
 }
 
@@ -141,6 +140,38 @@ export default async function CaseStudyPage({
             <p className="max-w-2xl text-lg leading-relaxed text-brand-mid font-medium">
               {cs.resultHeadline}
             </p>
+
+            {/* Project metadata */}
+            {(cs.clientName || cs.role || cs.duration || cs.liveUrl) && (
+              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-text-tertiary">
+                {cs.clientName && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Briefcase className="h-3.5 w-3.5" aria-hidden />
+                    {cs.clientName}
+                  </span>
+                )}
+                {cs.role && (
+                  <span>{cs.role}</span>
+                )}
+                {cs.duration && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5" aria-hidden />
+                    {cs.duration}
+                  </span>
+                )}
+                {cs.liveUrl && (
+                  <a
+                    href={cs.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-brand-mid transition-colors hover:text-brand-light"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+                    View live site
+                  </a>
+                )}
+              </div>
+            )}
           </ScrollFadeUp>
         </div>
       </section>
@@ -161,6 +192,29 @@ export default async function CaseStudyPage({
                 />
               </div>
             </ScrollFadeUp>
+          </div>
+        </section>
+      )}
+
+      {/* 02b — Gallery */}
+      {cs.gallery && cs.gallery.length > 0 && (
+        <section className="py-6 md:py-10">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {cs.gallery.map((img, i) => (
+                <ScrollFadeUp key={i} delay={0.05 * i}>
+                  <div className="relative aspect-video w-[320px] shrink-0 overflow-hidden rounded-xl border border-glass-border md:w-[480px]">
+                    <Image
+                      src={img}
+                      alt={`${cs.title} screenshot ${i + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 320px, 480px"
+                    />
+                  </div>
+                </ScrollFadeUp>
+              ))}
+            </div>
           </div>
         </section>
       )}

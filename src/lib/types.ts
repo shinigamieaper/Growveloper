@@ -302,9 +302,17 @@ export interface CaseStudyMetric {
 export interface CaseStudyCardData {
   title: string;
   slug: string;
+  clientName?: string;
+  clientIndustry?: string;
+  role?: string;
+  duration?: string;
+  liveUrl?: string;
+  services?: string[];
+  beforeState?: string;
   tags?: string[];
   heroImage?: string;
   heroVideo?: string;
+  gallery?: string[];
   situation: string;
   resultHeadline: string;
   techStack: string[];
@@ -364,6 +372,9 @@ export interface CaseStudyPageData extends CaseStudyCardData {
   metrics: CaseStudyMetric[];
   testimonial?: CaseStudyTestimonial;
   publishedAt?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
 }
 
 /* --- Industry (silo page) --- */
@@ -534,17 +545,21 @@ export interface PopupConfig {
   id: string;
   pageReference: string;
   enabled: boolean;
-  triggerType: "scroll_depth" | "time_on_page" | "inactivity" | "manual";
+  variant?: "A" | "B";
+  triggerType: "scroll_depth" | "time_on_page" | "inactivity" | "exit_intent" | "manual";
   triggerValue: number;
+  mobileTriggerValue?: number;
   offerType: "newsletter" | "lead_magnet" | "consultation" | "audit" | "download";
   headline: string;
-  subCopy: string;
+  subCopy?: string;
   ctaLabel: string;
-  ctaDestination: string;
-  /** URL to the downloadable file (used when offerType is 'download') */
+  ctaDestination?: string;
   downloadUrl?: string;
-  /** Title of the resource being downloaded (for analytics/display) */
   resourceTitle?: string;
+  dismissText?: string;
+  socialProofLine?: string;
+  dismissalDays?: number;
+  format?: "modal" | "slide_in";
 }
 
 /* --- Audit Page --- */
