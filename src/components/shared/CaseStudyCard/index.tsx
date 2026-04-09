@@ -163,14 +163,14 @@ export function CaseStudyCard({ data, colorIndex = 0, className, ...props }: Cas
       <div className={cn("relative flex flex-col justify-between gap-6 rounded-l-2xl p-8 md:p-10 lg:p-12", variant.panel)}>
 
         <div className="flex flex-col gap-4">
-          {/* Result headline */}
-          <h3 className={cn("heading-font text-2xl font-bold uppercase leading-tight md:text-3xl lg:text-[2.5rem] lg:leading-[1.1]", variant.heading)}>
-            {data.resultHeadline}
+          {/* Client / Title */}
+          <h3 className={cn("heading-font text-2xl font-bold leading-tight md:text-3xl lg:text-[2rem] lg:leading-[1.15]", variant.heading)}>
+            {data.clientName || data.title}
           </h3>
 
-          {/* Description */}
+          {/* Before-state or situation */}
           <p className={cn("max-w-md text-sm leading-relaxed md:text-base", variant.body)}>
-            {data.situation}
+            {data.beforeState || data.situation}
           </p>
         </div>
 
@@ -200,7 +200,7 @@ export function CaseStudyCard({ data, colorIndex = 0, className, ...props }: Cas
             alt={data.title}
             fill
             sizes="(max-width: 768px) 100vw, 45vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
           <div

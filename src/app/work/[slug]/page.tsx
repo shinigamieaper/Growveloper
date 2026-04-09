@@ -75,12 +75,21 @@ export default async function CaseStudyPage({
     .slice(0, 3);
 
   /* Map metrics to StatsBandItem shape */
-  const statItems: StatsBandItem[] = cs.metrics.map((m) => ({
-    value: parseFloat(m.value.replace(/[^0-9.]/g, "")) || 0,
-    prefix: m.value.match(/^[£$€]/) ? m.value[0] : undefined,
-    suffix: m.value.match(/[%xk+]/) ? m.value.replace(/[^%xk+]/g, "") : undefined,
-    label: m.label,
-  }));
+  const statItems: StatsBandItem[] = cs.metrics
+    .filter((m) => m.value && m.value !== "0")
+    .map((m) => {
+      const numericMatch = m.value.match(/^([£$€]?)([\d.]+)(.*)$/);
+      if (numericMatch) {
+        const [, prefix, num, suffix] = numericMatch;
+        return {
+          value: parseFloat(num),
+          prefix: prefix || undefined,
+          suffix: suffix.trim() || undefined,
+          label: m.label,
+        };
+      }
+      return { value: 0, displayValue: m.value, label: m.label };
+    });
 
   /* Testimonial as TestimonialData array */
   const testimonials: TestimonialData[] = cs.testimonial
@@ -187,7 +196,7 @@ export default async function CaseStudyPage({
                   alt={cs.title}
                   fill
                   priority
-                  className="object-cover"
+                  className="object-cover object-top"
                   sizes="(max-width: 1280px) 100vw, 1280px"
                 />
               </div>

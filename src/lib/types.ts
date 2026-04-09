@@ -291,6 +291,7 @@ export interface StatsBandItem {
   prefix?: string;
   decimals?: number;
   label: string;
+  displayValue?: string;
 }
 
 /* --- Case Study --- */

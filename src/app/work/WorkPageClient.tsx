@@ -31,21 +31,19 @@ interface WorkPageClientProps {
 }
 
 export function WorkPageClient({ caseStudies, workPageData, faq }: WorkPageClientProps) {
-  const industries = useMemo(
-    () => [...new Set(caseStudies.map((cs) => (cs as CaseStudyCardData & { clientIndustry?: string }).clientIndustry).filter(Boolean) as string[])],
+  const allTags = useMemo(
+    () => [...new Set(caseStudies.flatMap((cs) => cs.tags ?? []))].sort(),
     [caseStudies],
   );
 
-  const filterOptions = industries.map((i) => ({ label: i, value: i }));
+  const filterOptions = allTags.map((t) => ({ label: t, value: t }));
 
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   const visible = useMemo(() => {
     if (activeFilters.length === 0) return caseStudies;
     return caseStudies.filter((cs) =>
-      activeFilters.includes(
-        (cs as CaseStudyCardData & { clientIndustry?: string }).clientIndustry ?? "",
-      ),
+      activeFilters.some((f) => cs.tags?.includes(f)),
     );
   }, [activeFilters, caseStudies]);
 
