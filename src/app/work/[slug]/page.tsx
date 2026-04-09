@@ -80,7 +80,7 @@ export default async function CaseStudyPage({
   const statItems: StatsBandItem[] = cs.metrics
     .filter((m) => m.value && m.value !== "0")
     .map((m) => {
-      const simple = m.value.match(/^([£$€]?)([\d.]+)([%xK+]*)$/);
+      const simple = m.value.match(/^([£$€]?)([\d.]+)([%xK+/a-z]*)$/i);
       if (simple) {
         const [, prefix, num, suffix] = simple;
         return {
