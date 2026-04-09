@@ -118,21 +118,21 @@ export function StatsBand({
                   {item.label}
                 </span>
 
-                <span className="heading-font mt-3 text-4xl font-bold leading-none text-brand-mid drop-shadow-[0_0_14px_rgba(45,212,191,0.3)] md:text-5xl">
-                  {item.displayValue ? (
-                    item.displayValue
-                  ) : (
-                    <>
-                      {item.prefix}
-                      <Counter
-                        target={item.value}
-                        decimals={item.decimals ?? 0}
-                        active={inView}
-                      />
-                      {item.suffix}
-                    </>
-                  )}
-                </span>
+                {item.displayValue ? (
+                  <span className="heading-font mt-3 text-xl font-bold leading-tight text-brand-mid drop-shadow-[0_0_14px_rgba(45,212,191,0.3)] md:text-2xl">
+                    {item.displayValue}
+                  </span>
+                ) : (
+                  <span className="heading-font mt-3 text-4xl font-bold leading-none text-brand-mid drop-shadow-[0_0_14px_rgba(45,212,191,0.3)] md:text-5xl">
+                    {item.prefix}
+                    <Counter
+                      target={item.value}
+                      decimals={item.decimals ?? 0}
+                      active={inView}
+                    />
+                    {item.suffix}
+                  </span>
+                )}
               </motion.div>
             ))}
           </div>
