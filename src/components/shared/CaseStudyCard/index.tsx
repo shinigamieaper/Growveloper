@@ -165,7 +165,7 @@ export function CaseStudyCard({ data, colorIndex = 0, className, ...props }: Cas
         <div className="flex flex-col gap-4">
           {/* Client / Title */}
           <h3 className={cn("heading-font text-2xl font-bold leading-tight md:text-3xl lg:text-[2rem] lg:leading-[1.15]", variant.heading)}>
-            {data.clientName || data.title}
+            {data.title}
           </h3>
 
           {/* Before-state or situation */}
