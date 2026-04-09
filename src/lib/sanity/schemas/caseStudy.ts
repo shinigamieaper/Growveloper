@@ -95,8 +95,10 @@ export default defineType({
     defineField({
       name: "heroVideo",
       title: "Hero Video",
-      type: "url",
+      type: "file",
       group: "media",
+      options: { accept: "video/*" },
+      description: "Upload a video file for the case study hero. Falls back to the hero image if empty.",
     }),
     defineField({
       name: "gallery",

@@ -627,7 +627,7 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudyPageDat
       beforeState,
       tags,
       "heroImage": heroImage.asset->url,
-      heroVideo,
+      "heroVideo": heroVideo.asset->url,
       "gallery": gallery[].asset->url,
       "situation": pt::text(situation),
       "situationDetail": pt::text(situation),
