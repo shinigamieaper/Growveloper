@@ -137,7 +137,7 @@ export function CaseStudyCard({ data, colorIndex = 0, className, ...props }: Cas
       ref={cardRef}
       className={cn(
         "group relative grid overflow-hidden rounded-2xl border border-glass-border bg-bg-secondary",
-        "grid-cols-1 md:grid-cols-[55%_45%]",
+        "grid-cols-1 md:grid-cols-[40%_60%]",
         !reduced && "will-change-transform",
         className,
       )}
@@ -160,23 +160,23 @@ export function CaseStudyCard({ data, colorIndex = 0, className, ...props }: Cas
       </div>
 
       {/* ── Left: Accent content panel ── */}
-      <div className={cn("relative flex flex-col justify-between gap-6 rounded-l-2xl p-8 md:p-10 lg:p-12", variant.panel)}>
+      <div className={cn("relative flex flex-col justify-between gap-4 rounded-l-2xl p-6 md:p-8", variant.panel)}>
 
-        <div className="flex flex-col gap-4">
-          {/* Client / Title */}
-          <h3 className={cn("heading-font text-2xl font-bold leading-tight md:text-3xl lg:text-[2rem] lg:leading-[1.15]", variant.heading)}>
+        <div className="flex flex-col gap-3">
+          {/* Title */}
+          <h3 className={cn("heading-font text-lg font-bold leading-tight md:text-xl lg:text-2xl", variant.heading)}>
             {data.title}
           </h3>
 
           {/* Before-state or situation */}
-          <p className={cn("max-w-md text-sm leading-relaxed md:text-base", variant.body)}>
+          <p className={cn("line-clamp-4 text-xs leading-relaxed md:text-sm", variant.body)}>
             {data.beforeState || data.situation}
           </p>
         </div>
 
         {/* Tech stack icons at bottom */}
         {data.techStack.length > 0 && (
-          <div className="flex flex-wrap items-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center gap-2">
             {data.techStack.map(renderTechIcon)}
           </div>
         )}
@@ -199,7 +199,7 @@ export function CaseStudyCard({ data, colorIndex = 0, className, ...props }: Cas
             src={data.heroImage!}
             alt={data.title}
             fill
-            sizes="(max-width: 768px) 100vw, 45vw"
+            sizes="(max-width: 768px) 100vw, 60vw"
             className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
