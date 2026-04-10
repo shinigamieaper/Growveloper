@@ -11,7 +11,7 @@ import { MovingBorderButton } from "@/components/ui/moving-border";
 import { MagneticElement } from "@/components/animations/MagneticElement";
 import { ScrollCue } from "@/components/shared/ScrollCue";
 import { trackCTAClick } from "@/lib/analytics";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import type { AuditHeroData } from "@/lib/types";
 
 /* ── Price parsing (mirrors AuditPricing) ── */
@@ -37,6 +37,9 @@ interface AuditHeroProps extends React.ComponentPropsWithoutRef<"section"> {
 
 export function AuditHero({ data, scrollCueTargetId, className, ...props }: AuditHeroProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const promoCode = searchParams.get("promo");
+  const PROMO_DISCOUNT = promoCode === "welcome50" ? 50 : 0;
   const [isCheckoutActive, setIsCheckoutActive] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -62,6 +65,9 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
 
   const parsed = parsePrice(price);
   const isCheckoutEnabled = parsed !== null;
+  const displayPrice = parsed && PROMO_DISCOUNT > 0
+    ? `${price.trim().charAt(0)}${parsed.amount - PROMO_DISCOUNT}`
+    : price;
 
   const renderHeadline = () => {
     if (!highlightedWord || !headline.includes(highlightedWord)) {
@@ -99,8 +105,9 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
           productType: "audit",
           tierName: "Growth Audit",
           currency: parsed.currency,
-          amount: parsed.amount,
+          amount: parsed.amount - PROMO_DISCOUNT,
           email,
+          meta: { tier_name: "Growth Audit", product_type: "audit", promo_code: promoCode || undefined },
         }),
       });
 
@@ -166,12 +173,20 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                 </span>
               )}
               <span className="heading-font text-4xl font-black text-brand-mid sm:text-5xl">
-                {price}
+                {displayPrice}
               </span>
+              {PROMO_DISCOUNT > 0 && (
+                <span className="ml-2 text-lg text-text-tertiary line-through">{price}</span>
+              )}
               {heroPriceNote && (
                 <span className="text-xs text-text-tertiary">{heroPriceNote}</span>
               )}
             </div>
+            {PROMO_DISCOUNT > 0 && (
+              <p className="mt-1 text-center text-xs font-semibold text-brand-mid">
+                $50 off applied
+              </p>
+            )}
 
             {/* Card tagline */}
             {heroCardTagline && (
