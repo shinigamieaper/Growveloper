@@ -681,8 +681,8 @@ export interface ServicePageHeroData {
   subStatement: string;
   primaryCtaLabel: string;
   primaryCtaUrl: string;
-  secondaryCtaLabel: string;
-  secondaryCtaUrl: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaUrl?: string;
   scrollCueText?: string;
   scrollCueTargetId?: string;
 }
