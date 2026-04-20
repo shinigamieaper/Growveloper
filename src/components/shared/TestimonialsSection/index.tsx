@@ -9,7 +9,6 @@ import { MovingBorderButton } from "@/components/ui/moving-border";
 import { cn } from "@/lib/utils";
 import type { TestimonialData } from "@/lib/types";
 
-/* ─── Star icon ─── */
 function StarIcon({ filled }: { filled: boolean }) {
   return (
     <svg
@@ -23,7 +22,6 @@ function StarIcon({ filled }: { filled: boolean }) {
   );
 }
 
-/* ─── Avatar with initials fallback ─── */
 function Avatar({ src, name, size = "md" }: { src?: string; name: string; size?: "sm" | "md" }) {
   const initials = name
     .split(" ")
@@ -56,7 +54,6 @@ function Avatar({ src, name, size = "md" }: { src?: string; name: string; size?:
   );
 }
 
-/* ─── Background grid card (faded, rectangular) ─── */
 function GridCard({ data }: { data: TestimonialData }) {
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-white/[0.04] bg-white/[0.03] p-4">
@@ -83,10 +80,10 @@ function GridCard({ data }: { data: TestimonialData }) {
   );
 }
 
-/* ─── Active carousel card (prominent, rectangular) ─── */
+/* No h-full — card sizes to its natural content height */
 function CarouselCard({ data }: { data: TestimonialData }) {
   return (
-    <div className="flex h-full flex-col gap-5 rounded-2xl border border-brand-mid/60 bg-bg-secondary p-8 shadow-xl md:p-10">
+    <div className="flex flex-col gap-5 rounded-2xl border border-brand-mid/60 bg-bg-secondary p-8 shadow-[0_8px_40px_rgba(90,177,177,0.12)] md:p-10">
       {data.rating > 0 && (
         <div className="flex gap-0.5" aria-label={`${data.rating} out of 5 stars`}>
           {Array.from({ length: 5 }).map((_, i) => (
@@ -125,18 +122,9 @@ function CarouselCard({ data }: { data: TestimonialData }) {
   );
 }
 
-/* ─── CTA carousel card ─── */
-function CTACard({
-  headline,
-  label,
-  url,
-}: {
-  headline: string;
-  label: string;
-  url: string;
-}) {
+function CTACard({ headline, label, url }: { headline: string; label: string; url: string }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-8 rounded-2xl bg-brand-mid p-10 text-center shadow-xl md:p-14">
+    <div className="flex min-h-80 flex-col items-center justify-center gap-8 rounded-2xl bg-brand-mid p-10 text-center shadow-xl md:p-14">
       <p className="heading-font text-3xl font-bold italic text-base-black md:text-4xl lg:text-5xl">
         {headline}
       </p>
@@ -155,7 +143,6 @@ function CTACard({
   );
 }
 
-/* ─── Props ─── */
 interface TestimonialsSectionProps {
   items: TestimonialData[];
   showCTACard?: boolean;
@@ -185,14 +172,13 @@ export function TestimonialsSection({
 
   if (items.length === 0) return null;
 
-  /* Fill background grid — repeat items to fill 3 rows × 4 cols */
+  /* Tile enough cards to fill the container regardless of carousel height */
   const gridItems: TestimonialData[] = [];
-  while (gridItems.length < 12) {
+  while (gridItems.length < 24) {
     gridItems.push(...items);
   }
-  const backgroundCards = gridItems.slice(0, 12);
+  const backgroundCards = gridItems.slice(0, 24);
 
-  /* ─── GSAP slide transition ─── */
   const animateToSlide = useCallback(
     (index: number) => {
       slidesRef.current.forEach((el, i) => {
@@ -201,13 +187,7 @@ export function TestimonialsSection({
           gsap.fromTo(
             el,
             { opacity: 0, y: 24, scale: 0.96 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: reduced ? 0 : DURATION.normal,
-              ease: EASE.smooth,
-            },
+            { opacity: 1, y: 0, scale: 1, duration: reduced ? 0 : DURATION.normal, ease: EASE.smooth },
           );
         } else {
           gsap.to(el, {
@@ -232,10 +212,8 @@ export function TestimonialsSection({
     [slides.length, animateToSlide],
   );
 
-  /* ─── Auto-advance every 4s ─── */
   useEffect(() => {
     if (reduced || slides.length <= 1) return;
-
     timerRef.current = setInterval(() => {
       if (!isPausedRef.current) {
         setActiveIndex((prev) => {
@@ -245,36 +223,25 @@ export function TestimonialsSection({
         });
       }
     }, 4000);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [reduced, slides.length, animateToSlide]);
 
-  /* ─── Initial slide state ─── */
   useEffect(() => {
     slidesRef.current.forEach((el, i) => {
       if (!el) return;
-      gsap.set(el, {
-        opacity: i === 0 ? 1 : 0,
-        y: i === 0 ? 0 : 24,
-        scale: i === 0 ? 1 : 0.96,
-      });
+      gsap.set(el, { opacity: i === 0 ? 1 : 0, y: i === 0 ? 0 : 24, scale: i === 0 ? 1 : 0.96 });
     });
   }, []);
-
-  const handleMouseEnter = () => { isPausedRef.current = true; };
-  const handleMouseLeave = () => { isPausedRef.current = false; };
 
   return (
     <div
       className="relative w-full overflow-hidden"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => { isPausedRef.current = true; }}
+      onMouseLeave={() => { isPausedRef.current = false; }}
     >
-      {/* ── Background grid (visible, faded) ── */}
+      {/* ── Background grid — absolutely behind, never defines container height ── */}
       <div
-        className="pointer-events-none grid grid-cols-2 gap-3 py-6 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-5"
+        className="pointer-events-none absolute inset-0 grid grid-cols-2 gap-3 p-6 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-5"
         aria-hidden="true"
       >
         {backgroundCards.map((item, i) => (
@@ -282,36 +249,30 @@ export function TestimonialsSection({
         ))}
       </div>
 
-      {/* ── Heavy fog overlay — background barely visible ── */}
+      {/* ── Fog overlay ── */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background: [
-            "radial-gradient(ellipse 50% 40% at 50% 50%, var(--bg-primary) 20%, transparent 65%)",
-            "linear-gradient(to bottom, var(--bg-primary) 0%, transparent 12%, transparent 88%, var(--bg-primary) 100%)",
-            "linear-gradient(to right, var(--bg-primary) 0%, transparent 8%, transparent 92%, var(--bg-primary) 100%)",
+            "radial-gradient(ellipse 55% 50% at 50% 50%, var(--bg-primary) 25%, transparent 65%)",
+            "linear-gradient(to bottom, var(--bg-primary) 0%, transparent 15%, transparent 85%, var(--bg-primary) 100%)",
+            "linear-gradient(to right, var(--bg-primary) 0%, transparent 10%, transparent 90%, var(--bg-primary) 100%)",
           ].join(", "),
         }}
         aria-hidden="true"
       />
-      <div
-        className="pointer-events-none absolute inset-0 backdrop-blur-[3px]"
-        aria-hidden="true"
-      />
+      <div className="pointer-events-none absolute inset-0 backdrop-blur-[3px]" aria-hidden="true" />
 
-      {/* ── Centered carousel (overlays grid center) ── */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4">
-        {/* Active slide container */}
-        <div className="relative w-full max-w-2xl">
-          <div className="relative min-h-[260px] md:min-h-[300px]">
+      {/* ── Carousel — normal flow, defines container height ── */}
+      <div className="relative z-10 flex flex-col items-center px-4 py-16 md:py-20">
+        <div className="w-full max-w-2xl">
+          {/* CSS grid stacking: container grows to the tallest slide, dots always clear below */}
+          <div className="grid">
             {slides.map((slide, i) => (
               <div
                 key={i}
                 ref={(el) => { slidesRef.current[i] = el; }}
-                className={cn(
-                  "absolute inset-0",
-                  i !== activeIndex && "pointer-events-none",
-                )}
+                className={cn("col-start-1 row-start-1", i !== activeIndex && "pointer-events-none")}
                 aria-hidden={i !== activeIndex}
               >
                 {slide.type === "testimonial" ? (
@@ -324,7 +285,7 @@ export function TestimonialsSection({
           </div>
         </div>
 
-        {/* ── Dot indicators ── */}
+        {/* ── Dot indicators — always below the carousel card ── */}
         {slides.length > 1 && (
           <div
             className="mt-8 flex items-center justify-center gap-2"
