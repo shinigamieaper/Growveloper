@@ -272,7 +272,7 @@ export function TestimonialsSection({
               <div
                 key={i}
                 ref={(el) => { slidesRef.current[i] = el; }}
-                className={cn("col-start-1 row-start-1", i !== activeIndex && "pointer-events-none")}
+                className={cn("col-start-1 row-start-1 self-start", i !== activeIndex && "pointer-events-none")}
                 aria-hidden={i !== activeIndex}
               >
                 {slide.type === "testimonial" ? (
