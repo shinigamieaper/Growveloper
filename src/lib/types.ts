@@ -601,7 +601,6 @@ export interface PopupConfig {
 /* --- Audit Page --- */
 
 export interface AuditHeroData {
-  label?: string;
   headline: string;
   highlightedWord?: string;
   price: string;

@@ -274,9 +274,9 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                 {isCheckoutActive && isCheckoutEnabled ? (
                   <motion.div
                     key="email-form"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
+                    initial={reduced ? false : { opacity: 0, height: 0 }}
+                    animate={reduced ? undefined : { opacity: 1, height: "auto" }}
+                    exit={reduced ? undefined : { opacity: 0, height: 0 }}
                     className="flex flex-col gap-3 overflow-hidden"
                   >
                     <label htmlFor="audit-hero-email" className="sr-only">
@@ -334,7 +334,12 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                     </button>
                   </motion.div>
                 ) : (
-                  <motion.div key="cta-button" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3">
+                  <motion.div
+                    key="cta-button"
+                    initial={reduced ? false : { opacity: 0 }}
+                    animate={reduced ? undefined : { opacity: 1 }}
+                    className="flex flex-col items-center gap-3"
+                  >
                     <MagneticElement strength={0.4}>
                       {isCheckoutEnabled ? (
                         <MovingBorderButton
