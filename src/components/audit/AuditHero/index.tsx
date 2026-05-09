@@ -183,6 +183,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
 
       {/* Price card — outside LampContainer, pulled up into glow. No scroll trigger — must be visible on load. */}
       <div className="relative z-60 mx-auto -mt-44 flex max-w-xl flex-col items-center gap-6 px-6 pb-4 [@media(orientation:landscape)_and_(max-height:600px)]:-mt-16 [@media(orientation:landscape)_and_(max-height:600px)]:px-4">
+          {/* Asymmetric pricing card: kicker+price LEFT / value-line RIGHT (sm+); deliverables stripe; tagline; CTA */}
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 16, scale: 0.985 }}
             animate={reduced ? undefined : { opacity: 1, y: 0, scale: 1 }}
@@ -193,8 +194,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
             }
             className="w-full rounded-2xl border border-glass-border bg-glass-bg px-6 py-7 backdrop-blur-md sm:px-10 sm:py-8"
           >
-
-            {/* Asymmetric header: kicker + price LEFT, value line RIGHT (sm+); stacked on mobile */}
+            {/* Header: kicker + price LEFT, value line RIGHT (sm+); stacked on mobile */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
               {/* LEFT block — kicker + price (left-aligned on sm+) */}
               <div className="flex flex-col items-start">
@@ -232,7 +232,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
             {/* Deliverables block — visible at all viewports, with hairline label + brand-mid left stripe */}
             {heroFeatures && heroFeatures.length > 0 && (
               <div className="mt-6 border-l-2 border-brand-mid pl-4 sm:mt-7 sm:pl-5">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-brand-mid sm:text-[11px]">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-brand-mid sm:text-[11px]">
                   What you get
                 </p>
                 <motion.ul
@@ -269,7 +269,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
             )}
 
             {/* CTA / Email capture */}
-            <div className="mt-5 sm:mt-6" />
+            <div className="mt-5 sm:mt-6">
             <AnimatePresence mode="wait">
               {isCheckoutActive && isCheckoutEnabled ? (
                 <motion.div
@@ -371,6 +371,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                 </motion.div>
               )}
             </AnimatePresence>
+            </div>
           </motion.div>
       </div>
 
