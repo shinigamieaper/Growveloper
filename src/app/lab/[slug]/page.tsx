@@ -92,6 +92,9 @@ export default async function LabPostPage({
   const faqs = post.faqs ?? [];
   const authorName = post.author ?? "GROWVELOPER";
   const heroAlt = post.heroImageAlt ?? post.title;
+  const heroObjectPosition = post.heroImageHotspot
+    ? `${Math.round(post.heroImageHotspot.x * 100)}% ${Math.round(post.heroImageHotspot.y * 100)}%`
+    : undefined;
 
   return (
     <>
@@ -182,6 +185,7 @@ export default async function LabPostPage({
                   priority
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 768px"
+                  style={heroObjectPosition ? { objectPosition: heroObjectPosition } : undefined}
                 />
               </div>
             </ScrollFadeUp>

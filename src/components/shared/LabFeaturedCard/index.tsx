@@ -89,6 +89,10 @@ export function LabFeaturedCard({
   const video = isVideo(item);
   const thumbnail = blog ? item.heroImage : item.thumbnail;
   const hasMedia = Boolean(thumbnail);
+  const hotspot = blog ? item.heroImageHotspot : undefined;
+  const objectPosition = hotspot
+    ? `${Math.round(hotspot.x * 100)}% ${Math.round(hotspot.y * 100)}%`
+    : undefined;
   const excerpt = blog ? item.excerpt : item.description;
   const contentTypeLabel = blog ? "Blog" : video ? (item.platform === "youtube" ? "YouTube" : "TikTok") : "Blog";
   const meta = blog
@@ -164,6 +168,7 @@ export function LabFeaturedCard({
             fill
             sizes="(max-width: 768px) 100vw, 45vw"
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            style={objectPosition ? { objectPosition } : undefined}
           />
         ) : (
           <div className="h-full w-full bg-linear-to-br from-brand-dark to-brand-mid" aria-hidden="true" />

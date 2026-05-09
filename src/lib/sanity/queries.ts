@@ -272,6 +272,7 @@ export async function getAuditPage() {
       heroScrollCueTargetId,
       heroPriceNote,
       heroCardTagline,
+      heroValueLine,
       heroFeatures,
 
       // Qualifiers
@@ -685,6 +686,7 @@ export async function getAllBlogPosts(): Promise<BlogPostCardData[]> {
       "slug": slug.current,
       excerpt,
       "heroImage": heroImage.asset->url,
+      "heroImageHotspot": heroImage.hotspot{ x, y },
       category,
       tags,
       publishedAt,
@@ -709,6 +711,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostPageData 
       metaDescription,
       "heroImage": heroImage.asset->url,
       "heroImageAlt": heroImage.alt,
+      "heroImageHotspot": heroImage.hotspot{ x, y },
       body[]{
         ...,
         _type == "image" => {
@@ -756,6 +759,7 @@ export async function getAllLabContent(): Promise<LabContentCard[]> {
       "slug": slug.current,
       excerpt,
       "heroImage": heroImage.asset->url,
+      "heroImageHotspot": heroImage.hotspot{ x, y },
       category,
       tags,
       publishedAt,

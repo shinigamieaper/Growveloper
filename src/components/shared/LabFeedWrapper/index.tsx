@@ -134,6 +134,10 @@ export function LabFeedWrapper({
               ? "youtube"
               : "tiktok";
           const thumbnail = blog?.heroImage ?? video?.thumbnail ?? "";
+          const hotspot = blog?.heroImageHotspot;
+          const objectPosition = hotspot
+            ? `${Math.round(hotspot.x * 100)}% ${Math.round(hotspot.y * 100)}%`
+            : undefined;
           const variant = accentVariants[i % accentVariants.length];
           const labels = { blog: "Blog", youtube: "YouTube", tiktok: "TikTok" };
 
@@ -160,6 +164,7 @@ export function LabFeedWrapper({
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover transition-transform duration-500 group-hover/bento:scale-[1.03]"
+                      style={objectPosition ? { objectPosition } : undefined}
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-bg-tertiary to-bg-secondary">

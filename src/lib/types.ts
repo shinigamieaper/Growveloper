@@ -327,6 +327,7 @@ export interface BlogPostCardData {
   slug: string;
   excerpt?: string;
   heroImage?: string;
+  heroImageHotspot?: { x: number; y: number };
   category?: string;
   tags?: string[];
   publishedAt: string;
@@ -614,6 +615,7 @@ export interface AuditHeroData {
   scrollCueTargetId?: string;
   heroPriceNote?: string;
   heroCardTagline?: string;
+  heroValueLine?: string;
   heroFeatures?: string[];
 }
 
