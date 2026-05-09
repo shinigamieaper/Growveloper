@@ -117,6 +117,13 @@ export default defineType({
       description: "Short punchy headline inside the price card (e.g. 'One package. Clear price. No surprises.')",
     }),
     defineField({
+      name: "heroValueLine",
+      title: "Hero Value Line",
+      type: "string",
+      fieldset: "hero",
+      description: "Concrete one-liner above the price stating the outcome (e.g. 'A 14-day funnel deep-dive — report + walkthrough.')",
+    }),
+    defineField({
       name: "heroFeatures",
       title: "Hero Card Features",
       type: "array",

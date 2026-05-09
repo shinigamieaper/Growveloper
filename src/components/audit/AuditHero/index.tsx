@@ -55,6 +55,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
     priceLabel,
     heroPriceNote,
     heroCardTagline,
+    heroValueLine,
     heroFeatures,
     subStatement,
     primaryCtaLabel,
@@ -163,60 +164,73 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
 
       {/* Price card — outside LampContainer, pulled up into glow. No scroll trigger — must be visible on load. */}
       <div className="relative z-60 mx-auto -mt-44 flex max-w-xl flex-col items-center gap-6 px-6 pb-4 [@media(orientation:landscape)_and_(max-height:600px)]:-mt-16 [@media(orientation:landscape)_and_(max-height:600px)]:px-4">
-          <div className="w-full rounded-2xl border border-glass-border bg-glass-bg px-5 py-4 backdrop-blur-md sm:px-8 sm:py-5">
+          <div className="w-full rounded-2xl border border-glass-border bg-glass-bg px-6 py-7 backdrop-blur-md sm:px-10 sm:py-8">
 
-            {/* Top row: badge + price + note */}
-            <div className="flex flex-col items-center gap-1 sm:flex-row sm:justify-center sm:gap-4">
-              {priceLabel && (
-                <span className="rounded-full bg-brand-dark px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-base-white">
-                  {priceLabel}
-                </span>
-              )}
-              <span className="heading-font text-4xl font-black text-brand-mid sm:text-5xl">
-                {displayPrice}
-              </span>
-              {PROMO_DISCOUNT > 0 && (
-                <span className="ml-2 text-lg text-text-tertiary line-through">{price}</span>
-              )}
-              {heroPriceNote && (
-                <span className="text-xs text-text-tertiary">{heroPriceNote}</span>
+            {/* Asymmetric header: kicker + price LEFT, value line RIGHT (sm+); stacked on mobile */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+              {/* LEFT block — kicker + price (left-aligned on sm+) */}
+              <div className="flex flex-col items-start">
+                {priceLabel && (
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-mid">
+                    {priceLabel}
+                  </p>
+                )}
+                <div className={cn("flex items-baseline gap-3", priceLabel ? "mt-1.5" : undefined)}>
+                  <span className="heading-font text-4xl font-black leading-none text-brand-mid sm:text-5xl">
+                    {displayPrice}
+                  </span>
+                  {PROMO_DISCOUNT > 0 && (
+                    <span className="text-lg text-text-tertiary line-through">{price}</span>
+                  )}
+                </div>
+                {heroPriceNote && (
+                  <p className="mt-2 text-xs text-text-tertiary">{heroPriceNote}</p>
+                )}
+                {PROMO_DISCOUNT > 0 && (
+                  <p className="mt-1 text-xs font-semibold text-brand-mid">$50 off applied</p>
+                )}
+              </div>
+
+              {/* RIGHT block — value line carries the weight (right-aligned on sm+) */}
+              {heroValueLine && (
+                <p className="heading-font max-w-xs text-left text-base font-semibold leading-snug text-text-primary sm:text-right sm:text-lg">
+                  {heroValueLine}
+                </p>
               )}
             </div>
-            {PROMO_DISCOUNT > 0 && (
-              <p className="mt-1 text-center text-xs font-semibold text-brand-mid">
-                $50 off applied
-              </p>
+
+            {/* Deliverables block — visible at all viewports, with hairline label + brand-mid left stripe */}
+            {heroFeatures && heroFeatures.length > 0 && (
+              <div className="mt-6 border-l-2 border-brand-mid pl-4 sm:mt-7 sm:pl-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-brand-mid sm:text-[11px]">
+                  What you get
+                </p>
+                <ul className="mt-3 flex flex-col gap-2 sm:mt-3 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+                  {heroFeatures.map((feature, index) => (
+                    <li key={`${feature}-${index}`} className="flex items-start gap-2">
+                      <Check
+                        className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-mid sm:mt-1 sm:h-3 sm:w-3"
+                        strokeWidth={2.5}
+                        aria-hidden
+                      />
+                      <span className="text-sm leading-snug text-text-secondary sm:text-[11px]">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
-            {/* Card tagline */}
+            {/* Tagline — demoted to small support copy */}
             {heroCardTagline && (
-              <p className="mt-2 text-center text-sm font-semibold text-text-primary">
+              <p className="mt-5 text-xs text-text-tertiary sm:mt-6">
                 {heroCardTagline}
               </p>
             )}
 
-            {/* Divider + features — hidden on mobile & landscape, only shown sm+ portrait/desktop with 3+ items */}
-            {heroFeatures && heroFeatures.length >= 3 && (
-              <>
-                <div className="my-3 border-t border-glass-border" />
-                <div className="hidden sm:flex flex-wrap justify-center gap-x-6 gap-y-2 [@media(orientation:landscape)_and_(max-height:600px)]:hidden!">
-                  {heroFeatures.map((feature, index) => (
-                    <div key={`${feature}-${index}`} className="flex items-center gap-1.5">
-                      <Check
-                        className="h-3 w-3 shrink-0 text-brand-mid"
-                        strokeWidth={2.5}
-                        aria-hidden
-                      />
-                      <span className="text-[11px] leading-snug text-text-secondary">
-                        {feature}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
             {/* CTA / Email capture */}
+            <div className="mt-5 sm:mt-6" />
             <AnimatePresence mode="wait">
               {isCheckoutActive && isCheckoutEnabled ? (
                 <motion.div
