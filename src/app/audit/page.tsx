@@ -87,6 +87,7 @@ export default async function AuditPage() {
     scrollCueTargetId: page.heroScrollCueTargetId,
     heroPriceNote: page.heroPriceNote,
     heroCardTagline: page.heroCardTagline,
+    heroValueLine: page.heroValueLine,
     heroFeatures: page.heroFeatures,
   };
 

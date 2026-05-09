@@ -186,8 +186,10 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                 {heroPriceNote && (
                   <p className="mt-2 text-xs text-text-tertiary">{heroPriceNote}</p>
                 )}
-                {PROMO_DISCOUNT > 0 && (
-                  <p className="mt-1 text-xs font-semibold text-brand-mid">$50 off applied</p>
+                {PROMO_DISCOUNT > 0 && parsed && (
+                  <p className="mt-1 text-xs font-semibold text-brand-mid">
+                    {price.trim().charAt(0)}{PROMO_DISCOUNT} off applied
+                  </p>
                 )}
               </div>
 
