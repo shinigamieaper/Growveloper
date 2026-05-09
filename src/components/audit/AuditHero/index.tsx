@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Check, Loader2 } from "lucide-react";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion, type Variants } from "motion/react";
 import { cn } from "@/lib/utils";
 import { LampContainer } from "@/components/ui/lamp";
 import { CanvasText } from "@/components/ui/canvas-text";
@@ -34,6 +34,24 @@ interface AuditHeroProps extends React.ComponentPropsWithoutRef<"section"> {
   data: AuditHeroData | null;
   scrollCueTargetId?: string;
 }
+
+/* Module-level variants — hoisted out of render to keep object refs stable across re-renders
+   (the email-capture flow triggers component re-renders that would otherwise re-create these). */
+/* StaggerChildren is the project's general-purpose stagger primitive but wraps items in <div>,
+   which breaks <ul>/<li> semantics — using motion/react variants directly here. */
+const FEATURES_LIST_VARIANTS: Variants = {
+  hidden: {},
+  visible: { transition: { delayChildren: 0.85, staggerChildren: 0.07 } },
+};
+
+const FEATURE_ITEM_VARIANTS: Variants = {
+  hidden: { opacity: 0, y: 6 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring", stiffness: 220, damping: 24 },
+  },
+};
 
 export function AuditHero({ data, scrollCueTargetId, className, ...props }: AuditHeroProps) {
   const pathname = usePathname();
@@ -220,33 +238,13 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                 <motion.ul
                   initial={reduced ? false : "hidden"}
                   animate={reduced ? undefined : "visible"}
-                  variants={
-                    reduced
-                      ? undefined
-                      : {
-                          hidden: {},
-                          visible: {
-                            transition: { delayChildren: 0.85, staggerChildren: 0.07 },
-                          },
-                        }
-                  }
+                  variants={reduced ? undefined : FEATURES_LIST_VARIANTS}
                   className="mt-3 flex flex-col gap-2 sm:mt-3 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2"
                 >
                   {heroFeatures.map((feature, index) => (
                     <motion.li
                       key={`${feature}-${index}`}
-                      variants={
-                        reduced
-                          ? undefined
-                          : {
-                              hidden: { opacity: 0, y: 6 },
-                              visible: {
-                                opacity: 1,
-                                y: 0,
-                                transition: { type: "spring", stiffness: 220, damping: 24 },
-                              },
-                            }
-                      }
+                      variants={reduced ? undefined : FEATURE_ITEM_VARIANTS}
                       className="flex items-start gap-2"
                     >
                       <Check
