@@ -91,8 +91,8 @@ function ThumbnailHeader({
   return (
     <div
       className={cn(
-        "relative w-full flex-1 min-h-[6rem] overflow-hidden rounded-xl",
-        type === "tiktok" && !featured && "aspect-[9/12]",
+        "relative w-full overflow-hidden rounded-xl",
+        type === "tiktok" && !featured ? "aspect-9/12" : "aspect-video",
       )}
     >
       {src ? (
@@ -180,8 +180,8 @@ export function LiveFeedBento({
         </div>
       )}
 
-      {/* Bento grid */}
-      <BentoGrid className="md:auto-rows-[22rem]">
+      {/* Bento grid — cards size to image (aspect-video) + content */}
+      <BentoGrid>
         {allCards.map((data, i) => {
           const blog = isBlogPost(data) ? data : null;
           const video = isVideo(data) ? data : null;
@@ -201,7 +201,7 @@ export function LiveFeedBento({
             >
               <div
                 className={cn(
-                  "group/bento row-span-1 flex h-full flex-col justify-between space-y-4 rounded-xl border p-4 shadow-sm transition duration-200 hover:shadow-xl",
+                  "group/bento row-span-1 flex h-full flex-col gap-4 rounded-xl border p-4 shadow-sm transition duration-200 hover:shadow-xl",
                   variant.card,
                   variant.border,
                   (video) && "cursor-pointer",

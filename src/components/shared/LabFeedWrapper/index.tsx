@@ -123,8 +123,8 @@ export function LabFeedWrapper({
         onFilterChange={handleFilterChange}
       />
 
-      {/* BentoGrid — matches LiveFeedBento visual pattern */}
-      <BentoGrid className="mt-8 md:auto-rows-[22rem]">
+      {/* BentoGrid — cards size to image (aspect-video) + content; no fixed row height */}
+      <BentoGrid className="mt-8">
         {visibleItems.map((data, i) => {
           const blog = isBlogPost(data) ? data : null;
           const video = isVideo(data) ? data : null;
@@ -145,7 +145,7 @@ export function LabFeedWrapper({
             <SpotlightCard spotlightColor="rgba(90, 177, 177, 0.12)" className="h-full">
               <div
                 className={cn(
-                  "group/bento row-span-1 flex h-full flex-col justify-between space-y-4 rounded-xl border p-4 shadow-sm transition duration-200 hover:shadow-xl",
+                  "group/bento row-span-1 flex h-full flex-col gap-4 rounded-xl border p-4 shadow-sm transition duration-200 hover:shadow-xl",
                   variant.card,
                   variant.border,
                   video && "cursor-pointer",
@@ -155,8 +155,8 @@ export function LabFeedWrapper({
                 onClick={video ? () => onVideoClick?.(video.videoUrl, video.platform) : undefined}
                 onKeyDown={video ? (e) => { if (e.key === "Enter" || e.key === " ") onVideoClick?.(video.videoUrl, video.platform); } : undefined}
               >
-                {/* Thumbnail */}
-                <div className="relative w-full flex-1 min-h-[6rem] overflow-hidden rounded-xl">
+                {/* Thumbnail — aspect-video so 16:9 hero compositions render uncropped */}
+                <div className="relative w-full aspect-video overflow-hidden rounded-xl">
                   {thumbnail ? (
                     <Image
                       src={thumbnail}
