@@ -8,28 +8,51 @@ import {
 } from "@portabletext/react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { PostCostTable } from "@/components/shared/PostCostTable";
+import type { PostCostTableBlock } from "@/lib/types";
 
 interface PortableTextRendererProps extends React.ComponentPropsWithoutRef<"div"> {
   /** Sanity Portable Text value */
   value: PortableTextBlock[];
 }
 
+function slugifyHeading(value: PortableTextBlock | undefined): string | undefined {
+  if (!value || !Array.isArray(value.children)) return undefined;
+  const text = value.children
+    .map((c) => (typeof (c as { text?: unknown }).text === "string" ? (c as { text: string }).text : ""))
+    .join("")
+    .trim();
+  if (!text) return undefined;
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 80);
+}
+
 const components: PortableTextComponents = {
   block: {
-    h1: ({ children }) => (
-      <h1 className="heading-font mb-6 mt-10 text-3xl font-bold text-text-primary md:text-4xl first:mt-0">
+    h1: ({ children, value }) => (
+      <h1 id={slugifyHeading(value)} className="heading-font mb-6 mt-10 text-3xl font-bold text-text-primary md:text-4xl first:mt-0 scroll-mt-32">
         {children}
       </h1>
     ),
-    h2: ({ children }) => (
-      <h2 className="heading-font mb-4 mt-8 text-2xl font-bold text-text-primary md:text-3xl first:mt-0">
+    h2: ({ children, value }) => (
+      <h2 id={slugifyHeading(value)} className="heading-font mb-4 mt-10 text-2xl font-bold text-text-primary md:text-3xl first:mt-0 scroll-mt-32">
         {children}
       </h2>
     ),
-    h3: ({ children }) => (
-      <h3 className="heading-font mb-3 mt-6 text-xl font-semibold text-text-primary md:text-2xl first:mt-0">
+    h3: ({ children, value }) => (
+      <h3 id={slugifyHeading(value)} className="heading-font mb-3 mt-8 text-xl font-semibold text-text-primary md:text-2xl first:mt-0 scroll-mt-32">
         {children}
       </h3>
+    ),
+    h4: ({ children, value }) => (
+      <h4 id={slugifyHeading(value)} className="heading-font mb-2 mt-6 text-lg font-semibold text-text-primary md:text-xl first:mt-0 scroll-mt-32">
+        {children}
+      </h4>
     ),
     normal: ({ children }) => (
       <p className="mb-5 text-base leading-relaxed text-text-secondary" style={{ fontFamily: "var(--font-gambetta)" }}>
@@ -37,7 +60,7 @@ const components: PortableTextComponents = {
       </p>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-6 border-l-4 border-brand-mid py-1 pl-5 italic text-text-tertiary">
+      <blockquote className="my-6 border-l-4 border-brand-mid bg-brand-mid/4 py-3 pl-5 pr-4 italic text-text-tertiary">
         {children}
       </blockquote>
     ),
@@ -59,11 +82,12 @@ const components: PortableTextComponents = {
     link: ({ children, value }) => {
       const href = value?.href || "#";
       const isExternal = href.startsWith("http");
+      const isAnchor = href.startsWith("#");
       return (
         <a
           href={href}
           className="text-brand-mid underline-offset-2 transition-colors hover:text-brand-light hover:underline"
-          {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          {...(isExternal && !isAnchor ? { target: "_blank", rel: "noopener noreferrer" } : {})}
         >
           {children}
         </a>
@@ -73,20 +97,28 @@ const components: PortableTextComponents = {
 
   types: {
     image: ({ value }) => {
-      if (!value?.asset?._ref && !value?.asset?.url) return null;
-      const src = value.asset?.url || "";
-      const alt = value.alt || "";
+      const src: string | undefined = value?.url || value?.asset?.url;
+      if (!src) return null;
+      const alt: string = value.alt ?? "";
+      const caption: string | undefined = value.caption;
       return (
-        <div className="my-8 overflow-hidden rounded-xl">
-          <Image
-            src={src}
-            alt={alt}
-            width={1200}
-            height={675}
-            className="h-auto w-full"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 720px"
-          />
-        </div>
+        <figure className="my-8">
+          <div className="overflow-hidden rounded-xl border border-glass-border">
+            <Image
+              src={src}
+              alt={alt}
+              width={1600}
+              height={900}
+              className="h-auto w-full"
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 720px"
+            />
+          </div>
+          {caption && (
+            <figcaption className="mt-3 px-1 text-xs leading-relaxed text-text-tertiary">
+              {caption}
+            </figcaption>
+          )}
+        </figure>
       );
     },
     code: ({ value }) => (
@@ -96,6 +128,9 @@ const components: PortableTextComponents = {
       >
         <code>{value.code}</code>
       </pre>
+    ),
+    costTable: ({ value }) => (
+      <PostCostTable data={value as PostCostTableBlock} />
     ),
   },
 

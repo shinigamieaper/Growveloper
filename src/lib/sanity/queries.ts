@@ -702,15 +702,28 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostPageData 
       title,
       "slug": slug.current,
       excerpt,
+      tldr,
+      pullQuote,
+      author,
+      metaTitle,
+      metaDescription,
       "heroImage": heroImage.asset->url,
-      body,
+      "heroImageAlt": heroImage.alt,
+      body[]{
+        ...,
+        _type == "image" => {
+          ...,
+          "url": asset->url
+        }
+      },
       category,
       tags,
       publishedAt,
       "readTime": readTime + " min read",
       "platform": "blog",
       featuredToggle,
-      showCTA
+      showCTA,
+      "faqs": *[_type == "faq" && page._ref == ^._id] | order(order asc) { question, answer }
     }`,
     { slug }
   );

@@ -31,6 +31,7 @@ export default defineType({
         { type: "automationsPage" },
         { type: "labPage" },
         { type: "resourcesPage" },
+        { type: "blogPost" },
       ],
       validation: (rule) => rule.required(),
     }),

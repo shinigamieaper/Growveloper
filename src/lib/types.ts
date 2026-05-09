@@ -349,10 +349,44 @@ export interface VideoCardData {
 /* --- Lab Content (union of blog + video) --- */
 export type LabContentCard = BlogPostCardData | VideoCardData;
 
+export interface BlogPostBodyBlock {
+  _type: string;
+  _key?: string;
+  [key: string]: unknown;
+}
+
+export interface PostCostTableRow {
+  label: string;
+  low?: string;
+  mid?: string;
+  high?: string;
+}
+
+export interface PostCostTableBlock extends BlogPostBodyBlock {
+  _type: "costTable";
+  title?: string;
+  headerLow?: string;
+  headerMid?: string;
+  headerHigh?: string;
+  rows: PostCostTableRow[];
+  totalLabel?: string;
+  totalLow?: string;
+  totalMid?: string;
+  totalHigh?: string;
+  sourcesNote?: string;
+}
+
 export interface BlogPostPageData extends BlogPostCardData {
-  bodyParagraphs: string[];
+  body?: BlogPostBodyBlock[];
+  bodyParagraphs?: string[];
+  tldr?: string;
   pullQuote?: string;
   showCTA?: boolean;
+  author?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  heroImageAlt?: string;
+  faqs?: FAQItem[];
 }
 
 /* --- Case Study (detail page) --- */

@@ -7,6 +7,8 @@ import {
   CTABanner,
   NewsletterCapture,
   ScrollFadeUp,
+  PortableTextRenderer,
+  FAQAccordion,
 } from "@/components";
 import { SocialShareButtons } from "@/components/shared/SocialShareButtons";
 import { RelatedContentGrid } from "@/components/shared/RelatedContentGrid";
@@ -17,7 +19,8 @@ import {
   getSiteSettings,
   getLabPage,
 } from "@/lib/sanity/queries";
-import type { CTABannerData } from "@/lib/types";
+import type { CTABannerData, BlogPostBodyBlock } from "@/lib/types";
+import type { PortableTextBlock } from "@portabletext/react";
 
 /* ─── Static params — only blog posts have detail pages ─── */
 export async function generateStaticParams() {
@@ -41,8 +44,8 @@ export async function generateMetadata({
   ]);
   if (!post) return { title: "Post Not Found" };
   return {
-    title: `${post.title} — The Lab`,
-    description: post.excerpt,
+    title: post.metaTitle ?? `${post.title} — The Lab`,
+    description: post.metaDescription ?? post.excerpt,
     openGraph: settings?.ogImage
       ? { images: [{ url: settings.ogImage }] }
       : undefined,
@@ -64,13 +67,10 @@ export default async function LabPostPage({
   ]);
   if (!post) notFound();
 
-  /* Handle both static bodyParagraphs (Stage 3) and Sanity portable text body (Stage 4) */
-  const bodyContent: string[] =
-    post.bodyParagraphs ??
-    ((post as unknown as Record<string, unknown>).body as Array<{ _type: string; children?: Array<{ text: string }> }> ?? [])
-      .filter((b) => b._type === "block")
-      .map((b) => b.children?.map((c) => c.text).join("") ?? "")
-      .filter(Boolean);
+  const bodyBlocks: BlogPostBodyBlock[] = post.body ?? [];
+  const hasPortableBody = bodyBlocks.length > 0;
+  /* Legacy fallback: pre-Sanity-portable-text static bodyParagraphs */
+  const legacyParagraphs = !hasPortableBody ? post.bodyParagraphs ?? [] : [];
 
   /* Related posts: same category, exclude self */
   const related = allContent
@@ -89,6 +89,10 @@ export default async function LabPostPage({
     year: "numeric",
   });
 
+  const faqs = post.faqs ?? [];
+  const authorName = post.author ?? "GROWVELOPER";
+  const heroAlt = post.heroImageAlt ?? post.title;
+
   return (
     <>
       <script
@@ -102,12 +106,32 @@ export default async function LabPostPage({
             description: post.excerpt ?? "",
             image: post.heroImage ?? undefined,
             datePublished: post.publishedAt,
-            author: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+            author: post.author
+              ? { "@type": "Person", name: post.author }
+              : { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
             publisher: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
             mainEntityOfPage: { "@type": "WebPage", "@id": `https://growveloper.com/lab/${slug}` },
           }),
         }}
       />
+
+      {faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: faqs.map((f) => ({
+                "@type": "Question",
+                name: f.question,
+                acceptedAnswer: { "@type": "Answer", text: f.answer },
+              })),
+            }),
+          }}
+        />
+      )}
 
       {/* 01 — Post Header */}
       <section className="pt-32 pb-10 md:pt-40 md:pb-14">
@@ -150,10 +174,10 @@ export default async function LabPostPage({
         <section className="pb-12 md:pb-16">
           <div className="mx-auto max-w-3xl px-6">
             <ScrollFadeUp delay={0.1}>
-              <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-glass-border">
+              <div className="relative aspect-video overflow-hidden rounded-2xl border border-glass-border">
                 <Image
                   src={post.heroImage}
-                  alt={post.title}
+                  alt={heroAlt}
                   fill
                   priority
                   className="object-cover"
@@ -165,33 +189,72 @@ export default async function LabPostPage({
         </section>
       )}
 
-      {/* 03 — Article Body */}
-      {bodyContent.length > 0 && (
+      {/* 03 — TL;DR */}
+      {post.tldr && (
+        <section className="pb-8 md:pb-10">
+          <div className="mx-auto max-w-3xl px-6">
+            <ScrollFadeUp>
+              <div className="rounded-2xl border border-brand-mid/30 bg-brand-mid/5 p-6 md:p-8">
+                <p className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-mid">
+                  TL;DR
+                </p>
+                <p className="text-base leading-relaxed text-text-primary md:text-lg">
+                  {post.tldr}
+                </p>
+              </div>
+            </ScrollFadeUp>
+          </div>
+        </section>
+      )}
+
+      {/* 04 — Article Body */}
+      {(hasPortableBody || legacyParagraphs.length > 0) && (
         <section className="py-4 md:py-6">
           <div className="mx-auto max-w-3xl px-6">
-            <div className="space-y-6">
-              {bodyContent.map((paragraph, i) => {
-                const showPullQuote = i === 1 && post.pullQuote;
-                return (
-                  <ScrollFadeUp key={i} delay={i * 0.04}>
-                    <p className="text-base leading-[1.85] text-text-secondary md:text-lg">
-                      {paragraph}
+            {hasPortableBody ? (
+              <ScrollFadeUp>
+                <PortableTextRenderer value={bodyBlocks as unknown as PortableTextBlock[]} />
+                {post.pullQuote && (
+                  <blockquote className="my-8 border-l-4 border-brand-mid pl-6">
+                    <p className="text-lg font-medium italic leading-relaxed text-text-primary md:text-xl">
+                      &ldquo;{post.pullQuote}&rdquo;
                     </p>
-                    {showPullQuote && (
-                      <blockquote className="my-8 border-l-4 border-brand-mid pl-6">
-                        <p className="text-lg font-medium italic leading-relaxed text-text-primary md:text-xl">
-                          &ldquo;{post.pullQuote}&rdquo;
-                        </p>
-                      </blockquote>
-                    )}
-                  </ScrollFadeUp>
-                );
-              })}
+                  </blockquote>
+                )}
+              </ScrollFadeUp>
+            ) : (
+              <div className="space-y-6">
+                {legacyParagraphs.map((paragraph, i) => {
+                  const showPullQuote = i === 1 && post.pullQuote;
+                  return (
+                    <ScrollFadeUp key={i} delay={i * 0.04}>
+                      <p className="text-base leading-[1.85] text-text-secondary md:text-lg">
+                        {paragraph}
+                      </p>
+                      {showPullQuote && (
+                        <blockquote className="my-8 border-l-4 border-brand-mid pl-6">
+                          <p className="text-lg font-medium italic leading-relaxed text-text-primary md:text-xl">
+                            &ldquo;{post.pullQuote}&rdquo;
+                          </p>
+                        </blockquote>
+                      )}
+                    </ScrollFadeUp>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Author byline */}
+            <div className="mt-12 border-t border-glass-border pt-6">
+              <p className="text-sm text-text-tertiary">
+                Written by{" "}
+                <span className="font-semibold text-text-primary">{authorName}</span>
+              </p>
             </div>
 
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
-              <div className="mt-12 flex flex-wrap gap-2 border-t border-glass-border pt-8">
+              <div className="mt-6 flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
@@ -206,7 +269,7 @@ export default async function LabPostPage({
         </section>
       )}
 
-      {/* 04 — Share + CTA (conditional) */}
+      {/* 05 — Share + CTA (conditional) */}
       {post.showCTA && (
         <GlassSection>
           <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
@@ -225,7 +288,19 @@ export default async function LabPostPage({
         </GlassSection>
       )}
 
-      {/* 05 — Inline CTA */}
+      {/* 06 — FAQs (conditional) */}
+      {faqs.length > 0 && (
+        <FAQAccordion
+          id="faq"
+          className="scroll-mt-32"
+          items={faqs}
+          sectionHeadline="Frequently asked"
+          highlightedWord="asked"
+          sectionDescription="Quick answers to the most common follow-up questions."
+        />
+      )}
+
+      {/* 07 — Inline CTA */}
       {lab?.postInlineCtaHeadline && lab?.postInlineCtaLabel && (
         <CTABanner
           data={{ headline: lab.postInlineCtaHeadline, highlightedWord: lab.postInlineCtaHighlightedWord ?? undefined, ctaLabel: lab.postInlineCtaLabel, ctaDestination: lab.postInlineCtaDestination ?? "/start" } as CTABannerData}
@@ -234,7 +309,7 @@ export default async function LabPostPage({
         />
       )}
 
-      {/* 06 — Related Posts */}
+      {/* 08 — Related Posts */}
       {related.length > 0 && (
         <section className="py-12 md:py-16">
           <div className="mx-auto max-w-6xl px-6">
@@ -249,7 +324,7 @@ export default async function LabPostPage({
         </section>
       )}
 
-      {/* 07 — Newsletter */}
+      {/* 09 — Newsletter */}
       {lab?.postNewsletterHeadline && (
         <NewsletterCapture
           headline={lab.postNewsletterHeadline}
@@ -262,7 +337,7 @@ export default async function LabPostPage({
         />
       )}
 
-      {/* 08 — Section CTA */}
+      {/* 10 — Section CTA */}
       {lab?.postSectionCtaHeadline && lab?.postSectionCtaLabel && (
         <CTABanner
           data={{ headline: lab.postSectionCtaHeadline, highlightedWord: lab.postSectionCtaHighlightedWord ?? undefined, ctaLabel: lab.postSectionCtaLabel, ctaDestination: lab.postSectionCtaDestination ?? "/start" } as CTABannerData}
