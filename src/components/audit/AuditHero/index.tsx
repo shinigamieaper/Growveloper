@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Check, Loader2 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { LampContainer } from "@/components/ui/lamp";
 import { CanvasText } from "@/components/ui/canvas-text";
@@ -40,6 +40,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
   const searchParams = useSearchParams();
   const promoCode = searchParams.get("promo");
   const PROMO_DISCOUNT = promoCode === "welcome50" ? 50 : 0;
+  const reduced = useReducedMotion();
   const [isCheckoutActive, setIsCheckoutActive] = useState(false);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -164,7 +165,16 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
 
       {/* Price card — outside LampContainer, pulled up into glow. No scroll trigger — must be visible on load. */}
       <div className="relative z-60 mx-auto -mt-44 flex max-w-xl flex-col items-center gap-6 px-6 pb-4 [@media(orientation:landscape)_and_(max-height:600px)]:-mt-16 [@media(orientation:landscape)_and_(max-height:600px)]:px-4">
-          <div className="w-full rounded-2xl border border-glass-border bg-glass-bg px-6 py-7 backdrop-blur-md sm:px-10 sm:py-8">
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 16, scale: 0.985 }}
+            animate={reduced ? undefined : { opacity: 1, y: 0, scale: 1 }}
+            transition={
+              reduced
+                ? undefined
+                : { type: "spring", stiffness: 110, damping: 18, mass: 0.9, delay: 0.55 }
+            }
+            className="w-full rounded-2xl border border-glass-border bg-glass-bg px-6 py-7 backdrop-blur-md sm:px-10 sm:py-8"
+          >
 
             {/* Asymmetric header: kicker + price LEFT, value line RIGHT (sm+); stacked on mobile */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
@@ -207,9 +217,38 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                 <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-brand-mid sm:text-[11px]">
                   What you get
                 </p>
-                <ul className="mt-3 flex flex-col gap-2 sm:mt-3 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
+                <motion.ul
+                  initial={reduced ? false : "hidden"}
+                  animate={reduced ? undefined : "visible"}
+                  variants={
+                    reduced
+                      ? undefined
+                      : {
+                          hidden: {},
+                          visible: {
+                            transition: { delayChildren: 0.85, staggerChildren: 0.07 },
+                          },
+                        }
+                  }
+                  className="mt-3 flex flex-col gap-2 sm:mt-3 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2"
+                >
                   {heroFeatures.map((feature, index) => (
-                    <li key={`${feature}-${index}`} className="flex items-start gap-2">
+                    <motion.li
+                      key={`${feature}-${index}`}
+                      variants={
+                        reduced
+                          ? undefined
+                          : {
+                              hidden: { opacity: 0, y: 6 },
+                              visible: {
+                                opacity: 1,
+                                y: 0,
+                                transition: { type: "spring", stiffness: 220, damping: 24 },
+                              },
+                            }
+                      }
+                      className="flex items-start gap-2"
+                    >
                       <Check
                         className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-mid sm:mt-1 sm:h-3 sm:w-3"
                         strokeWidth={2.5}
@@ -218,9 +257,9 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                       <span className="text-sm leading-snug text-text-secondary sm:text-[11px]">
                         {feature}
                       </span>
-                    </li>
+                    </motion.li>
                   ))}
-                </ul>
+                </motion.ul>
               </div>
             )}
 
@@ -334,7 +373,7 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
       </div>
 
       {scrollCueTargetId && (
