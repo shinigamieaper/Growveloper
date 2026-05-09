@@ -270,107 +270,107 @@ export function AuditHero({ data, scrollCueTargetId, className, ...props }: Audi
 
             {/* CTA / Email capture */}
             <div className="mt-5 sm:mt-6">
-            <AnimatePresence mode="wait">
-              {isCheckoutActive && isCheckoutEnabled ? (
-                <motion.div
-                  key="email-form"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="flex flex-col gap-3 overflow-hidden"
-                >
-                  <label htmlFor="audit-hero-email" className="sr-only">
-                    Email address
-                  </label>
-                  <input
-                    id="audit-hero-email"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={status === "loading"}
-                    className={cn(
-                      "min-h-[44px] w-full rounded-full border bg-bg-primary px-5 py-3 text-sm text-text-primary outline-none transition-colors focus:border-brand-mid",
-                      emailError ? "border-red-500" : "border-glass-border",
-                    )}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        void handleCheckout();
-                      }
-                    }}
-                  />
-                  {emailError && <p className="text-xs text-red-500">{emailError}</p>}
-                  {status === "error" && errorMessage && (
-                    <p className="text-xs text-red-500">{errorMessage}</p>
-                  )}
-                  <p className="text-center text-xs text-text-tertiary">
-                    By submitting, you agree to our{" "}
-                    <Link href="/privacy" className="text-brand-mid underline-offset-4 hover:underline">
-                      Privacy Policy
-                    </Link>
-                    .
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => void handleCheckout()}
-                    disabled={status === "loading"}
-                    className="min-h-[44px] rounded-full bg-brand-dark px-6 py-3 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105 disabled:opacity-60 disabled:hover:scale-100"
+              <AnimatePresence mode="wait">
+                {isCheckoutActive && isCheckoutEnabled ? (
+                  <motion.div
+                    key="email-form"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex flex-col gap-3 overflow-hidden"
                   >
-                    {status === "loading" ? (
-                      <Loader2 className="mx-auto h-5 w-5 animate-spin" />
-                    ) : (
-                      "Proceed to Payment"
+                    <label htmlFor="audit-hero-email" className="sr-only">
+                      Email address
+                    </label>
+                    <input
+                      id="audit-hero-email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={status === "loading"}
+                      className={cn(
+                        "min-h-[44px] w-full rounded-full border bg-bg-primary px-5 py-3 text-sm text-text-primary outline-none transition-colors focus:border-brand-mid",
+                        emailError ? "border-red-500" : "border-glass-border",
+                      )}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          void handleCheckout();
+                        }
+                      }}
+                    />
+                    {emailError && <p className="text-xs text-red-500">{emailError}</p>}
+                    {status === "error" && errorMessage && (
+                      <p className="text-xs text-red-500">{errorMessage}</p>
                     )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={cancelCheckout}
-                    className="text-xs text-text-tertiary transition-colors hover:text-text-secondary"
-                  >
-                    Cancel
-                  </button>
-                </motion.div>
-              ) : (
-                <motion.div key="cta-button" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3">
-                  <MagneticElement strength={0.4}>
-                    {isCheckoutEnabled ? (
-                      <MovingBorderButton
-                        as="button"
-                        type="button"
-                        duration={3000}
-                        containerClassName="inline-flex w-full sm:w-auto"
-                        onClick={activateCheckout}
-                      >
-                        {primaryCtaLabel}
-                      </MovingBorderButton>
-                    ) : (
-                      <MovingBorderButton
-                        as="a"
-                        href={primaryCtaUrl}
-                        duration={3000}
-                        containerClassName="inline-flex w-full sm:w-auto"
-                        onClick={() => trackCTAClick(pathname, primaryCtaLabel, primaryCtaUrl)}
-                      >
-                        {primaryCtaLabel}
-                      </MovingBorderButton>
-                    )}
-                  </MagneticElement>
-
-                  {secondaryCtaText && secondaryCtaUrl && (
-                    <Link
-                      href={secondaryCtaUrl}
-                      className="inline-flex min-h-[44px] items-center text-sm text-brand-mid transition-colors hover:text-brand-light"
-                      onClick={() => trackCTAClick(pathname, secondaryCtaText, secondaryCtaUrl)}
+                    <p className="text-center text-xs text-text-tertiary">
+                      By submitting, you agree to our{" "}
+                      <Link href="/privacy" className="text-brand-mid underline-offset-4 hover:underline">
+                        Privacy Policy
+                      </Link>
+                      .
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => void handleCheckout()}
+                      disabled={status === "loading"}
+                      className="min-h-[44px] rounded-full bg-brand-dark px-6 py-3 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105 disabled:opacity-60 disabled:hover:scale-100"
                     >
-                      {secondaryCtaText}
-                    </Link>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      {status === "loading" ? (
+                        <Loader2 className="mx-auto h-5 w-5 animate-spin" />
+                      ) : (
+                        "Proceed to Payment"
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={cancelCheckout}
+                      className="text-xs text-text-tertiary transition-colors hover:text-text-secondary"
+                    >
+                      Cancel
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.div key="cta-button" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-3">
+                    <MagneticElement strength={0.4}>
+                      {isCheckoutEnabled ? (
+                        <MovingBorderButton
+                          as="button"
+                          type="button"
+                          duration={3000}
+                          containerClassName="inline-flex w-full sm:w-auto"
+                          onClick={activateCheckout}
+                        >
+                          {primaryCtaLabel}
+                        </MovingBorderButton>
+                      ) : (
+                        <MovingBorderButton
+                          as="a"
+                          href={primaryCtaUrl}
+                          duration={3000}
+                          containerClassName="inline-flex w-full sm:w-auto"
+                          onClick={() => trackCTAClick(pathname, primaryCtaLabel, primaryCtaUrl)}
+                        >
+                          {primaryCtaLabel}
+                        </MovingBorderButton>
+                      )}
+                    </MagneticElement>
+
+                    {secondaryCtaText && secondaryCtaUrl && (
+                      <Link
+                        href={secondaryCtaUrl}
+                        className="inline-flex min-h-[44px] items-center text-sm text-brand-mid transition-colors hover:text-brand-light"
+                        onClick={() => trackCTAClick(pathname, secondaryCtaText, secondaryCtaUrl)}
+                      >
+                        {secondaryCtaText}
+                      </Link>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
       </div>
