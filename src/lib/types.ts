@@ -380,6 +380,10 @@ export interface PostCostTableBlock extends BlogPostBodyBlock {
 export interface BlogPostPageData extends BlogPostCardData {
   body?: BlogPostBodyBlock[];
   bodyParagraphs?: string[];
+  /* Sanity's _updatedAt. Surfaced so the page can emit schema.org
+     dateModified and a visible "last updated" line, both of which the
+     answer engines use when deciding what to cite. */
+  updatedAt?: string;
   tldr?: string;
   pullQuote?: string;
   showCTA?: boolean;

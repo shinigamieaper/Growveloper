@@ -722,6 +722,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostPageData 
       category,
       tags,
       publishedAt,
+      "updatedAt": _updatedAt,
       "readTime": readTime + " min read",
       "platform": "blog",
       featuredToggle,

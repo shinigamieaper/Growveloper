@@ -83,11 +83,22 @@ export default async function LabPostPage({
     )
     .slice(0, 3);
 
-  const publishedDate = new Date(post.publishedAt).toLocaleDateString("en-GB", {
+  const dateFormat = {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
+  } as const;
+  const publishedDate = new Date(post.publishedAt).toLocaleDateString("en-GB", dateFormat);
+  /* Only surface "last updated" when it is meaningfully later than publish,
+     so a same-day CMS tweak does not present as a revision. */
+  const updatedAt = post.updatedAt;
+  const showUpdated =
+    !!updatedAt &&
+    new Date(updatedAt).getTime() - new Date(post.publishedAt).getTime() >
+      24 * 60 * 60 * 1000;
+  const updatedDate = updatedAt
+    ? new Date(updatedAt).toLocaleDateString("en-GB", dateFormat)
+    : null;
 
   const faqs = post.faqs ?? [];
   const authorName = post.author ?? "GROWVELOPER";
@@ -109,6 +120,7 @@ export default async function LabPostPage({
             description: post.excerpt ?? "",
             image: post.heroImage ?? undefined,
             datePublished: post.publishedAt,
+            dateModified: post.updatedAt ?? post.publishedAt,
             author: post.author
               ? { "@type": "Person", name: post.author }
               : { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
@@ -136,6 +148,10 @@ export default async function LabPostPage({
         />
       )}
 
+      {/* Sections 01–04 are the article proper. The explicit <article>
+          element is what content extractors and AI crawlers look for to
+          separate the post from the surrounding page furniture. */}
+      <article>
       {/* 01 — Post Header */}
       <section className="pt-32 pb-10 md:pt-40 md:pb-14">
         <div className="mx-auto max-w-3xl px-6">
@@ -254,6 +270,12 @@ export default async function LabPostPage({
                 Written by{" "}
                 <span className="font-semibold text-text-primary">{authorName}</span>
               </p>
+              {showUpdated && updatedDate && (
+                <p className="mt-1 text-sm text-text-tertiary">
+                  Last updated{" "}
+                  <time dateTime={updatedAt}>{updatedDate}</time>
+                </p>
+              )}
             </div>
 
             {/* Tags */}
@@ -272,6 +294,7 @@ export default async function LabPostPage({
           </div>
         </section>
       )}
+      </article>
 
       {/* 05 — Share + CTA (conditional) */}
       {post.showCTA && (
