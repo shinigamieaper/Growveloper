@@ -38,7 +38,7 @@ import { Popup } from "@/components/shared/Popup";
 import { NewsletterCapture } from "@/components/shared/NewsletterCapture";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { GrowveloperCard } from "@/components/shared/GrowveloperCard";
-import Loading from "@/app/loading";
+import Loading from "@/components/shared/LoadingScreen";
 import { motion } from "motion/react";
 import { EyeOff, Zap, BarChart3, Bot, Rocket, Target, Cpu, Landmark } from "lucide-react";
 import type { NavigationData, PopupConfig } from "@/lib/types";

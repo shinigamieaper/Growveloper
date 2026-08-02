@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Check } from "lucide-react";
 import { AuditHero } from "@/components/audit/AuditHero";
 import { AuditPricing } from "@/components/audit/AuditPricing";
@@ -165,7 +166,12 @@ export default async function AuditPage() {
       />
 
       {/* ═══ Section 01 — HERO ═══ */}
-      <AuditHero data={hero} scrollCueTargetId={hero.scrollCueTargetId ?? "qualifiers"} />
+      {/* AuditHero reads useSearchParams for the ?promo code, which is
+          request data. It needs its own Suspense boundary so only the hero
+          streams, rather than blocking the whole route from prerendering. */}
+      <Suspense fallback={null}>
+        <AuditHero data={hero} scrollCueTargetId={hero.scrollCueTargetId ?? "qualifiers"} />
+      </Suspense>
 
       {/* ═══ Section 02 — WHO IT'S FOR ═══ */}
       {qualifiers && <AuditQualifiers data={qualifiers} />}

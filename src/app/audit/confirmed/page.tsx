@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Check, ClipboardList, CalendarDays, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getAuditConfirmedPage } from "@/lib/sanity/queries";
@@ -39,12 +40,37 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+type ConfirmSearchParams = Promise<{
+  status?: string;
+  tx_ref?: string;
+  transaction_id?: string;
+}>;
+
+/* The payment status and reference come from the query string, which is
+   request data. Isolating them here lets the rest of the page prerender
+   into static HTML instead of the whole route being held back. */
+async function PaymentStatus({ searchParams }: { searchParams: ConfirmSearchParams }) {
+  const params = await searchParams;
+  return (
+    <>
+      {params.status === "successful" && (
+        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-400">
+          <Check className="h-3 w-3" />
+          Payment successful
+        </span>
+      )}
+      {params.tx_ref && (
+        <p className="mt-2 text-xs text-text-tertiary">Reference: {params.tx_ref}</p>
+      )}
+    </>
+  );
+}
+
 export default async function AuditConfirmedPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; tx_ref?: string; transaction_id?: string }>;
+  searchParams: ConfirmSearchParams;
 }) {
-  const params = await searchParams;
   const data = await getAuditConfirmedPage();
 
   const headline = data?.headline ?? "Your audit is booked.";
@@ -88,17 +114,9 @@ export default async function AuditConfirmedPage({
               {headline}
             </h1>
             <p className="text-text-secondary">{description}</p>
-            {params.status === "successful" && (
-              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-400">
-                <Check className="h-3 w-3" />
-                Payment successful
-              </span>
-            )}
-            {params.tx_ref && (
-              <p className="mt-2 text-xs text-text-tertiary">
-                Reference: {params.tx_ref}
-              </p>
-            )}
+            <Suspense fallback={null}>
+              <PaymentStatus searchParams={searchParams} />
+            </Suspense>
           </div>
 
           <p className="mb-8 text-center text-sm font-medium text-brand-mid">
