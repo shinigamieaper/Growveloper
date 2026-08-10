@@ -165,7 +165,7 @@ export default async function LabPostPage({
               {post.title}
             </h1>
             {post.excerpt && (
-              <p className="mb-8 text-lg leading-relaxed text-text-secondary">
+              <p className="mb-8 text-lg leading-relaxed text-text-primary">
                 {post.excerpt}
               </p>
             )}
@@ -248,7 +248,7 @@ export default async function LabPostPage({
                   const showPullQuote = i === 1 && post.pullQuote;
                   return (
                     <ScrollFadeUp key={i} delay={i * 0.04}>
-                      <p className="text-base leading-[1.85] text-text-secondary md:text-lg">
+                      <p className="text-base leading-[1.85] text-text-primary md:text-lg">
                         {paragraph}
                       </p>
                       {showPullQuote && (

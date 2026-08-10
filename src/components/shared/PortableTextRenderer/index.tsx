@@ -55,12 +55,12 @@ const components: PortableTextComponents = {
       </h4>
     ),
     normal: ({ children }) => (
-      <p className="mb-5 text-base leading-relaxed text-text-secondary" style={{ fontFamily: "var(--font-gambetta)" }}>
+      <p className="mb-5 text-base leading-relaxed text-text-primary" style={{ fontFamily: "var(--font-gambetta)" }}>
         {children}
       </p>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-6 border-l-4 border-brand-mid bg-brand-mid/4 py-3 pl-5 pr-4 italic text-text-tertiary">
+      <blockquote className="my-6 border-l-4 border-brand-mid bg-brand-mid/4 py-3 pl-5 pr-4 italic text-text-primary">
         {children}
       </blockquote>
     ),
@@ -136,12 +136,12 @@ const components: PortableTextComponents = {
 
   list: {
     bullet: ({ children }) => (
-      <ul className="mb-5 ml-5 list-disc space-y-2 text-text-secondary">
+      <ul className="mb-5 ml-5 list-disc space-y-2 text-text-primary">
         {children}
       </ul>
     ),
     number: ({ children }) => (
-      <ol className="mb-5 ml-5 list-decimal space-y-2 text-text-secondary">
+      <ol className="mb-5 ml-5 list-decimal space-y-2 text-text-primary">
         {children}
       </ol>
     ),
