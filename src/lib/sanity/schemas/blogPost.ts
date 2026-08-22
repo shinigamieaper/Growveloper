@@ -52,6 +52,16 @@ export default defineType({
       rows: 2,
     }),
     defineField({
+      name: "ogImage",
+      title: "Share Image (Open Graph)",
+      description:
+        "1200x630. Shown when the post is shared on LinkedIn, Facebook or X. " +
+        "Falls back to the hero image, then to the site-wide default. The hero " +
+        "is usually the wrong shape for this, so set one per post.",
+      type: "image",
+      group: "media",
+    }),
+    defineField({
       name: "heroImage",
       title: "Hero Image",
       type: "image",

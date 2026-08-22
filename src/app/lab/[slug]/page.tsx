@@ -43,12 +43,32 @@ export async function generateMetadata({
     getSiteSettings(),
   ]);
   if (!post) return { title: "Post Not Found" };
+  const title = post.metaTitle ?? `${post.title} — The Lab`;
+  const description = post.metaDescription ?? post.excerpt;
+  /* Per-post share card first. The hero is usually 4:5 or square and gets
+     cropped badly by every platform, so it is only a fallback, and the
+     site-wide banner is the last resort rather than the default. */
+  const share = post.ogImage ?? post.heroImage ?? settings?.ogImage;
   return {
-    title: post.metaTitle ?? `${post.title} — The Lab`,
-    description: post.metaDescription ?? post.excerpt,
-    openGraph: settings?.ogImage
-      ? { images: [{ url: settings.ogImage }] }
-      : undefined,
+    title,
+    description,
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: `https://growveloper.com/lab/${slug}`,
+      publishedTime: post.publishedAt,
+      authors: post.author ? [post.author] : undefined,
+      images: share
+        ? [{ url: share, width: 1200, height: 630, alt: post.title }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: share ? [share] : undefined,
+    },
   };
 }
 

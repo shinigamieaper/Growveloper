@@ -327,6 +327,7 @@ export interface BlogPostCardData {
   slug: string;
   excerpt?: string;
   heroImage?: string;
+  ogImage?: string;
   heroImageHotspot?: { x: number; y: number };
   category?: string;
   tags?: string[];

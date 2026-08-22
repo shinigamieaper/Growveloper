@@ -709,6 +709,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostPageData 
       author,
       metaTitle,
       metaDescription,
+      "ogImage": ogImage.asset->url,
       "heroImage": heroImage.asset->url,
       "heroImageAlt": heroImage.alt,
       "heroImageHotspot": heroImage.hotspot{ x, y },
