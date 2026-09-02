@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Lock } from "lucide-react";
-import { getStartPage } from "@/lib/sanity/queries";
+import { getStartPage, getSiteSettings } from "@/lib/sanity/queries";
 import { QualifyingForm } from "@/components/forms/QualifyingForm";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildBreadcrumbSchema } from "@/lib/jsonld";
 
 type StartData = Awaited<ReturnType<typeof getStartPage>>;
 
@@ -26,12 +29,13 @@ async function PrefilledForm({
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const data = await getStartPage();
-  return {
-    title: data?.seoTitle ?? "Book a Consultation — GROWVELOPER",
+  const [data, settings] = await Promise.all([getStartPage(), getSiteSettings()]);
+  return buildPageMetadata({
+    title: data?.seoTitle ?? "Book a Free Consultation",
     description: data?.seoDescription ?? "Tell us about your project and book a free consultation.",
-    openGraph: data?.ogImage ? { images: [{ url: data.ogImage }] } : undefined,
-  };
+    path: "/start",
+    image: data?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function StartPage({
@@ -43,6 +47,7 @@ export default async function StartPage({
 
   return (
     <>
+      <JsonLd schema={buildBreadcrumbSchema([{ name: "Book a Consultation", path: "/start" }])} />
       <section className="min-h-screen px-6 py-16 md:py-24">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="heading-font mb-3 text-3xl font-bold text-text-primary md:text-4xl">

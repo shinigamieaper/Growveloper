@@ -23,10 +23,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const resource = await getResourceBySlug(slug);
-  if (!resource) return { title: "Purchase Confirmed — GROWVELOPER" };
+  const robots = { index: false, follow: false };
+  if (!resource) return { title: "Purchase Confirmed", robots };
   return {
-    title: `${resource.title} — Purchase Confirmed — GROWVELOPER`,
+    title: `${resource.title}: Purchase Confirmed`,
     description: `Your purchase is confirmed. Download ${resource.title} now.`,
+    robots,
   };
 }
 

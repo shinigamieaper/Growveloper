@@ -16,8 +16,11 @@ import {
   NewsletterCapture,
   AnimatedList,
 } from "@/components";
+import { JsonLd } from "@/components/shared/JsonLd";
 import { ICON_MAP } from "@/lib/icons";
 import { fluidGrid } from "@/lib/utils";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildServiceSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
 import { getAuditPage, getAuditFAQ, getSiteSettings } from "@/lib/sanity/queries";
 import type {
   AuditHeroData,
@@ -33,41 +36,63 @@ import type {
 /* ─── METADATA ─── */
 export async function generateMetadata(): Promise<Metadata> {
   const [audit, settings] = await Promise.all([getAuditPage(), getSiteSettings()]);
-  const ogImage = audit?.ogImage ?? settings?.ogImage;
-  return {
+  return buildPageMetadata({
     title: audit?.seoTitle ?? "Growth Audit",
     description:
       audit?.seoDescription ??
-      "A comprehensive audit of your development, marketing, and AI infrastructure \u2014 with a clear roadmap to fix it.",
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+      "A comprehensive audit of your development, marketing, and AI infrastructure, with a clear roadmap to fix it.",
+    path: "/audit",
+    image: audit?.ogImage ?? settings?.ogImage,
+  });
 }
 
 /* ─── JSON-LD SCHEMA ─── */
 function AuditJsonLd({ price, description }: { price: string; description: string }) {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Growth Audit",
-    provider: { "@type": "Person", name: "Juwon" },
-    description,
-    offers: {
-      "@type": "Offer",
-      price: price.replace(/[^0-9.]/g, "") || "500",
-      priceCurrency: "USD",
-    },
-  };
-
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    <JsonLd
+      schema={[
+        buildServiceSchema({
+          name: "Growth Audit",
+          description,
+          serviceType: "Growth audit",
+          path: "/audit",
+          audience: "Small and mid-sized businesses",
+          offer: {
+            price: price.replace(/[^0-9.]/g, "") || "500",
+            priceCurrency: "USD",
+            description: "Flat fee, credited against any project signed within 60 days.",
+          },
+        }),
+        buildBreadcrumbSchema([{ name: "Growth Audit", path: "/audit" }]),
+      ]}
+    />
+  );
+}
+
+/* ─── HERO (request-time) ─── */
+async function PromoAwareHero({
+  searchParams,
+  hero,
+}: {
+  searchParams: Promise<{ promo?: string }>;
+  hero: AuditHeroData;
+}) {
+  const { promo } = await searchParams;
+  return (
+    <AuditHero
+      data={hero}
+      promoCode={promo ?? null}
+      scrollCueTargetId={hero.scrollCueTargetId ?? "qualifiers"}
     />
   );
 }
 
 /* ─── PAGE ─── */
-export default async function AuditPage() {
+export default async function AuditPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ promo?: string }>;
+}) {
   const [page, faq, settings] = await Promise.all([getAuditPage(), getAuditFAQ(), getSiteSettings()]);
 
   if (!page) return null;
@@ -166,11 +191,13 @@ export default async function AuditPage() {
       />
 
       {/* ═══ Section 01 — HERO ═══ */}
-      {/* AuditHero reads useSearchParams for the ?promo code, which is
-          request data. It needs its own Suspense boundary so only the hero
-          streams, rather than blocking the whole route from prerendering. */}
+      {/* The ?promo code is request data, so it is read inside its own
+          Suspense boundary: only the hero streams at request time, the rest
+          of the route stays prerendered. Reading it here on the server (not
+          via useSearchParams in the hero) keeps the H1 and price in the HTML
+          that crawlers and answer engines receive. */}
       <Suspense fallback={null}>
-        <AuditHero data={hero} scrollCueTargetId={hero.scrollCueTargetId ?? "qualifiers"} />
+        <PromoAwareHero searchParams={searchParams} hero={hero} />
       </Suspense>
 
       {/* ═══ Section 02 — WHO IT'S FOR ═══ */}

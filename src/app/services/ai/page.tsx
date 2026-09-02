@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildServiceSchema, buildWebPageSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
 import { SubServicesBentoAI, BeforeAfterCompareClient } from "@/components/services/ClientDynamicComponents";
 import { ServiceHero } from "@/components/shared/ServiceHero";
 import { AuditProcess } from "@/components/audit/AuditProcess";
@@ -37,18 +40,14 @@ import type {
 
 export async function generateMetadata(): Promise<Metadata> {
   const [page, settings] = await Promise.all([getServicePage("ai"), getSiteSettings()]);
-  const ogImage = page?.ogImage ?? settings?.ogImage;
-  return {
-    title: page?.seoTitle ?? "AI & Automation \u2014 GROWVELOPER",
+  return buildPageMetadata({
+    title: page?.seoTitle ?? "AI & Automation",
     description:
       page?.seoDescription ??
       "Done-for-you automation workflows and custom AI infrastructure \u2014 built by a team that understands your funnel, not just your tech stack.",
-    openGraph: {
-      title: page?.seoTitle ?? "AI & Automation \u2014 GROWVELOPER",
-      url: "/services/ai",
-      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
-    },
-  };
+    path: "/services/ai",
+    image: page?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function AIPage() {
@@ -172,20 +171,23 @@ export default async function AIPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Service",
+      <JsonLd
+        schema={[
+          buildServiceSchema({
             name: "AI & Automation",
-            description: page.heroSubStatement ?? "",
-            provider: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+            description: page.seoDescription ?? page.heroSubStatement ?? "",
             serviceType: "AI Automation",
-            areaServed: "Worldwide",
+            path: "/services/ai",
+            audience: "Small and mid-sized businesses",
           }),
-        }}
+          buildWebPageSchema({
+            name: page.seoTitle ?? "AI & Automation",
+            description: page.seoDescription ?? page.heroSubStatement ?? "",
+            path: "/services/ai",
+            dateModified: page.updatedAt,
+          }),
+          buildBreadcrumbSchema([{ name: "AI & Automation", path: "/services/ai" }]),
+        ]}
       />
 
       {/* Section 01 — Hero */}

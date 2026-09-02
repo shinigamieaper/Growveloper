@@ -7,6 +7,7 @@ import { ScrollFadeUp } from "@/components/animations/ScrollFadeUp";
 import { MagneticElement } from "@/components/animations/MagneticElement";
 import { MovingBorderButton } from "@/components/ui/moving-border";
 import { cn } from "@/lib/utils";
+import { buildFaqSchema, serializeJsonLd } from "@/lib/jsonld";
 import type { FAQItem } from "@/lib/types";
 
 interface FAQAccordionProps extends React.ComponentPropsWithoutRef<"section"> {
@@ -90,6 +91,13 @@ export function FAQAccordion({
 
   return (
     <section className={cn("py-24", className)} {...props}>
+      {/* FAQPage schema travels with the section, so every page that renders
+          a FAQ is extractable by search and answer engines without wiring. */}
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildFaqSchema(items)) }}
+      />
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col gap-10 lg:flex-row lg:gap-16">
           {/* Left column — heading + CTA */}

@@ -13,6 +13,7 @@ import { LiveFeed } from "@/components/home/LiveFeed";
 import { NewsletterCapture } from "@/components/shared/NewsletterCapture";
 import { GlassSection } from "@/components/shared/GlassSection";
 import { BeforeAfterCompare } from "@/components/shared/BeforeAfterCompare";
+import { buildPageMetadata } from "@/lib/seo";
 import {
   getHomePage,
   getHomeFAQ,
@@ -29,17 +30,19 @@ import type {
 
 export async function generateMetadata(): Promise<Metadata> {
   const [page, settings] = await Promise.all([getHomePage(), getSiteSettings()]);
-  const ogImage = page?.ogImage ?? settings?.ogImage;
-  return {
-    title: {
-      absolute: page?.seoTitle ?? settings?.seoTitle ?? "GROWVELOPER \u2014 Technical Growth Engine",
-    },
+  return buildPageMetadata({
+    title:
+      page?.seoTitle ??
+      settings?.seoTitle ??
+      "GROWVELOPER - Build, Market, and Automate Your Growth",
+    absoluteTitle: true,
     description:
       page?.seoDescription ??
       settings?.seoDescription ??
-      "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+      "Growveloper is a growth studio that combines web development, performance marketing, and AI automation into one system.",
+    path: "/",
+    image: page?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function Home() {
@@ -115,22 +118,7 @@ export default async function Home() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            name: "GROWVELOPER",
-            url: "https://growveloper.com",
-            description:
-              page.seoDescription ??
-              settings?.seoDescription ??
-              "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
-          }),
-        }}
-      />
+      {/* Organization, WebSite and founder schema come from the root layout. */}
       {/* Section 02 — Hero */}
       <Hero data={hero} />
 

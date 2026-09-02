@@ -10,6 +10,8 @@ interface SectionHeaderProps extends React.ComponentPropsWithoutRef<"div"> {
   highlightedWord?: string | null;
   description?: string | null;
   alignment?: "left" | "center";
+  /** Heading level. Pass "h1" when this header is the page title. */
+  as?: "h1" | "h2" | "h3";
 }
 
 export function SectionHeader({
@@ -18,6 +20,7 @@ export function SectionHeader({
   highlightedWord,
   description,
   alignment = "center",
+  as = "h2",
   className,
   ...props
 }: SectionHeaderProps) {
@@ -39,7 +42,7 @@ export function SectionHeader({
         </ScrollFadeUp>
       )}
       <TextReveal
-        as="h2"
+        as={as}
         className="heading-font text-3xl font-bold text-text-primary md:text-4xl lg:text-5xl"
         splitType="words"
         highlightedWord={highlightedWord}

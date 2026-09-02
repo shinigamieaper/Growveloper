@@ -21,6 +21,9 @@ import {
 } from "@/lib/sanity/queries";
 import type { CTABannerData, BlogPostBodyBlock } from "@/lib/types";
 import type { PortableTextBlock } from "@portabletext/react";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata, snippet } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
 
 /* ─── Static params — only blog posts have detail pages ─── */
 export async function generateStaticParams() {
@@ -42,34 +45,29 @@ export async function generateMetadata({
     getBlogPostBySlug(slug),
     getSiteSettings(),
   ]);
-  if (!post) return { title: "Post Not Found" };
-  const title = post.metaTitle ?? `${post.title} — The Lab`;
-  const description = post.metaDescription ?? post.excerpt;
+  if (!post) return { title: "Post Not Found", robots: { index: false } };
   /* Per-post share card first. The hero is usually 4:5 or square and gets
      cropped badly by every platform, so it is only a fallback, and the
      site-wide banner is the last resort rather than the default. */
   const share = post.ogImage ?? post.heroImage ?? settings?.ogImage;
-  return {
-    title,
-    description,
-    openGraph: {
-      type: "article",
-      title,
-      description,
-      url: `https://growveloper.com/lab/${slug}`,
+  return buildPageMetadata({
+    title: post.metaTitle || post.title,
+    description:
+      post.metaDescription ||
+      post.excerpt ||
+      post.tldr ||
+      snippet(post.firstParagraph, 155),
+    path: `/lab/${slug}`,
+    image: share,
+    imageAlt: post.title,
+    type: "article",
+    article: {
       publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt,
       authors: post.author ? [post.author] : undefined,
-      images: share
-        ? [{ url: share, width: 1200, height: 630, alt: post.title }]
-        : undefined,
+      tags: post.tags,
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: share ? [share] : undefined,
-    },
-  };
+  });
 }
 
 /* ─── Page ─── */
@@ -129,44 +127,27 @@ export default async function LabPostPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: post.title,
-            description: post.excerpt ?? "",
-            image: post.heroImage ?? undefined,
+      {/* FAQPage schema is emitted by the FAQAccordion further down. */}
+      <JsonLd
+        schema={[
+          buildArticleSchema({
+            type: "BlogPosting",
+            title: post.title,
+            description:
+              post.metaDescription ||
+              post.excerpt ||
+              post.tldr ||
+              snippet(post.firstParagraph, 155),
+            path: `/lab/${slug}`,
             datePublished: post.publishedAt,
-            dateModified: post.updatedAt ?? post.publishedAt,
-            author: post.author
-              ? { "@type": "Person", name: post.author }
-              : { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
-            publisher: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
-            mainEntityOfPage: { "@type": "WebPage", "@id": `https://growveloper.com/lab/${slug}` },
+            dateModified: post.updatedAt,
+            imageUrl: post.ogImage ?? post.heroImage,
+            authorName: post.author,
+            keywords: post.tags,
           }),
-        }}
+          buildBreadcrumbSchema([{ name: "The Lab", path: "/lab" }, { name: post.title }]),
+        ]}
       />
-
-      {faqs.length > 0 && (
-        <script
-          type="application/ld+json"
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: faqs.map((f) => ({
-                "@type": "Question",
-                name: f.question,
-                acceptedAnswer: { "@type": "Answer", text: f.answer },
-              })),
-            }),
-          }}
-        />
-      )}
 
       {/* Sections 01–04 are the article proper. The explicit <article>
           element is what content extractors and AI crawlers look for to

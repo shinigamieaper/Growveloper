@@ -7,8 +7,15 @@ import { Footer } from "@/components/shared/Footer";
 import { LayoutGridOverlay } from "@/components/layout/LayoutGridOverlay";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { LayoutClients } from "@/components/layout/LayoutClients";
-import { getNavigation, getFooter, getAllPopupConfigs, getSiteSettings } from "@/lib/sanity/queries";
-import { buildOrganizationSchema, buildWebSiteSchema } from "@/lib/jsonld";
+import {
+  getNavigation,
+  getFooter,
+  getAllPopupConfigs,
+  getSiteSettings,
+  getAboutPage,
+} from "@/lib/sanity/queries";
+import { buildSiteGraph } from "@/lib/jsonld";
+import { SITE_URL, SITE_NAME, absoluteUrl, snippet } from "@/lib/seo";
 import { JsonLd } from "@/components/shared/JsonLd";
 import type { NavigationData, FooterData } from "@/lib/types";
 import "./globals.css";
@@ -62,44 +69,67 @@ const PLACEHOLDER_FOOTER: FooterData = {
   copyrightText: "\u00a9 2025 Growveloper. All rights reserved.",
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
-  title: {
-    default: "GROWVELOPER — Technical Growth Engine",
-    template: "%s | GROWVELOPER",
-  },
-  description:
-    "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    siteName: "GROWVELOPER",
-    title: "GROWVELOPER — Technical Growth Engine",
-    description:
-      "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
-    images: [
-      {
-        url: "/images/og/og-default.png",
-        width: 1200,
-        height: 630,
-        alt: "GROWVELOPER — Technical Growth Engine",
+const FALLBACK_TITLE = "GROWVELOPER - Build, Market, and Automate Your Growth";
+const FALLBACK_DESCRIPTION =
+  "Growveloper is a growth studio that combines web development, performance marketing, and AI automation into one system for small and mid-sized businesses.";
+
+/* Site-wide defaults. Every page overrides title, description and canonical
+   through buildPageMetadata; what lives here is the floor a page inherits if
+   it sets nothing. metadataBase is the production origin on purpose, so
+   share images and canonicals never point at a preview host. */
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const title = settings?.seoTitle ?? FALLBACK_TITLE;
+  const description = snippet(settings?.seoDescription ?? FALLBACK_DESCRIPTION, 160);
+  const image = settings?.ogImage ? absoluteUrl(settings.ogImage) : undefined;
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: title,
+      template: `%s | ${SITE_NAME}`,
+    },
+    description,
+    applicationName: SITE_NAME,
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      siteName: SITE_NAME,
+      title,
+      description,
+      ...(image ? { images: [{ url: image, width: 1200, height: 630, alt: title }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(image ? { images: [image] } : {}),
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
       },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "GROWVELOPER — Technical Growth Engine",
-    description:
-      "I architect high-performance digital engines where clean code and marketing ROI are inseparable.",
-    images: ["/images/og/og-default.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  icons: {
+    },
+    ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+    process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+      ? {
+          verification: {
+            ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+              ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+              : {}),
+            ...(process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+              ? { other: { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION } }
+              : {}),
+          },
+        }
+      : {}),
+    icons: {
     icon: [
       {
         url: "/images/logo/logo-icon-light.png",
@@ -112,7 +142,8 @@ export const metadata: Metadata = {
     ],
     apple: "/images/logo/logo-icon-light.png",
   },
-};
+  };
+}
 
 const THEME_INIT_SCRIPT = `
 (function(){
@@ -127,21 +158,36 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [nav, footer, popupConfigs, settings] = await Promise.all([
+  const [nav, footer, popupConfigs, settings, about] = await Promise.all([
     getNavigation(),
     getFooter(),
     getAllPopupConfigs(),
     getSiteSettings(),
+    getAboutPage(),
   ]);
 
   const navData: NavigationData = nav ?? PLACEHOLDER_NAV;
   const footerData: FooterData = footer ?? PLACEHOLDER_FOOTER;
 
+  /* One entity graph for the whole site: WebSite, Organization, founder.
+     Social profiles come from whichever CMS document holds them. */
+  const sameAs = [...(settings?.socialLinks ?? []), ...(footerData.socialLinks ?? [])]
+    .map((s) => s.url)
+    .filter((u): u is string => typeof u === "string" && /^https?:\/\//.test(u));
+  const siteGraph = buildSiteGraph({
+    description: settings?.seoDescription,
+    email: settings?.contactEmail,
+    telephone: settings?.whatsappNumber,
+    sameAs,
+    founderJobTitle: about?.heroIdentity,
+    founderImage: about?.portraitImage,
+  });
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        <JsonLd schema={[buildWebSiteSchema(), buildOrganizationSchema(settings?.seoDescription)]} />
+        <JsonLd schema={siteGraph} />
       </head>
       <body
         suppressHydrationWarning

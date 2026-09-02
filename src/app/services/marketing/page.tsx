@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildServiceSchema, buildWebPageSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
 import { SubServicesBentoMarketing, BeforeAfterCompareClient } from "@/components/services/ClientDynamicComponents";
 import { ServiceHero } from "@/components/shared/ServiceHero";
 import { AuditProcess } from "@/components/audit/AuditProcess";
@@ -29,18 +32,14 @@ import type {
 
 export async function generateMetadata(): Promise<Metadata> {
   const [page, settings] = await Promise.all([getServicePage("marketing"), getSiteSettings()]);
-  const ogImage = page?.ogImage ?? settings?.ogImage;
-  return {
-    title: page?.seoTitle ?? "Growth Marketing \u2014 GROWVELOPER",
+  return buildPageMetadata({
+    title: page?.seoTitle ?? "Growth Marketing",
     description:
       page?.seoDescription ??
       "Performance marketing that compounds your growth. AEO, SEO, Paid Ads, Content Strategy, CRO, and Analytics.",
-    openGraph: {
-      title: page?.seoTitle ?? "Growth Marketing \u2014 GROWVELOPER",
-      url: "/services/marketing",
-      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
-    },
-  };
+    path: "/services/marketing",
+    image: page?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function MarketingPage() {
@@ -150,20 +149,23 @@ export default async function MarketingPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Service",
+      <JsonLd
+        schema={[
+          buildServiceSchema({
             name: "Growth Marketing",
-            description: page.heroSubStatement ?? "",
-            provider: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+            description: page.seoDescription ?? page.heroSubStatement ?? "",
             serviceType: "Digital Marketing",
-            areaServed: "Worldwide",
+            path: "/services/marketing",
+            audience: "Small and mid-sized businesses",
           }),
-        }}
+          buildWebPageSchema({
+            name: page.seoTitle ?? "Growth Marketing",
+            description: page.seoDescription ?? page.heroSubStatement ?? "",
+            path: "/services/marketing",
+            dateModified: page.updatedAt,
+          }),
+          buildBreadcrumbSchema([{ name: "Growth Marketing", path: "/services/marketing" }]),
+        ]}
       />
 
       {/* Section 01 — Hero */}

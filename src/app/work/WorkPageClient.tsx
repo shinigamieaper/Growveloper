@@ -119,6 +119,7 @@ export function WorkPageClient({ caseStudies, workPageData, faq }: WorkPageClien
         <section className="pt-16 pb-16 md:pt-20 md:pb-20">
           <div className="mx-auto max-w-6xl px-6">
             <SectionHeader
+              as="h1"
               headline={workPageData.pageHeadline}
               highlightedWord={workPageData.pageHighlightedWord}
               description={workPageData.pageDescription}

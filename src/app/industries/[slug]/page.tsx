@@ -35,6 +35,9 @@ import type {
   CTABannerData,
   BeforeAfterData,
 } from "@/lib/types";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildServiceSchema, buildWebPageSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
 
 /* ─── Static params ─── */
 export async function generateStaticParams() {
@@ -56,13 +59,13 @@ export async function generateMetadata({
     getIndustryBySlug(slug),
     getSiteSettings(),
   ]);
-  if (!industry) return { title: "Industry Not Found" };
-  const ogImage = industry.ogImage ?? settings?.ogImage;
-  return {
-    title: industry.seoTitle ?? `${industry.name}`,
+  if (!industry) return { title: "Industry Not Found", robots: { index: false } };
+  return buildPageMetadata({
+    title: industry.seoTitle ?? `Growth Studio for ${industry.name}`,
     description: industry.seoDescription ?? industry.heroSubStatement,
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+    path: `/industries/${slug}`,
+    image: industry.ogImage ?? settings?.ogImage,
+  });
 }
 
 /* ─── Page ─── */
@@ -214,21 +217,23 @@ export default async function IndustryPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Service",
-            name: `${industry.name} Growth Services`,
-            description: industry.heroSubStatement ?? "",
-            provider: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
-            serviceType: industry.name,
-            areaServed: "Worldwide",
-            url: `https://growveloper.com/industries/${industry.slug}`,
+      <JsonLd
+        schema={[
+          buildServiceSchema({
+            name: `Growth services for ${industry.name}`,
+            description: industry.seoDescription ?? industry.heroSubStatement ?? "",
+            serviceType: "Web development, growth marketing and automation",
+            path: `/industries/${industry.slug}`,
+            audience: industry.name,
           }),
-        }}
+          buildWebPageSchema({
+            name: industry.seoTitle ?? `Growth Studio for ${industry.name}`,
+            description: industry.seoDescription ?? industry.heroSubStatement ?? "",
+            path: `/industries/${industry.slug}`,
+            dateModified: industry.updatedAt,
+          }),
+          buildBreadcrumbSchema([{ name: industry.name, path: `/industries/${industry.slug}` }]),
+        ]}
       />
 
       {/* 01 — Hero */}

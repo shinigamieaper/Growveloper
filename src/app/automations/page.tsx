@@ -4,17 +4,21 @@ import { AutomationsCatalogueHero } from "@/components/automations/AutomationsCa
 import { AutomationsCatalogue } from "@/components/automations/AutomationsCatalogue";
 import { getAllAutomations, getSiteSettings, getAutomationsPage } from "@/lib/sanity/queries";
 import type { CTABannerData } from "@/lib/types";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildCollectionPageSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
+
+const AUTOMATIONS_DESCRIPTION =
+  "Browse pre-built automation workflows ready to deploy in your business. Lead gen, reporting, content, CRM sync, and more.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [page, settings] = await Promise.all([getAutomationsPage(), getSiteSettings()]);
-  const ogImage = page?.ogImage ?? settings?.ogImage;
-  return {
+  return buildPageMetadata({
     title: page?.seoTitle ?? "Automations Catalogue",
-    description:
-      page?.seoDescription ??
-      "Browse pre-built automation workflows ready to deploy in your business. Lead gen, reporting, content, CRM sync, and more.",
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+    description: page?.seoDescription ?? AUTOMATIONS_DESCRIPTION,
+    path: "/automations",
+    image: page?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function AutomationsPage() {
@@ -37,25 +41,15 @@ export default async function AutomationsPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            name: page?.seoTitle ?? "Automations Catalogue — GROWVELOPER",
-            description:
-              page?.seoDescription ??
-              "Browse pre-built automation workflows ready to deploy in your business.",
-            url: "https://growveloper.com/automations",
-            provider: {
-              "@type": "Organization",
-              name: "GROWVELOPER",
-              url: "https://growveloper.com",
-            },
+      <JsonLd
+        schema={[
+          buildCollectionPageSchema({
+            name: page?.seoTitle ?? "Automations Catalogue",
+            description: page?.seoDescription ?? AUTOMATIONS_DESCRIPTION,
+            path: "/automations",
           }),
-        }}
+          buildBreadcrumbSchema([{ name: "Automations", path: "/automations" }]),
+        ]}
       />
       {/* 01 — Hero */}
       <AutomationsCatalogueHero

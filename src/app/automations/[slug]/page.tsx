@@ -19,6 +19,9 @@ import {
   getSiteSettings,
 } from "@/lib/sanity/queries";
 import type { AuditProcessData, ServiceQualifierData, CTABannerData } from "@/lib/types";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata, absoluteUrl } from "@/lib/seo";
+import { buildBreadcrumbSchema, ORG_ID } from "@/lib/jsonld";
 
 /* ─── Static params ─── */
 
@@ -45,16 +48,15 @@ export async function generateMetadata({
   ]);
 
   if (!automation) {
-    return { title: "Automation Not Found" };
+    return { title: "Automation Not Found", robots: { index: false } };
   }
 
-  return {
-    title: `${automation.title} — Automations`,
-    description: automation.tagline,
-    openGraph: settings?.ogImage
-      ? { images: [{ url: settings.ogImage }] }
-      : undefined,
-  };
+  return buildPageMetadata({
+    title: automation.title,
+    description: automation.tagline || automation.description,
+    path: `/automations/${slug}`,
+    image: automation.coverImage ?? settings?.ogImage,
+  });
 }
 
 /* ─── Page ─── */
@@ -112,11 +114,9 @@ export default async function AutomationPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+      <JsonLd
+        schema={[
+          {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             name: automation.title,
@@ -125,10 +125,14 @@ export default async function AutomationPage({
             offers: isFixed
               ? { "@type": "Offer", price: automation.price, priceCurrency: "GBP" }
               : { "@type": "Offer", price: "0", priceCurrency: "GBP", description: "Custom quote" },
-            provider: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
-            url: `https://growveloper.com/automations/${automation.slug}`,
-          }),
-        }}
+            provider: { "@id": ORG_ID },
+            url: absoluteUrl(`/automations/${automation.slug}`),
+          },
+          buildBreadcrumbSchema([
+            { name: "Automations", path: "/automations" },
+            { name: automation.title },
+          ]),
+        ]}
       />
 
       {/* 01 — Hero */}

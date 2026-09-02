@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
 import { ResourcesPageClient } from "./ResourcesPageClient";
 import { getAllResources, getSiteSettings, getResourcesPage } from "@/lib/sanity/queries";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildCollectionPageSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
+
+const RESOURCES_DESCRIPTION =
+  "Guides, templates, frameworks, and playbooks for founders who build and market.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [res, settings] = await Promise.all([getResourcesPage(), getSiteSettings()]);
-  const ogImage = res?.ogImage ?? settings?.ogImage;
-  return {
+  return buildPageMetadata({
     title: res?.seoTitle ?? "Resources",
-    description:
-      res?.seoDescription ??
-      "Guides, templates, frameworks, and playbooks for founders who build and market.",
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+    description: res?.seoDescription ?? RESOURCES_DESCRIPTION,
+    path: "/resources",
+    image: res?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function ResourcesPage() {
@@ -22,19 +26,15 @@ export default async function ResourcesPage() {
   ]);
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            name: "Resources — GROWVELOPER",
-            description: "Guides, templates, frameworks, and playbooks for founders who build and market.",
-            url: "https://growveloper.com/resources",
-            provider: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+      <JsonLd
+        schema={[
+          buildCollectionPageSchema({
+            name: res?.seoTitle ?? "Resources",
+            description: res?.seoDescription ?? RESOURCES_DESCRIPTION,
+            path: "/resources",
           }),
-        }}
+          buildBreadcrumbSchema([{ name: "Resources", path: "/resources" }]),
+        ]}
       />
       <ResourcesPageClient
         resources={resources}

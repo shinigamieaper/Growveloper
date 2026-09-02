@@ -2,17 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { getSiteSettings, getTermsPage } from "@/lib/sanity/queries";
+import { buildPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, page] = await Promise.all([getSiteSettings(), getTermsPage()]);
-  const title = page?.seoTitle ?? (page?.pageTitle ? `${page.pageTitle} — GROWVELOPER` : "Terms of Service — GROWVELOPER");
-  const description = page?.seoDescription ?? settings?.seoDescription ?? "";
-  const ogImage = page?.ogImage ?? settings?.ogImage;
-  return {
-    title,
-    description,
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+  return buildPageMetadata({
+    title: page?.seoTitle ?? page?.pageTitle ?? "Terms of Service",
+    description: page?.seoDescription ?? settings?.seoDescription ?? "",
+    path: "/terms",
+    image: page?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function TermsPage() {

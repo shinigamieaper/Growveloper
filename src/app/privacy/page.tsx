@@ -2,17 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { getSiteSettings, getPrivacyPage } from "@/lib/sanity/queries";
+import { buildPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, page] = await Promise.all([getSiteSettings(), getPrivacyPage()]);
-  const title = page?.seoTitle ?? (page?.pageTitle ? `${page.pageTitle} — GROWVELOPER` : "Privacy Policy — GROWVELOPER");
-  const description = page?.seoDescription ?? settings?.seoDescription ?? "";
-  const ogImage = page?.ogImage ?? settings?.ogImage;
-  return {
-    title,
-    description,
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+  return buildPageMetadata({
+    title: page?.seoTitle ?? page?.pageTitle ?? "Privacy Policy",
+    description: page?.seoDescription ?? settings?.seoDescription ?? "",
+    path: "/privacy",
+    image: page?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function PrivacyPage() {

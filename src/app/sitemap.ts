@@ -6,8 +6,37 @@ import {
   getAllAutomations,
   getAllResources,
 } from "@/lib/sanity/queries";
+import { SITE_URL } from "@/lib/seo";
 
-const BASE = "https://growveloper.com";
+/* Static routes carry no lastModified on purpose. A date that is always
+   "now" tells crawlers nothing and teaches them to ignore the field. CMS
+   routes use the document's real _updatedAt. */
+const STATIC_ROUTES: MetadataRoute.Sitemap = [
+  { url: SITE_URL, changeFrequency: "weekly", priority: 1.0 },
+  { url: `${SITE_URL}/services/development`, changeFrequency: "monthly", priority: 0.9 },
+  { url: `${SITE_URL}/services/marketing`, changeFrequency: "monthly", priority: 0.9 },
+  { url: `${SITE_URL}/services/ai`, changeFrequency: "monthly", priority: 0.9 },
+  { url: `${SITE_URL}/audit`, changeFrequency: "monthly", priority: 0.9 },
+  { url: `${SITE_URL}/work`, changeFrequency: "weekly", priority: 0.8 },
+  { url: `${SITE_URL}/lab`, changeFrequency: "weekly", priority: 0.8 },
+  { url: `${SITE_URL}/nothing-after-six`, changeFrequency: "weekly", priority: 0.7 },
+  { url: `${SITE_URL}/resources`, changeFrequency: "weekly", priority: 0.7 },
+  { url: `${SITE_URL}/automations`, changeFrequency: "weekly", priority: 0.7 },
+  { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.6 },
+  { url: `${SITE_URL}/start`, changeFrequency: "monthly", priority: 0.5 },
+  { url: `${SITE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
+  { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
+];
+
+function when(...candidates: (string | undefined | null)[]): Date | undefined {
+  for (const c of candidates) {
+    if (c) {
+      const d = new Date(c);
+      if (!Number.isNaN(d.getTime())) return d;
+    }
+  }
+  return undefined;
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [caseStudies, blogPosts, industries, automations, resources] =
@@ -19,62 +48,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       getAllResources(),
     ]);
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: BASE, lastModified: new Date(), changeFrequency: "weekly", priority: 1.0 },
-    { url: `${BASE}/services/development`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/services/marketing`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/services/ai`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/audit`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/work`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/lab`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
-    { url: `${BASE}/resources`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
-    { url: `${BASE}/automations`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
-    { url: `${BASE}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/start`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.2 },
-    { url: `${BASE}/terms`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.2 },
-  ];
+  const industryRoutes: MetadataRoute.Sitemap = industries.map((industry) => ({
+    url: `${SITE_URL}/industries/${industry.slug}`,
+    lastModified: when(industry.updatedAt),
+    changeFrequency: "monthly",
+    priority: 0.9,
+  }));
 
   const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((cs) => ({
-    url: `${BASE}/work/${cs.slug}`,
-    lastModified: new Date(),
+    url: `${SITE_URL}/work/${cs.slug}`,
+    lastModified: when(cs.updatedAt),
     changeFrequency: "monthly",
     priority: 0.7,
   }));
 
   const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({
-    url: `${BASE}/lab/${post.slug}`,
-    lastModified: new Date(post.publishedAt ?? Date.now()),
-    changeFrequency: "monthly",
-    priority: 0.7,
-  }));
-
-  const industryRoutes: MetadataRoute.Sitemap = industries.map((industry) => ({
-    url: `${BASE}/industries/${industry.slug}`,
-    lastModified: new Date(),
+    url: `${SITE_URL}/lab/${post.slug}`,
+    lastModified: when(post.updatedAt, post.publishedAt),
     changeFrequency: "monthly",
     priority: 0.7,
   }));
 
   const automationRoutes: MetadataRoute.Sitemap = automations.map((a) => ({
-    url: `${BASE}/automations/${a.slug}`,
-    lastModified: new Date(),
+    url: `${SITE_URL}/automations/${a.slug}`,
+    lastModified: when(a.updatedAt),
     changeFrequency: "monthly",
     priority: 0.5,
   }));
 
   const resourceRoutes: MetadataRoute.Sitemap = resources.map((r) => ({
-    url: `${BASE}/resources/${r.slug}`,
-    lastModified: new Date(),
+    url: `${SITE_URL}/resources/${r.slug}`,
+    lastModified: when(r.updatedAt),
     changeFrequency: "monthly",
     priority: 0.6,
   }));
 
   return [
-    ...staticRoutes,
+    ...STATIC_ROUTES,
+    ...industryRoutes,
     ...caseStudyRoutes,
     ...blogRoutes,
-    ...industryRoutes,
     ...automationRoutes,
     ...resourceRoutes,
   ];

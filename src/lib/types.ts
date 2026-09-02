@@ -174,6 +174,8 @@ export interface IndustryCardData {
   hookLine: string;
   slug: string;
   ctaLabel?: string;
+  /** Sanity _updatedAt, for schema.org dateModified and the sitemap. */
+  updatedAt?: string;
 }
 
 export interface IndustriesGridData {
@@ -303,6 +305,8 @@ export interface CaseStudyMetric {
 export interface CaseStudyCardData {
   title: string;
   slug: string;
+  /** Sanity _updatedAt, for the sitemap. */
+  updatedAt?: string;
   clientName?: string;
   clientIndustry?: string;
   role?: string;
@@ -325,6 +329,8 @@ export interface CaseStudyCardData {
 export interface BlogPostCardData {
   title: string;
   slug: string;
+  /** Sanity _updatedAt, for schema.org dateModified and the sitemap. */
+  updatedAt?: string;
   excerpt?: string;
   heroImage?: string;
   ogImage?: string;
@@ -381,10 +387,8 @@ export interface PostCostTableBlock extends BlogPostBodyBlock {
 export interface BlogPostPageData extends BlogPostCardData {
   body?: BlogPostBodyBlock[];
   bodyParagraphs?: string[];
-  /* Sanity's _updatedAt. Surfaced so the page can emit schema.org
-     dateModified and a visible "last updated" line, both of which the
-     answer engines use when deciding what to cite. */
-  updatedAt?: string;
+  /** Plain text of the first body paragraph. Last-resort meta description. */
+  firstParagraph?: string;
   tldr?: string;
   pullQuote?: string;
   showCTA?: boolean;
@@ -510,6 +514,8 @@ export interface IndustryPageData extends IndustryCardData {
 export interface ResourceCardData {
   title: string;
   slug: string;
+  /** Sanity _updatedAt, for the sitemap. */
+  updatedAt?: string;
   description: string;
   resourceType: "Template" | "Guide" | "Framework" | "Playbook";
   category: string;
@@ -547,6 +553,8 @@ export interface AutomationStep {
 export interface AutomationCardData {
   title: string;
   slug: string;
+  /** Sanity _updatedAt, for the sitemap. */
+  updatedAt?: string;
   tagline: string;
   description: string;
   accessType: "fixed" | "custom";
@@ -901,6 +909,8 @@ export interface AboutInterestsData {
 /* --- Service Page (Sanity CMS raw shape) --- */
 export interface ServicePageCmsData {
   pageId: string;
+  /** Sanity _updatedAt, for schema.org dateModified and the sitemap. */
+  updatedAt?: string;
   // SEO
   seoTitle?: string;
   seoDescription?: string;

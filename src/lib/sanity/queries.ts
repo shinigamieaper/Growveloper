@@ -452,7 +452,8 @@ export async function getServicePage(pageId: string): Promise<ServicePageCmsData
       faqCtaHeadline,
       faqCtaDescription,
       faqCtaLabel,
-      faqCtaUrl
+      faqCtaUrl,
+      "updatedAt": _updatedAt
     }`,
     { pageId }
   );
@@ -583,7 +584,8 @@ export async function getAllCaseStudies(): Promise<CaseStudyCardData[]> {
       "resultHeadline": metrics[0].label + " " + metrics[0].value,
       "techStack": techStack[]->name,
       "techStackLogos": techStack[]->{ name, "logo": logo.asset->url },
-      featured
+      featured,
+      "updatedAt": _updatedAt
     }`
   );
 }
@@ -692,7 +694,8 @@ export async function getAllBlogPosts(): Promise<BlogPostCardData[]> {
       publishedAt,
       "readTime": readTime + " min read",
       "platform": "blog",
-      "featuredToggle": featuredToggle
+      "featuredToggle": featuredToggle,
+      "updatedAt": _updatedAt
     }`
   );
 }
@@ -724,6 +727,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostPageData 
       tags,
       publishedAt,
       "updatedAt": _updatedAt,
+      "firstParagraph": pt::text(body[_type == "block" && style == "normal"][0]),
       "readTime": readTime + " min read",
       "platform": "blog",
       featuredToggle,
@@ -802,7 +806,8 @@ export async function getAllResources(): Promise<ResourceCardData[]> {
       priceGBP,
       priceNGN,
       "coverImage": coverImage.asset->url,
-      featuredToggle
+      featuredToggle,
+      "updatedAt": _updatedAt
     }`
   );
 }
@@ -850,7 +855,8 @@ export async function getAllAutomations(): Promise<AutomationCardData[]> {
       featured,
       "coverImage": null,
       "toolsUsed": toolsUsed[]->{ name, "iconKey": name },
-      "setupTimeDays": coalesce(setupTime, 0)
+      "setupTimeDays": coalesce(setupTime, 0),
+      "updatedAt": _updatedAt
     }`
   );
 }
@@ -911,7 +917,8 @@ export async function getAllIndustries(): Promise<IndustriesGridData["industries
       "name": industryName,
       hookLine,
       "slug": slug.current,
-      ctaLabel
+      ctaLabel,
+      "updatedAt": _updatedAt
     }`
   );
 }
@@ -1005,7 +1012,8 @@ export async function getIndustryBySlug(slug: string): Promise<IndustryPageData 
       faqCtaHeadline,
       faqCtaDescription,
       faqCtaLabel,
-      faqCtaUrl
+      faqCtaUrl,
+      "updatedAt": _updatedAt
     }`,
     { slug }
   );

@@ -19,6 +19,9 @@ import {
   getWorkPage,
 } from "@/lib/sanity/queries";
 import type { CTABannerData, TestimonialData, StatsBandItem } from "@/lib/types";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata, absoluteUrl } from "@/lib/seo";
+import { buildBreadcrumbSchema, ORG_ID } from "@/lib/jsonld";
 
 /* ─── Static params ─── */
 export async function generateStaticParams() {
@@ -40,13 +43,14 @@ export async function generateMetadata({
     getCaseStudyBySlug(slug),
     getSiteSettings(),
   ]);
-  if (!cs) return { title: "Case Study Not Found" };
-  const ogImage = cs.ogImage ?? settings?.ogImage;
-  return {
-    title: cs.seoTitle ?? `${cs.title} — Case Study`,
+  if (!cs) return { title: "Case Study Not Found", robots: { index: false } };
+  return buildPageMetadata({
+    title: cs.seoTitle ?? `${cs.title}: Case Study`,
     description: cs.seoDescription ?? cs.situation,
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+    path: `/work/${slug}`,
+    image: cs.ogImage ?? cs.heroImage ?? settings?.ogImage,
+    type: "article",
+  });
 }
 
 /* ─── Page ─── */
@@ -100,21 +104,21 @@ export default async function CaseStudyPage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+      <JsonLd
+        schema={[
+          {
             "@context": "https://schema.org",
             "@type": "CreativeWork",
             name: cs.title,
             description: cs.situation ?? "",
             image: cs.heroImage ?? undefined,
-            author: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
-            url: `https://growveloper.com/work/${cs.slug}`,
+            author: { "@id": ORG_ID },
+            publisher: { "@id": ORG_ID },
+            url: absoluteUrl(`/work/${cs.slug}`),
             about: { "@type": "Thing", name: cs.clientIndustry ?? "" },
-          }),
-        }}
+          },
+          buildBreadcrumbSchema([{ name: "Work", path: "/work" }, { name: cs.title }]),
+        ]}
       />
 
       {/* 01 — Hero */}

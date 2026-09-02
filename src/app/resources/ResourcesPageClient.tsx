@@ -82,6 +82,7 @@ export function ResourcesPageClient({
         <section className="pt-16 pb-16 md:pt-20 md:pb-24">
           <div className="mx-auto max-w-6xl px-6">
             <SectionHeader
+              as="h1"
               headline={pageHeadline}
               highlightedWord={pageHighlightedWord}
               description={pageDescription}

@@ -16,6 +16,9 @@ import {
   TextReveal,
 } from "@/components";
 import { getAboutPage, getAboutFAQ, getSiteSettings } from "@/lib/sanity/queries";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata, absoluteUrl } from "@/lib/seo";
+import { buildBreadcrumbSchema, PERSON_ID, WEBSITE_ID } from "@/lib/jsonld";
 import type {
   AboutHeroData,
   AboutShortVersionData,
@@ -31,14 +34,14 @@ import type {
 
 export async function generateMetadata(): Promise<Metadata> {
   const [page, settings] = await Promise.all([getAboutPage(), getSiteSettings()]);
-  const ogImage = page?.ogImage ?? settings?.ogImage;
-  return {
-    title: page?.seoTitle ?? "The Brains \u2014 GROWVELOPER",
+  return buildPageMetadata({
+    title: page?.seoTitle ?? "About Juwon",
     description:
       page?.seoDescription ??
       "Meet Juwon. The intersection of full-stack development and performance marketing.",
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+    path: "/about",
+    image: page?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function AboutPage() {
@@ -149,20 +152,20 @@ export default async function AboutPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+      {/* The founder Person entity lives in the root graph; this page is its profile. */}
+      <JsonLd
+        schema={[
+          {
             "@context": "https://schema.org",
-            "@type": "Person",
-            name: page.heroName ?? "Juwon",
-            url: "https://growveloper.com/about",
-            jobTitle: page.heroIdentity ?? "Full-Stack Developer & Growth Marketer",
-            worksFor: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
-            image: page.portraitImage ?? undefined,
-          }),
-        }}
+            "@type": "ProfilePage",
+            "@id": absoluteUrl("/about"),
+            url: absoluteUrl("/about"),
+            name: page.seoTitle ?? "About Juwon",
+            mainEntity: { "@id": PERSON_ID },
+            isPartOf: { "@id": WEBSITE_ID },
+          },
+          buildBreadcrumbSchema([{ name: "About", path: "/about" }]),
+        ]}
       />
 
       {/* 01 — Hero */}

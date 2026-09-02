@@ -19,6 +19,9 @@ import {
   getResourcesPage,
 } from "@/lib/sanity/queries";
 import type { CTABannerData } from "@/lib/types";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
 
 export async function generateStaticParams() {
   const resources = await getAllResources();
@@ -38,14 +41,14 @@ export async function generateMetadata({
     getResourceBySlug(slug),
     getSiteSettings(),
   ]);
-  if (!resource) return { title: "Resource Not Found" };
-  return {
-    title: `${resource.title} — Resources`,
+  if (!resource) return { title: "Resource Not Found", robots: { index: false } };
+  return buildPageMetadata({
+    title: resource.title,
     description: resource.description,
-    openGraph: settings?.ogImage
-      ? { images: [{ url: settings.ogImage }] }
-      : undefined,
-  };
+    path: `/resources/${slug}`,
+    image: resource.coverImage ?? settings?.ogImage,
+    type: "article",
+  });
 }
 
 export default async function ResourcePage({
@@ -87,24 +90,17 @@ export default async function ResourcePage({
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: resource.title,
+      <JsonLd
+        schema={[
+          buildArticleSchema({
+            title: resource.title,
             description: resource.description,
-            ...(resource.publishedAt ? { datePublished: resource.publishedAt } : {}),
-            url: `https://growveloper.com/resources/${resource.slug}`,
-            publisher: {
-              "@type": "Organization",
-              name: "GROWVELOPER",
-              url: "https://growveloper.com",
-            },
+            path: `/resources/${resource.slug}`,
+            datePublished: resource.publishedAt,
+            imageUrl: resource.coverImage,
           }),
-        }}
+          buildBreadcrumbSchema([{ name: "Resources", path: "/resources" }, { name: resource.title }]),
+        ]}
       />
       {/* 01 — Header */}
       <section className="pt-32 pb-12 md:pt-40 md:pb-16">

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { NewsletterCapture, ScrollFadeUp } from "@/components";
+import { JsonLd } from "@/components/shared/JsonLd";
 import { getSiteSettings } from "@/lib/sanity/queries";
+import { buildPageMetadata, absoluteUrl } from "@/lib/seo";
+import { buildBreadcrumbSchema, ORG_ID, WEBSITE_ID } from "@/lib/jsonld";
 
 /* Nothing After Six — the newsletter home and the archive.
    Issue one lives on this page rather than being emailed, because the list is
@@ -9,11 +12,16 @@ import { getSiteSettings } from "@/lib/sanity/queries";
    When issue two ships, move issues to nothing-after-six/[issue] and leave
    this page as the index. */
 
-export const metadata: Metadata = {
-  title: "Nothing After Six — one thing you can build this week",
-  description:
-    "A newsletter for the owner doing everything. Every other week, one thing you can build, specific enough to finish in a sitting, with no tool you do not already own.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return buildPageMetadata({
+    title: "Nothing After Six: one thing you can build this week",
+    description:
+      "A newsletter for the owner doing everything. Every other week, one thing you can build, specific enough to finish in a sitting, with no tool you do not already own.",
+    path: "/nothing-after-six",
+    image: settings?.ogImage,
+  });
+}
 
 const H2 = "heading-font mt-12 mb-4 text-2xl font-bold text-text-primary md:text-3xl";
 const P = "mb-5 text-base leading-relaxed text-text-primary";
@@ -24,23 +32,20 @@ export default async function NothingAfterSixPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+      <JsonLd
+        schema={[
+          {
             "@context": "https://schema.org",
             "@type": "Periodical",
+            "@id": absoluteUrl("/nothing-after-six"),
             name: "Nothing After Six",
             description: "One thing you can build this week.",
-            publisher: {
-              "@type": "Organization",
-              name: "GROWVELOPER",
-              url: "https://growveloper.com",
-            },
-            url: "https://growveloper.com/nothing-after-six",
-          }),
-        }}
+            publisher: { "@id": ORG_ID },
+            isPartOf: { "@id": WEBSITE_ID },
+            url: absoluteUrl("/nothing-after-six"),
+          },
+          buildBreadcrumbSchema([{ name: "Nothing After Six", path: "/nothing-after-six" }]),
+        ]}
       />
 
       {/* 01 — What it is */}

@@ -11,7 +11,7 @@ import { MovingBorderButton } from "@/components/ui/moving-border";
 import { MagneticElement } from "@/components/animations/MagneticElement";
 import { ScrollCue } from "@/components/shared/ScrollCue";
 import { trackCTAClick } from "@/lib/analytics";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import type { AuditHeroData } from "@/lib/types";
 
 /* ── Price parsing (mirrors AuditPricing) ── */
@@ -33,6 +33,9 @@ function parsePrice(priceStr: string): { amount: number; currency: "USD" | "GBP"
 interface AuditHeroProps extends React.ComponentPropsWithoutRef<"section"> {
   data: AuditHeroData | null;
   scrollCueTargetId?: string;
+  /** The ?promo query value, read by the page on the server so the hero
+      itself renders as HTML for crawlers instead of bailing out to the client. */
+  promoCode?: string | null;
 }
 
 /* Module-level variants — hoisted out of render to keep object refs stable across re-renders
@@ -53,10 +56,14 @@ const FEATURE_ITEM_VARIANTS: Variants = {
   },
 };
 
-export function AuditHero({ data, scrollCueTargetId, className, ...props }: AuditHeroProps) {
+export function AuditHero({
+  data,
+  scrollCueTargetId,
+  promoCode = null,
+  className,
+  ...props
+}: AuditHeroProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const promoCode = searchParams.get("promo");
   const PROMO_DISCOUNT = promoCode === "welcome50" ? 50 : 0;
   const reduced = useReducedMotion();
   const [isCheckoutActive, setIsCheckoutActive] = useState(false);

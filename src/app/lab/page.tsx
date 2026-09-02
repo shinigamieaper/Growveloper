@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
 import { LabPageClient } from "./LabPageClient";
 import { getAllLabContent, getSiteSettings, getLabPage } from "@/lib/sanity/queries";
+import { JsonLd } from "@/components/shared/JsonLd";
+import { buildPageMetadata } from "@/lib/seo";
+import { buildBlogSchema, buildBreadcrumbSchema } from "@/lib/jsonld";
+
+const LAB_DESCRIPTION =
+  "Blog posts, breakdowns, and video content on development, marketing, and automation.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [lab, settings] = await Promise.all([getLabPage(), getSiteSettings()]);
-  const ogImage = lab?.ogImage ?? settings?.ogImage;
-  return {
+  return buildPageMetadata({
     title: lab?.seoTitle ?? "The Lab",
-    description:
-      lab?.seoDescription ??
-      "Blog posts, breakdowns, and video content on development, marketing, and automation.",
-    openGraph: ogImage ? { images: [{ url: ogImage }] } : undefined,
-  };
+    description: lab?.seoDescription ?? LAB_DESCRIPTION,
+    path: "/lab",
+    image: lab?.ogImage ?? settings?.ogImage,
+  });
 }
 
 export default async function LabPage() {
@@ -22,19 +26,15 @@ export default async function LabPage() {
   ]);
   return (
     <>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Blog",
-            name: "The Lab — GROWVELOPER",
-            description: "Blog posts, breakdowns, and video content on development, marketing, and automation.",
-            url: "https://growveloper.com/lab",
-            publisher: { "@type": "Organization", name: "GROWVELOPER", url: "https://growveloper.com" },
+      <JsonLd
+        schema={[
+          buildBlogSchema({
+            name: lab?.seoTitle ?? "The Lab",
+            description: lab?.seoDescription ?? LAB_DESCRIPTION,
+            path: "/lab",
           }),
-        }}
+          buildBreadcrumbSchema([{ name: "The Lab", path: "/lab" }]),
+        ]}
       />
       <LabPageClient
       items={items}
