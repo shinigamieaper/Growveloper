@@ -218,7 +218,7 @@ export default async function LocalServiceTradePage({
                 />
               </ScrollFadeUp>
             </div>
-            <StatsBand items={statItems} />
+            <StatsBand items={statItems} className="py-0 md:py-0" />
             <div className="mx-auto mt-8 max-w-6xl px-6">
               <p className="text-xs leading-relaxed text-text-tertiary">
                 Sources:{" "}

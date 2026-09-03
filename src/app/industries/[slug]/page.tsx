@@ -308,7 +308,8 @@ export default async function IndustryPage({
                 />
               </ScrollFadeUp>
             </div>
-            <StatsBand items={industry.outcomeStats ?? []} />
+            {/* The section above already carries the padding and the header. */}
+            <StatsBand items={industry.outcomeStats ?? []} className="py-0 md:py-0" />
           </div>
         </GlassSection>
       )}

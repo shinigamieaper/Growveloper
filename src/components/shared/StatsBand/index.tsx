@@ -62,6 +62,15 @@ export function StatsBand({
 
   const hasText = Boolean(headline);
 
+  /* Without a text column the cards sit in one centred row. Match the
+     column count to the item count so three stats do not leave a hole. */
+  const rowCols =
+    items.length <= 2
+      ? "md:grid-cols-2"
+      : items.length === 3
+        ? "md:grid-cols-3"
+        : "md:grid-cols-4";
+
   return (
     <section
       ref={ref}
@@ -91,7 +100,7 @@ export function StatsBand({
           <div
             className={cn(
               "grid grid-cols-2 gap-3",
-              !hasText && "mx-auto max-w-4xl md:grid-cols-4",
+              !hasText && cn("mx-auto w-full max-w-4xl", rowCols),
             )}
           >
             {items.map((item, i) => (
