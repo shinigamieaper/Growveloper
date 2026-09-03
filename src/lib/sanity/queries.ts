@@ -52,6 +52,8 @@ import type {
   StartPageData,
   StartConfirmedPageData,
   AuditConfirmedPageData,
+  LocalServiceTradeCard,
+  LocalServicePageData,
 } from "@/lib/types";
 
 /* ============================================================
@@ -1341,5 +1343,73 @@ export async function getAuditConfirmedPage(): Promise<AuditConfirmedPageData | 
       seoDescription,
       "ogImage": ogImage.asset->url
     }`
+  );
+}
+
+// ── Local service trade pages ──
+
+export async function getAllLocalServicePages(): Promise<LocalServiceTradeCard[]> {
+  "use cache";
+  return client.fetch<LocalServiceTradeCard[]>(
+    `*[_type == "localServicePage"] | order(tradeName asc) {
+      "name": tradeName,
+      "slug": slug.current,
+      hookLine,
+      icon,
+      "updatedAt": _updatedAt
+    }`
+  );
+}
+
+export async function getLocalServicePageBySlug(slug: string): Promise<LocalServicePageData | null> {
+  "use cache";
+  return client.fetch<LocalServicePageData | null>(
+    `*[_type == "localServicePage" && slug.current == $slug][0]{
+      "name": tradeName,
+      "slug": slug.current,
+      hookLine,
+      icon,
+      "updatedAt": _updatedAt,
+      seoTitle,
+      seoDescription,
+      "ogImage": ogImage.asset->url,
+      heroHeadline,
+      heroHighlightedWord,
+      heroSubStatement,
+      primaryCtaLabel,
+      primaryCtaUrl,
+      secondaryCtaLabel,
+      secondaryCtaUrl,
+      problemHeadline,
+      problemHighlightedWord,
+      painPoints,
+      howWeHelpHeadline,
+      howWeHelpHighlightedWord,
+      howWeHelpDescription,
+      serviceCardCtaLabel,
+      serviceCards[]{ title, description, "link": linkUrl, icon },
+      statsHeadline,
+      statsHighlightedWord,
+      statsDescription,
+      stats[]{ label, value, prefix, suffix, decimals, sourceName, sourceUrl, year },
+      ctaInlineHeadline,
+      ctaInlineHighlightedWord,
+      ctaInlineLabel,
+      ctaInlineDestination,
+      ctaSectionHeadline,
+      ctaSectionHighlightedWord,
+      ctaSectionLabel,
+      ctaSectionDestination,
+      faqHeadline,
+      faqHighlightedWord,
+      faqDescription,
+      faqCtaHeadline,
+      faqCtaDescription,
+      faqCtaLabel,
+      faqCtaUrl,
+      "faq": *[_type == "faq" && page._ref == ^._id] | order(order asc) { question, answer },
+      targetQueries
+    }`,
+    { slug }
   );
 }

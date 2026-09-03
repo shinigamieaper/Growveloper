@@ -31,4 +31,8 @@ export const jetbrainsMono = localFont({
   ],
   variable: "--font-jetbrains-mono",
   display: "swap",
+  // Not used above the fold on home or industry pages (mono accent/code
+  // text only) — skip the automatic eager preload so it doesn't compete
+  // with the hero heading font and critical CSS/JS on the initial request.
+  preload: false,
 });

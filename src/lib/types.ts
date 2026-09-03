@@ -430,6 +430,65 @@ export interface IndustryServiceCard {
   link: string;
 }
 
+/* ── Local service trade pages (/industries/local-services/[trade]) ── */
+
+export interface LocalServiceStat extends StatsBandItem {
+  sourceName: string;
+  sourceUrl: string;
+  year?: number;
+}
+
+export interface LocalServiceTradeCard {
+  name: string;
+  slug: string;
+  hookLine: string;
+  icon: string;
+  /** Sanity _updatedAt, for schema.org dateModified and the sitemap. */
+  updatedAt?: string;
+}
+
+export interface LocalServicePageData extends LocalServiceTradeCard {
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
+  heroHeadline: string;
+  heroHighlightedWord?: string;
+  heroSubStatement: string;
+  primaryCtaLabel?: string;
+  primaryCtaUrl?: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaUrl?: string;
+  problemHeadline?: string;
+  problemHighlightedWord?: string;
+  painPoints: string[];
+  howWeHelpHeadline?: string;
+  howWeHelpHighlightedWord?: string;
+  howWeHelpDescription?: string;
+  serviceCardCtaLabel?: string;
+  serviceCards: IndustryServiceCard[];
+  statsHeadline?: string;
+  statsHighlightedWord?: string;
+  statsDescription?: string;
+  stats: LocalServiceStat[];
+  ctaInlineHeadline?: string;
+  ctaInlineHighlightedWord?: string;
+  ctaInlineLabel?: string;
+  ctaInlineDestination?: string;
+  ctaSectionHeadline?: string;
+  ctaSectionHighlightedWord?: string;
+  ctaSectionLabel?: string;
+  ctaSectionDestination?: string;
+  faqHeadline?: string;
+  faqHighlightedWord?: string;
+  faqDescription?: string;
+  faqCtaHeadline?: string;
+  faqCtaDescription?: string;
+  faqCtaLabel?: string;
+  faqCtaUrl?: string;
+  faq: FAQItem[];
+  targetQueries?: string[];
+}
+
 export interface IndustryProcessStep {
   stepNumber: string;
   heading: string;

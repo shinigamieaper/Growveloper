@@ -5,6 +5,7 @@ import {
   getAllIndustries,
   getAllAutomations,
   getAllResources,
+  getAllLocalServicePages,
 } from "@/lib/sanity/queries";
 import { SITE_URL } from "@/lib/seo";
 
@@ -39,13 +40,14 @@ function when(...candidates: (string | undefined | null)[]): Date | undefined {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [caseStudies, blogPosts, industries, automations, resources] =
+  const [caseStudies, blogPosts, industries, automations, resources, trades] =
     await Promise.all([
       getAllCaseStudies(),
       getAllBlogPosts(),
       getAllIndustries(),
       getAllAutomations(),
       getAllResources(),
+      getAllLocalServicePages(),
     ]);
 
   const industryRoutes: MetadataRoute.Sitemap = industries.map((industry) => ({
@@ -53,6 +55,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: when(industry.updatedAt),
     changeFrequency: "monthly",
     priority: 0.9,
+  }));
+
+  const tradeRoutes: MetadataRoute.Sitemap = trades.map((t) => ({
+    url: `${SITE_URL}/industries/local-services/${t.slug}`,
+    lastModified: when(t.updatedAt),
+    changeFrequency: "monthly",
+    priority: 0.8,
   }));
 
   const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((cs) => ({
@@ -86,6 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...STATIC_ROUTES,
     ...industryRoutes,
+    ...tradeRoutes,
     ...caseStudyRoutes,
     ...blogRoutes,
     ...automationRoutes,

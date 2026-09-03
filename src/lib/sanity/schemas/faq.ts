@@ -28,6 +28,7 @@ export default defineType({
         { type: "workPage" },
         { type: "servicePage" },
         { type: "industryPage" },
+        { type: "localServicePage" },
         { type: "automationsPage" },
         { type: "labPage" },
         { type: "resourcesPage" },

@@ -1,0 +1,728 @@
+[
+  {
+    "tradeName": "Cleaning Companies",
+    "slug": "cleaning-companies",
+    "seoTitle": "Websites and Marketing for Cleaning Companies | Growveloper",
+    "seoDescription": "Websites, local search and quote follow-up for cleaning companies. Win more bids, show up on Google, and never miss a lead. Free consultation.",
+    "heroHeadline": "Be the cleaning company that answers first",
+    "heroHighlightedWord": "answers first",
+    "heroSubStatement": "Homeowners and property managers search on their phone, check your reviews, and message the first cleaner who replies with a real quote. We build the website, run the local search and ads, and automate the follow-up so that job is yours.",
+    "painPoints": [
+      "Your website looks fine, but nobody can request a quote or book a walkthrough from it in under a minute, so they call the next cleaner on the list instead.",
+      "You show up on Google Maps for some searches and not others, and you cannot say why, while a competitor with fewer five-star reviews keeps winning the recurring contracts.",
+      "Quote requests land on WhatsApp, a contact form and a Facebook message, and you answer between jobs. Some get a bid back the same day. Some never do.",
+      "You have run ads before and cannot say what came out of it, because nothing tracks which quote requests turned into a signed contract or a one-time clean."
+    ],
+    "serviceCards": [
+      {
+        "title": "A Website Built to Get the Quote Request",
+        "description": "Built for the phone, because that is where residential clients and property managers meet you. Your services, your service area, your pricing or price ranges, your reviews, and one obvious next step: request a quote or book a walkthrough. It loads fast on a slow connection, and you can update it yourself without a developer.",
+        "linkUrl": "/services/development"
+      },
+      {
+        "title": "Local Search and Ads That Bring the Right Jobs",
+        "description": "Google Business Profile set up and maintained, service and area pages that rank for what people actually type, reviews that arrive on schedule, and paid ads only where the maths works for a job that size. We also structure your pages so AI answers can quote you, because more searches now end without a click.",
+        "linkUrl": "/services/marketing"
+      },
+      {
+        "title": "Follow-Up That Happens Without You",
+        "description": "The average business takes over 42 hours to answer a new enquiry, and nearly a quarter never do. We connect your website, WhatsApp and email so every quote request gets an instant reply, a price range and a booking link, while you are on the job with a mop in your hand.",
+        "linkUrl": "/services/ai"
+      }
+    ],
+    "stats": [
+      {
+        "value": 75,
+        "suffix": "%",
+        "label": "Consumers who decide which local business to hire in under 30 minutes",
+        "sourceName": "BrightLocal, Consumer Search Behavior: Speed",
+        "sourceUrl": "https://www.brightlocal.com/research/consumer-search-behavior-speed/",
+        "year": 2026
+      },
+      {
+        "value": 84,
+        "suffix": "%",
+        "label": "Consumers who use Google to find and check local business reviews",
+        "sourceName": "BrightLocal, Local Consumer Review Survey 2025",
+        "sourceUrl": "https://www.brightlocal.com/research/local-consumer-review-survey-2025/",
+        "year": 2025
+      },
+      {
+        "value": 7,
+        "suffix": "x",
+        "label": "More likely to turn a quote request into a real conversation when you reply within an hour instead of waiting",
+        "sourceName": "Harvard Business Review, The Short Life of Online Sales Leads",
+        "sourceUrl": "https://hbr.org/2011/03/the-short-life-of-online-sales-leads",
+        "year": 2011
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Do I need a website for my cleaning business?",
+        "answer": "Yes, if you want quote requests to arrive while you are on a job, not just referrals. A site built to get the call turns Google searches and reviews into booked walkthroughs. Growveloper builds it for $2,000 to $10,000, quoted as one fixed number after a free 30-minute call."
+      },
+      {
+        "question": "How do I quote a cleaning job so I don't lose it or undercharge?",
+        "answer": "Fast and clear wins more jobs than clever pricing. Most homeowners decide who to hire in under 30 minutes, so a walkthrough booked same-day and a quote sent within the hour beats a lower price sent two days later. We build the booking flow and the instant follow-up that gets you there first."
+      },
+      {
+        "question": "How do I get more Google reviews for my cleaning business?",
+        "answer": "Ask right after the clean, while the client is standing in a spotless room, and make it a one-tap link, not a search. We set up a review request that fires automatically after each job closes out, timed for when clients are happiest, plus a Google Business Profile built to hold them."
+      },
+      {
+        "question": "How can I get more leads for my cleaning business outside of social media?",
+        "answer": "Local search and Google Business Profile bring in buyers who are ready to book now, not just followers scrolling past a post. We set up service and area pages that rank for what people actually type, plus paid ads only where the maths works for a job your size. Marketing retainers start at $1,500 a month, no long contract."
+      },
+      {
+        "question": "How do I win more commercial cleaning contracts, not just one-off jobs?",
+        "answer": "Commercial buyers check your site and reviews before they ever call, then compare how fast you reply to their RFP or walk-through request. A site that shows your commercial experience, a fast quote turnaround, and automated follow-up on every enquiry puts you on more preferred-vendor lists. We scope this as a fixed project, not a retainer you don't need yet."
+      },
+      {
+        "question": "What CRM or software should I use to manage cleaning leads and quotes?",
+        "answer": "The tool matters less than whether every quote request lands in one place and gets a fast reply. Rather than sell you another subscription, we connect your website, WhatsApp and email so leads flow into a single inbox with automatic follow-up, no matter which cleaning software you already run day to day."
+      }
+    ],
+    "ctaInlineHeadline": "Run a cleaning company? Let's fix your quote follow-up.",
+    "ctaSectionHeadline": "Your next client is searching right now",
+    "queries": [
+      {
+        "query": "How can I get more leads for my cleaning business outside of social media?",
+        "intent": "commercial"
+      },
+      {
+        "query": "How do you quote for a residential cleaning job?",
+        "intent": "informational"
+      },
+      {
+        "query": "How to quote commercial cleaning jobs?",
+        "intent": "informational"
+      },
+      {
+        "query": "What is a fair quoting method for cleaning jobs?",
+        "intent": "commercial"
+      },
+      {
+        "query": "Do I need a website for my cleaning business?",
+        "intent": "commercial"
+      },
+      {
+        "query": "How do I get more Google reviews for my cleaning business?",
+        "intent": "commercial"
+      },
+      {
+        "query": "How do I get commercial contracts?",
+        "intent": "transactional"
+      },
+      {
+        "query": "What CRM or software should I use to manage cleaning leads and quotes?",
+        "intent": "commercial"
+      }
+    ],
+    "hookLine": "Homeowners and property managers search on their phone, check your reviews, and message the first cleaner who replies with a real quote."
+  },
+  {
+    "tradeName": "Solar Installers",
+    "slug": "solar-installers",
+    "seoTitle": "Websites and Marketing for Solar Installers | Growveloper",
+    "seoDescription": "Websites, local search and quote follow-up for solar and inverter installers. Get found on Google, win more installs, never miss a lead. Free consultation.",
+    "heroHeadline": "Be the solar installer homeowners call first",
+    "heroHighlightedWord": "call first",
+    "heroSubStatement": "Homeowners compare three installers, check your reviews, and message whoever answers first with a real quote. We build the website, run the local search and ads, and automate the follow-up so the next solar or inverter job in your area comes to you.",
+    "painPoints": [
+      "Your website looks fine, but nobody can request a site survey, see your systems, or check pricing per watt from it in under a minute, so they call the next installer.",
+      "You show up on Google Maps for some searches and not others, and a competitor with fewer installs and worse reviews keeps winning the quotes you should be getting.",
+      "Quote requests arrive on WhatsApp, a contact form and a phone call, and you answer between installs. Some get a proposal back the same week. Some never do.",
+      "You have paid for ads before and cannot say what came out of it, because nothing tracks which enquiries turned into a signed system, financed or paid upfront."
+    ],
+    "serviceCards": [
+      {
+        "title": "A Website Built to Get the Enquiry",
+        "description": "Built for the phone, because that is where homeowners meet you first. Your systems, your service area, your pricing or price per watt, your reviews, and one obvious next step: request a site survey or a quote. It loads fast on a slow connection, and you can update it yourself without a developer.",
+        "linkUrl": "/services/development"
+      },
+      {
+        "title": "Local Search and Ads That Bring the Right Installs",
+        "description": "Google Business Profile set up and maintained, service and area pages that rank for what people actually type, reviews that arrive on schedule, and paid ads only where the maths works for a system that size. We also structure your pages so AI answers can quote you, because more searches now end without a click.",
+        "linkUrl": "/services/marketing"
+      },
+      {
+        "title": "Follow-Up That Happens Without You",
+        "description": "The average business takes over 42 hours to answer a new enquiry, and nearly a quarter never do. We connect your website, WhatsApp and email so every quote request gets an instant reply, a price range and a survey booking link, while you are on-site running an install.",
+        "linkUrl": "/services/ai"
+      }
+    ],
+    "stats": [
+      {
+        "value": 97,
+        "suffix": "%",
+        "label": "Consumers who read online reviews before choosing a local business",
+        "sourceName": "BrightLocal, Local Consumer Review Survey 2026",
+        "sourceUrl": "https://www.brightlocal.com/research/local-consumer-review-survey/",
+        "year": 2026
+      },
+      {
+        "value": 7,
+        "suffix": "x",
+        "label": "More likely to qualify a lead when you make contact within an hour instead of waiting",
+        "sourceName": "Harvard Business Review, The Short Life of Online Sales Leads",
+        "sourceUrl": "https://hbr.org/2011/03/the-short-life-of-online-sales-leads",
+        "year": 2011
+      },
+      {
+        "value": 53,
+        "suffix": "%",
+        "label": "Of internet use in Nigeria that happens on a phone, not a desktop",
+        "sourceName": "StatCounter Global Stats, Nigeria Device Market Share",
+        "sourceUrl": "https://gs.statcounter.com/platform-market-share/desktop-mobile-tablet/nigeria",
+        "year": 2026
+      }
+    ],
+    "faqs": [
+      {
+        "question": "How much does a website cost for a solar installation business?",
+        "answer": "Website builds run from $2,000 to $10,000 and up, quoted as one fixed number after a free 30-minute call. Marketing retainers start at $1,500 a month, no long contract. If you only need faster follow-up on quote requests, that is scoped and quoted per request, no retainer required."
+      },
+      {
+        "question": "How do I get more solar leads?",
+        "answer": "Local search and Google Business Profile bring in homeowners who are already comparing installers, which converts better than cold outreach. We build service and area pages that rank for what people actually type, plus ads only where the maths works, so every naira or dollar you spend chases a real system, not a click."
+      },
+      {
+        "question": "How do I get more Google reviews for my solar company?",
+        "answer": "Ask right after commissioning, while the homeowner is watching the system come alive for the first time, and make it a one-tap link, not a search. We set up an automatic review request timed to fire once the install is signed off, plus a Google Business Profile built to hold every review you earn."
+      },
+      {
+        "question": "Why isn't my solar website getting me any quote requests?",
+        "answer": "Most solar sites explain the technology and forget to make it easy to act. If there is no site survey button, no clear service area, and no price range, homeowners leave for a site that gives them one. We rebuild the site around a single next step, then track which pages actually produce a signed quote."
+      },
+      {
+        "question": "How do I start or grow a solar and inverter installation business in Nigeria?",
+        "answer": "Growth comes from being found and answering fast, not just doing good installs. Buyers search by system size, in KVA, and compare who replies quickest with a real quote and financing options. We build the site, the local search presence, and the WhatsApp follow-up so you are the installer they reach first."
+      },
+      {
+        "question": "What is the best CRM for a small solar installation company?",
+        "answer": "The best system is whichever one your enquiries actually reach, and most small installers lose leads because WhatsApp, calls and web forms never meet in one place. Rather than sell you another subscription, we connect what you already use so every enquiry gets an instant reply and a follow-up, with no software to learn."
+      }
+    ],
+    "ctaInlineHeadline": "Run a solar installation business? Let's fix your follow-up.",
+    "ctaSectionHeadline": "Your next homeowner is comparing installers right now",
+    "queries": [
+      {
+        "query": "How to get more solar leads",
+        "intent": "commercial"
+      },
+      {
+        "query": "Why isn't my solar website converting",
+        "intent": "informational"
+      },
+      {
+        "query": "Best CRM for solar installers",
+        "intent": "commercial"
+      },
+      {
+        "query": "How do I get more Google reviews for my solar company",
+        "intent": "commercial"
+      },
+      {
+        "query": "How to respond to a negative Google review",
+        "intent": "informational"
+      },
+      {
+        "query": "How much should a solar company website cost",
+        "intent": "commercial"
+      },
+      {
+        "query": "How to start a solar energy business in Nigeria",
+        "intent": "informational"
+      },
+      {
+        "query": "How to advertise for solar and inverter installation in Nigeria",
+        "intent": "commercial"
+      }
+    ],
+    "hookLine": "Homeowners compare three installers, check your reviews, and message whoever answers first with a real quote."
+  },
+  {
+    "tradeName": "Roofing Contractors",
+    "slug": "roofing-contractors",
+    "seoTitle": "Websites and Marketing for Roofing Contractors | Growveloper",
+    "seoDescription": "Websites, local search and estimate follow-up for roofing contractors. Get found on Google, win more jobs, and never miss a lead. Free consultation.",
+    "heroHeadline": "Be the roofer homeowners call first",
+    "heroHighlightedWord": "call first",
+    "heroSubStatement": "Homeowners search after a storm, check three roofers' reviews, and message whoever answers the phone first with a real estimate. We build the website, run the local search and ads, and automate the follow-up so the next re-roof or repair in your area comes to you.",
+    "painPoints": [
+      "Your website looks fine, but nobody can request a free inspection or an estimate from it in under a minute, so they call the next roofer on the list.",
+      "You show up on Google Maps for some searches and not others, and a roofer with worse work but more reviews keeps winning the storm-damage jobs you should get.",
+      "Estimate requests arrive on the phone, a contact form and a text after a storm, and you answer between jobs on the roof. Some get an estimate back the same day. Some never do.",
+      "You have paid for ads before and cannot say what came out of it, because nothing tracks which calls turned into a signed job, insurance claim or not."
+    ],
+    "serviceCards": [
+      {
+        "title": "A Website Built to Get the Call",
+        "description": "Built for the phone, because that is where homeowners meet you, often right after a storm. Your services, your service area, your work photos, your reviews, and one obvious next step: call, text, or book a free inspection. It loads fast on a slow connection, and you can update it yourself without a developer.",
+        "linkUrl": "/services/development"
+      },
+      {
+        "title": "Local Search and Ads That Bring the Right Jobs",
+        "description": "Google Business Profile set up and maintained, service and area pages that rank for what people actually type, reviews that arrive on schedule, and paid ads only where the maths works for a roof that size. We also structure your pages so AI answers can quote you, because more searches now end without a click.",
+        "linkUrl": "/services/marketing"
+      },
+      {
+        "title": "Follow-Up That Happens Without You",
+        "description": "The average business takes over 42 hours to answer a new enquiry, and nearly a quarter never do. We connect your website, phone and email so every estimate request gets an instant reply, a booking link and a reminder, while you are up on a roof and cannot pick up.",
+        "linkUrl": "/services/ai"
+      }
+    ],
+    "stats": [
+      {
+        "value": 96,
+        "suffix": "%",
+        "label": "Consumers who read online reviews before choosing a local business",
+        "sourceName": "BrightLocal, Local Consumer Review Survey 2025",
+        "sourceUrl": "https://www.brightlocal.com/research/local-consumer-review-survey-2025/",
+        "year": 2025
+      },
+      {
+        "value": 35,
+        "suffix": "%",
+        "label": "Homeowners who say answering the phone on the first call is the biggest factor in who they hire",
+        "sourceName": "Service Direct, Survey: What Matters to Homeowners When Choosing a Contractor",
+        "sourceUrl": "https://blog.servicedirect.com/survey-what-matters-homeowners-choosing-contractor",
+        "year": 2022
+      },
+      {
+        "value": 60,
+        "suffix": "%",
+        "label": "Homeowners who decide which contractor to hire within 72 hours of first contact",
+        "sourceName": "Service Direct, Survey: What Matters to Homeowners When Choosing a Contractor",
+        "sourceUrl": "https://blog.servicedirect.com/survey-what-matters-homeowners-choosing-contractor",
+        "year": 2022
+      }
+    ],
+    "faqs": [
+      {
+        "question": "How much does a website cost for a roofing company?",
+        "answer": "Website builds run from $2,000 to $10,000 and up, quoted as one fixed number after a free 30-minute call. Marketing retainers start at $1,500 a month, no long contract. A single fix, like instant call and text follow-up on estimate requests, is scoped and quoted per request, no retainer needed."
+      },
+      {
+        "question": "Why isn't my roofing company showing up on Google?",
+        "answer": "Usually a Google Business Profile that is thin or unmanaged, and a site with no service and area pages for Google to match to local searches. We rebuild both, list the specific work you do (re-roofs, repairs, storm damage) by area, and keep reviews arriving on schedule so the profile earns trust, not just a listing."
+      },
+      {
+        "question": "How do I get more roofing leads?",
+        "answer": "Local search and ads that target people already searching for a roofer beat cold calling or door knocking on cost per job. We build service and area pages that rank for what homeowners actually type after a storm or a leak, plus ads only where the maths works, so every dollar chases a real estimate request."
+      },
+      {
+        "question": "How do I get more Google reviews for my roofing company?",
+        "answer": "Ask the moment the final walk-around is done and the homeowner is looking at a finished roof, then make leaving a review one tap, not a search. We set up an automatic review request that fires when a job is marked complete, plus a Google Business Profile built to hold every review you earn."
+      },
+      {
+        "question": "What is the best CRM for a small roofing contractor?",
+        "answer": "The best system is whichever one actually catches every estimate request, and most small roofers lose jobs because calls, texts and web forms never meet in one place. Rather than sell you another subscription, we connect what you already use so every enquiry gets an instant reply, with no new software to learn between jobs."
+      },
+      {
+        "question": "How do I follow up on a roofing estimate without losing the job to someone faster?",
+        "answer": "Speed decides more jobs than price. Most homeowners make their hiring decision within 72 hours of first contact, so a same-day follow-up call or text after the estimate beats a lower bid sent later. We automate that follow-up so it happens whether you are on the roof or on the next job."
+      }
+    ],
+    "ctaInlineHeadline": "Run a roofing company? Let's fix your estimate follow-up.",
+    "ctaSectionHeadline": "Your next roof is being searched for right now",
+    "queries": [
+      {
+        "query": "How much does a roofing website cost",
+        "intent": "commercial"
+      },
+      {
+        "query": "Why is my roofing company not showing up on Google",
+        "intent": "informational"
+      },
+      {
+        "query": "How do I get more roofing leads",
+        "intent": "commercial"
+      },
+      {
+        "query": "Roofing website design companies",
+        "intent": "transactional"
+      },
+      {
+        "query": "How to get more Google reviews for my roofing company",
+        "intent": "commercial"
+      },
+      {
+        "query": "How to respond to a negative Google review",
+        "intent": "informational"
+      },
+      {
+        "query": "Best CRM for roofing contractors",
+        "intent": "commercial"
+      },
+      {
+        "query": "How to follow up on a roofing estimate",
+        "intent": "informational"
+      }
+    ],
+    "hookLine": "Homeowners search after a storm, check three roofers' reviews, and message whoever answers the phone first with a real estimate."
+  },
+  {
+    "tradeName": "HVAC Companies",
+    "slug": "hvac-companies",
+    "seoTitle": "Websites and Marketing for HVAC Companies | Growveloper",
+    "seoDescription": "Websites, local search and service call follow-up for HVAC companies. Get found on Google, win more jobs, and never miss a call. Free consultation.",
+    "heroHeadline": "Be the HVAC company that answers first",
+    "heroHighlightedWord": "answers first",
+    "heroSubStatement": "Homeowners search the moment the air conditioner dies or the heat goes out, check reviews fast, and call whoever answers first. We build the website, run the local search and ads, and automate the follow-up so the next no-cool or no-heat call in your area comes to you.",
+    "painPoints": [
+      "Your website looks fine, but nobody can book a service call or check pricing on an install from it in under a minute, so they call the next HVAC company.",
+      "You show up on Google Maps for some searches and not others, and a company with a worse tune-up but more reviews keeps winning the maintenance plan sign-ups you should get.",
+      "Service calls arrive on the phone, a contact form and a text at all hours, and you answer between jobs. Some get a callback the same hour. Some never do.",
+      "You have paid for ads before and cannot say what came out of it, because nothing tracks which calls turned into a booked service call or a signed install."
+    ],
+    "serviceCards": [
+      {
+        "title": "A Website Built to Get the Call",
+        "description": "Built for the phone, because that is where homeowners meet you, often mid-emergency with no air or no heat. Your services, your service area, your maintenance plans, your reviews, and one obvious next step: call, text, or book a service call. It loads fast on a slow connection, and you can update it yourself without a developer.",
+        "linkUrl": "/services/development"
+      },
+      {
+        "title": "Local Search and Ads That Bring the Right Calls",
+        "description": "Google Business Profile set up and maintained, service and area pages that rank for what people actually type, reviews that arrive on schedule, and paid ads only where the maths works for a service call or an install. We also structure your pages so AI answers can quote you, because more searches now end without a click.",
+        "linkUrl": "/services/marketing"
+      },
+      {
+        "title": "Follow-Up That Happens Without You",
+        "description": "The average business takes over 42 hours to answer a new enquiry, and nearly a quarter never do. We connect your website, phone and email so every service call gets an instant reply and a booking link, plus a reminder for maintenance plan renewals, while you are on a job with no signal.",
+        "linkUrl": "/services/ai"
+      }
+    ],
+    "stats": [
+      {
+        "value": 7,
+        "suffix": "x",
+        "label": "More likely to qualify a new lead when you make contact within an hour instead of waiting",
+        "sourceName": "Harvard Business Review, The Short Life of Online Sales Leads",
+        "sourceUrl": "https://hbr.org/2011/03/the-short-life-of-online-sales-leads",
+        "year": 2011
+      },
+      {
+        "value": 80,
+        "suffix": "%",
+        "label": "Home-improvement shoppers who start their research online before calling anyone",
+        "sourceName": "ServiceTitan, Synchrony and Visa, State of the Trades: Consumer Trends in the Trades",
+        "sourceUrl": "https://get.servicetitan.com/rs/304-EAE-038/images/HMS-0563_StateoftheTrades_Whitepaper_Final_ADA%20(1)%20(2).pdf",
+        "year": 2025
+      },
+      {
+        "value": 96,
+        "suffix": "%",
+        "label": "Consumers who read online reviews before choosing a local business",
+        "sourceName": "BrightLocal, Local Consumer Review Survey 2025",
+        "sourceUrl": "https://www.brightlocal.com/research/local-consumer-review-survey-2025/",
+        "year": 2025
+      }
+    ],
+    "faqs": [
+      {
+        "question": "How much does an HVAC website cost?",
+        "answer": "Website builds run from $2,000 to $10,000 and up, quoted as one fixed number after a free 30-minute call. Marketing retainers start at $1,500 a month, no long contract. A single fix, like instant call and text follow-up on service requests, is scoped and quoted per request, no retainer needed."
+      },
+      {
+        "question": "How do I get more Google reviews for my HVAC company?",
+        "answer": "Ask right after the technician finishes the job, while the customer is relieved the air or heat is back on, and make it one tap, not a search. We set up an automatic review request that fires when a service call closes, plus a Google Business Profile built to hold what you earn."
+      },
+      {
+        "question": "How much should I spend on HVAC marketing?",
+        "answer": "Most HVAC companies spend seven to ten percent of revenue on marketing, but the bigger issue is usually not spend, it is follow-up. Fast reply and review management often move the needle before a bigger ad budget does. Growveloper retainers start at $1,500 a month, no long contract, scoped to what your business actually needs first."
+      },
+      {
+        "question": "How much business am I losing from missed calls?",
+        "answer": "Every missed call is a customer calling the next HVAC company on the list, especially during a heat wave or cold snap when they will not wait. We connect your phone, website and email so every call and message gets an instant reply, even a simple text back, instead of ringing out unanswered."
+      },
+      {
+        "question": "Is SEO or Google Ads better for my HVAC business?",
+        "answer": "Both, used for different jobs. Local search and a Google Business Profile earn calls for months after the work is done, while ads bring in jobs fast when you need to fill the schedule now. We run both, tracked so you know which one is producing the service calls you are paying for."
+      },
+      {
+        "question": "What's the best CRM or answering service for a small HVAC company?",
+        "answer": "The best fix is not another tool, it is making sure every channel you already use reaches one place with a fast reply. Rather than sell you a new subscription, we connect your website, phone and email so calls, texts and web enquiries all get an instant response, day or night, without hiring a receptionist."
+      }
+    ],
+    "ctaInlineHeadline": "Run an HVAC company? Let's fix your call follow-up.",
+    "ctaSectionHeadline": "Someone's AC just died. Answer first.",
+    "queries": [
+      {
+        "query": "How much does an HVAC website cost",
+        "intent": "commercial"
+      },
+      {
+        "query": "How do I get more Google reviews for my HVAC company",
+        "intent": "commercial"
+      },
+      {
+        "query": "How much does HVAC marketing cost",
+        "intent": "commercial"
+      },
+      {
+        "query": "Is SEO or Google Ads better for my HVAC business",
+        "intent": "commercial"
+      },
+      {
+        "query": "My HVAC website isn't generating leads, why",
+        "intent": "informational"
+      },
+      {
+        "query": "How much business am I losing from missed calls",
+        "intent": "informational"
+      },
+      {
+        "query": "Best HVAC answering service",
+        "intent": "transactional"
+      },
+      {
+        "query": "HVAC marketing agency near me",
+        "intent": "transactional"
+      }
+    ],
+    "hookLine": "Homeowners search the moment the air conditioner dies or the heat goes out, check reviews fast, and call whoever answers first."
+  },
+  {
+    "tradeName": "Private Clinics",
+    "slug": "private-clinics",
+    "seoTitle": "Websites and Marketing for Private Clinics | Growveloper",
+    "seoDescription": "Websites, local search and appointment follow-up for dental, physio and small clinics. Get found on Google, fill your schedule. Free consultation.",
+    "heroHeadline": "Be the practice patients book first",
+    "heroHighlightedWord": "book first",
+    "heroSubStatement": "Patients search on their phone, check your star rating, and book with whichever practice replies first with a clear appointment time. We build the website, run the local search and ads, and automate the follow-up so your schedule fills with new patients, not just referrals.",
+    "painPoints": [
+      "Your website looks fine, but nobody can book an appointment or see your fees from it in under a minute, so they call the next practice on the list.",
+      "You show up on Google Maps for some searches and not others, and a practice with a lower rating but more reviews keeps winning the new patients you should get.",
+      "Enquiries arrive on WhatsApp, a contact form and missed calls, and your front desk answers between patients. Some get a callback the same day. Some never do.",
+      "You have paid for ads before and cannot say what came out of it, because nothing tracks which enquiries turned into a booked appointment or a no-show."
+    ],
+    "serviceCards": [
+      {
+        "title": "A Website Built to Get the Booking",
+        "description": "Built for the phone, because that is where patients meet you first. Your services, your fees or price ranges, your team, your reviews, and one obvious next step: call, WhatsApp, or book an appointment online. It loads fast on a slow connection, and you can update it yourself without a developer.",
+        "linkUrl": "/services/development"
+      },
+      {
+        "title": "Local Search and Ads That Bring the Right Patients",
+        "description": "Google Business Profile set up and maintained, service pages that rank for what people actually type, reviews that arrive on schedule, and paid ads only where the maths works for a new patient's lifetime value. We also structure your pages so AI answers can quote you, because more searches now end without a click.",
+        "linkUrl": "/services/marketing"
+      },
+      {
+        "title": "Follow-Up That Happens Without You",
+        "description": "The average business takes over 42 hours to answer a new enquiry, and nearly a quarter never do. We connect your website, WhatsApp and email so every enquiry gets an instant reply and a booking link, plus reminders that cut no-shows, while your front desk is busy with the patient in front of them.",
+        "linkUrl": "/services/ai"
+      }
+    ],
+    "stats": [
+      {
+        "value": 75,
+        "suffix": "%",
+        "label": "Patients who won't book with a provider rated below 4 stars",
+        "sourceName": "rater8, 2026 Patient Choice Report",
+        "sourceUrl": "https://rater8.com/2026-patient-choice-report/",
+        "year": 2026
+      },
+      {
+        "value": 66,
+        "suffix": "%",
+        "label": "Patients who say how a practice responds to reviews affects whether they trust it",
+        "sourceName": "rater8, 2026 Patient Choice Report",
+        "sourceUrl": "https://rater8.com/2026-patient-choice-report/",
+        "year": 2026
+      },
+      {
+        "value": 7,
+        "suffix": "x",
+        "label": "More likely to turn an enquiry into a booked appointment when you respond within an hour instead of waiting",
+        "sourceName": "Harvard Business Review, The Short Life of Online Sales Leads",
+        "sourceUrl": "https://hbr.org/2011/03/the-short-life-of-online-sales-leads",
+        "year": 2011
+      }
+    ],
+    "faqs": [
+      {
+        "question": "How do I get more patients for my dental practice?",
+        "answer": "New patients come from being found and answering fast, not just referrals. A site with clear fees, service pages that match what people search, and reviews arriving on schedule brings in patients who are ready to book. We build all three together, priced from $2,000 to $10,000 as one fixed quote after a free call."
+      },
+      {
+        "question": "Why isn't my dental website getting me new patients?",
+        "answer": "Most practice sites list services but give patients no reason to book today, no clear fee range, and a contact form nobody answers fast. We rebuild the site around a single next step, connect it to WhatsApp and phone so every enquiry gets an instant reply, and track which pages actually produce booked appointments."
+      },
+      {
+        "question": "How much does a dental or clinic website cost?",
+        "answer": "Website builds run from $2,000 to $10,000 and up, quoted as one fixed number after a free 30-minute call. Marketing retainers start at $1,500 a month, no long contract. If you only need faster follow-up on enquiries, that is scoped and quoted per request, no retainer required."
+      },
+      {
+        "question": "How do I reduce no-shows at my practice?",
+        "answer": "Reminders sent close to the appointment cut no-shows more reliably than reminders sent days early, because patients forget between the two. We connect your booking system to automatic text and email reminders, timed the day before and the morning of, so your schedule stays full without your front desk chasing anyone by hand."
+      },
+      {
+        "question": "How do I respond to a negative review from a patient?",
+        "answer": "Respond calmly, in public, without discussing any clinical detail, and offer to sort it out privately by phone. Three in five patients say how a practice responds to reviews changes whether they trust it, so a short, professional reply often does more good than the negative review does harm. We can set up a template and a routine for this."
+      },
+      {
+        "question": "Should I hire a marketing agency for my physiotherapy or dental clinic?",
+        "answer": "Only if it covers the whole front door: the site, the local search, and the follow-up on every enquiry, not just ads. Many practices pay for traffic that lands on a slow site with no fast reply, and lose the patient anyway. Growveloper runs all three together, so nothing gets lost between suppliers."
+      }
+    ],
+    "ctaInlineHeadline": "Run a clinic? Let's fix your patient follow-up.",
+    "ctaSectionHeadline": "Your next patient is searching right now",
+    "queries": [
+      {
+        "query": "How to get more patients for my dental practice",
+        "intent": "informational"
+      },
+      {
+        "query": "Why isn't my dental website getting me new patients",
+        "intent": "informational"
+      },
+      {
+        "query": "How much does a dental website cost",
+        "intent": "commercial"
+      },
+      {
+        "query": "Best website builder for dentists",
+        "intent": "commercial"
+      },
+      {
+        "query": "How to reduce no-shows at my practice",
+        "intent": "informational"
+      },
+      {
+        "query": "How do I respond to a negative review from a patient",
+        "intent": "informational"
+      },
+      {
+        "query": "Should I hire a marketing agency for my dental practice",
+        "intent": "commercial"
+      },
+      {
+        "query": "How to stop missing calls at my dental office",
+        "intent": "commercial"
+      }
+    ],
+    "hookLine": "Patients search on their phone, check your star rating, and book with whichever practice replies first with a clear appointment time."
+  },
+  {
+    "tradeName": "Personal Trainers and Fitness Studios",
+    "slug": "personal-trainers",
+    "seoTitle": "Websites and Marketing for Personal Trainers | Growveloper",
+    "seoDescription": "Websites, local search and enquiry follow-up for trainers and studios. Get found on Google, fill your sessions, win more clients. Free consultation.",
+    "heroHeadline": "Be the trainer clients book first",
+    "heroHighlightedWord": "book first",
+    "heroSubStatement": "Clients search on their phone, check your reviews, and message whoever replies first with a clear next step. We build the website, run the local search and ads, and automate the follow-up so every enquiry turns into a booked session or trial, not a cold DM.",
+    "painPoints": [
+      "Your website looks fine, but nobody can book a trial session or see your packages from it in under a minute, so they message the next trainer on their list.",
+      "You show up on Google Maps for some searches and not others, and a studio with fewer results but more reviews keeps filling the classes you should be filling.",
+      "Enquiries arrive on Instagram DMs, WhatsApp and a contact form, and you answer between sessions. Some get a reply and book a trial. Some never hear back at all.",
+      "You have paid for ads before and cannot say what came out of it, because nothing tracks which enquiries turned into a paying client or a package sold."
+    ],
+    "serviceCards": [
+      {
+        "title": "A Website Built to Get the Booking",
+        "description": "Built for the phone, because that is where clients meet you first, usually after seeing a post. Your packages, your programs, your results, your reviews, and one obvious next step: book a trial session or a free consultation. It loads fast on a slow connection, and you can update it yourself without a developer.",
+        "linkUrl": "/services/development"
+      },
+      {
+        "title": "Local Search and Ads That Bring the Right Clients",
+        "description": "Google Business Profile set up and maintained, service pages that rank for what people actually type, reviews that arrive on schedule, and paid ads only where the maths works against what a client is worth over a year. We also structure your pages so AI answers can quote you, because more searches now end without a click.",
+        "linkUrl": "/services/marketing"
+      },
+      {
+        "title": "Follow-Up That Happens Without You",
+        "description": "The average business takes over 42 hours to answer a new enquiry, and nearly a quarter never do. We connect your website, Instagram and WhatsApp so every DM and form fill gets an instant reply and a trial booking link, while you are coaching a session and cannot check your phone.",
+        "linkUrl": "/services/ai"
+      }
+    ],
+    "stats": [
+      {
+        "value": 97,
+        "suffix": "%",
+        "label": "Consumers who read online reviews before choosing a local business",
+        "sourceName": "BrightLocal, Local Consumer Review Survey 2026",
+        "sourceUrl": "https://www.brightlocal.com/research/local-consumer-review-survey/",
+        "year": 2026
+      },
+      {
+        "value": 68,
+        "suffix": "%",
+        "label": "Consumers who won't consider a business rated under 4 stars",
+        "sourceName": "BrightLocal, Local Consumer Review Survey 2026",
+        "sourceUrl": "https://www.brightlocal.com/research/local-consumer-review-survey/",
+        "year": 2026
+      },
+      {
+        "value": 21,
+        "suffix": "x",
+        "label": "Less likely to turn an enquiry into a real conversation if you wait 30 minutes to call back instead of 5",
+        "sourceName": "InsideSales.com and MIT Sloan, Lead Response Management Study",
+        "sourceUrl": "https://25649.fs1.hubspotusercontent-na2.net/hub/25649/file-13535879-pdf/docs/mit_study.pdf",
+        "year": 2007
+      }
+    ],
+    "faqs": [
+      {
+        "question": "How much does a personal trainer website cost?",
+        "answer": "Website builds run from $2,000 to $10,000 and up, quoted as one fixed number after a free 30-minute call, well above a $17 to $50 a month DIY builder but built to actually convert enquiries into booked sessions. Marketing retainers start at $1,500 a month, no long contract."
+      },
+      {
+        "question": "Do I need a website as a personal trainer, or is Instagram enough?",
+        "answer": "Instagram builds trust, but a website converts it into a booking, especially once someone is ready to pay. A site with clear packages, real results and one obvious way to book a trial catches the client Instagram alone loses to a slow DM reply or no reply at all. Most trainers need both, not either."
+      },
+      {
+        "question": "How do I get more personal training clients?",
+        "answer": "Most new clients come from being found and answering fast, not just posting more. Local search that ranks you for 'personal trainer near me,' reviews that arrive on schedule, and an instant reply to every DM or form fill bring in people who are ready to book, not just browse. We build all three together."
+      },
+      {
+        "question": "How do I get more Google reviews for my gym or training business?",
+        "answer": "Ask right after a client hits a goal or finishes a strong session, while the win is fresh, and make it a one-tap link, not a search. We set up an automatic review request timed to fire after milestone sessions, plus a Google Business Profile built to hold every review you earn."
+      },
+      {
+        "question": "How do I rank for 'personal trainer near me' on Google?",
+        "answer": "Start with a complete, active Google Business Profile, service pages for what you actually offer by area, and reviews arriving on a steady schedule, since all three are what the map pack rewards. We set this up and maintain it, so you show up when someone nearby searches, not just when you post."
+      },
+      {
+        "question": "Why aren't my leads or DMs responding after they first message me?",
+        "answer": "Most leads go cold because the first reply is too slow or too generic, not because they were never interested. Enquiries answered within an hour convert far better than ones left overnight. We automate the first reply and a follow-up sequence so every DM and form fill gets a fast, personal-feeling response, then a booking link."
+      }
+    ],
+    "ctaInlineHeadline": "Train clients? Let's fix your booking follow-up.",
+    "ctaSectionHeadline": "Someone's searching for a trainer right now",
+    "queries": [
+      {
+        "query": "How much does a personal trainer website cost",
+        "intent": "commercial"
+      },
+      {
+        "query": "Do I need a website as a personal trainer",
+        "intent": "informational"
+      },
+      {
+        "query": "How do I get more personal training clients",
+        "intent": "informational"
+      },
+      {
+        "query": "How do I get more Google reviews for my gym or training business",
+        "intent": "commercial"
+      },
+      {
+        "query": "How do I rank for 'personal trainer near me' on Google",
+        "intent": "commercial"
+      },
+      {
+        "query": "Why aren't my leads or DMs responding",
+        "intent": "informational"
+      },
+      {
+        "query": "Best gym trial inquiry response time",
+        "intent": "informational"
+      },
+      {
+        "query": "How much should I charge for personal training sessions or packages",
+        "intent": "informational"
+      }
+    ],
+    "hookLine": "Clients search on their phone, check your reviews, and message whoever replies first with a clear next step."
+  }
+]

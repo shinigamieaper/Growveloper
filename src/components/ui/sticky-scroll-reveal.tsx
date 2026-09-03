@@ -1,13 +1,20 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Lottie, { type LottieRefCurrentProps } from "lottie-react";
+import dynamic from "next/dynamic";
+import type { LottieRefCurrentProps } from "lottie-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { ScrollTrigger, gsap } from "@/lib/gsap";
 import { MovingBorderButton } from "@/components/ui/moving-border";
 import { cn } from "@/lib/utils";
 import type { StickyScrollBottomCta, StickyScrollItem } from "@/lib/types";
+
+// The lottie-react renderer is a pure decorative visual (each visual only
+// mounts once its JSON animation data has been fetched anyway), so it's
+// deferred out of the main bundle instead of loading on every page that
+// renders a sticky-scroll section — the same behaviour, a smaller initial JS payload.
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface StickyScrollProps extends React.ComponentPropsWithoutRef<"div"> {
   items: StickyScrollItem[];

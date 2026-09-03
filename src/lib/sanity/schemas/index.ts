@@ -10,6 +10,7 @@ import video from "./video";
 import resource from "./resource";
 import automation from "./automation";
 import industryPage from "./industryPage";
+import localServicePage from "./localServicePage";
 import homePage from "./homePage";
 import auditPage from "./auditPage";
 import servicePage from "./servicePage";
@@ -41,6 +42,7 @@ export const schemaTypes = [
   resource,
   automation,
   industryPage,
+  localServicePage,
   homePage,
   auditPage,
   servicePage,

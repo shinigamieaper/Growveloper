@@ -5,6 +5,7 @@ import {
   getAllBlogPosts,
   getAllResources,
   getAllAutomations,
+  getAllLocalServicePages,
 } from "@/lib/sanity/queries";
 import { SITE_URL } from "@/lib/seo";
 
@@ -24,7 +25,7 @@ function day(iso?: string | null): string {
 }
 
 export async function GET() {
-  const [settings, industries, caseStudies, posts, resources, automations] =
+  const [settings, industries, caseStudies, posts, resources, automations, trades] =
     await Promise.all([
       getSiteSettings(),
       getAllIndustries(),
@@ -32,6 +33,7 @@ export async function GET() {
       getAllBlogPosts(),
       getAllResources(),
       getAllAutomations(),
+      getAllLocalServicePages(),
     ]);
 
   const description =
@@ -64,6 +66,14 @@ ${line("Pricing", "/pricing.md", "machine-readable offer ladder and price ranges
 
 ${industries
   .map((i) => line(i.name, `/industries/${i.slug}`, i.hookLine))
+  .join("\n")}`);
+  }
+
+  if (trades.length > 0) {
+    sections.push(`## Local service trades
+
+${trades
+  .map((t) => line(t.name, `/industries/local-services/${t.slug}`, t.hookLine))
   .join("\n")}`);
   }
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { Hero } from "@/components/home/Hero";
 import { DiagnosisCards } from "@/components/home/DiagnosisCards";
 import { ServicesAlternating } from "@/components/home/ServicesAlternating";
@@ -10,7 +11,6 @@ import { CTABanner } from "@/components/shared/CTABanner";
 import { HomeTestimonials } from "@/components/home/Testimonials";
 import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { LiveFeed } from "@/components/home/LiveFeed";
-import { NewsletterCapture } from "@/components/shared/NewsletterCapture";
 import { GlassSection } from "@/components/shared/GlassSection";
 import { BeforeAfterCompare } from "@/components/shared/BeforeAfterCompare";
 import { buildPageMetadata } from "@/lib/seo";
@@ -27,6 +27,14 @@ import type {
   IndustriesGridData,
   BeforeAfterData,
 } from "@/lib/types";
+
+// Last section on the page — below every other fold. Code-split out of the
+// main bundle since it drags in zod + react-hook-form just for one email
+// field. ssr stays on (the default) so the headline/copy/form markup is
+// still fully server-rendered for crawlers and no-JS visitors.
+const NewsletterCapture = dynamic(() =>
+  import("@/components/shared/NewsletterCapture").then((m) => m.NewsletterCapture),
+);
 
 export async function generateMetadata(): Promise<Metadata> {
   const [page, settings] = await Promise.all([getHomePage(), getSiteSettings()]);

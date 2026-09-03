@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Home, CalendarDays, BookOpen } from "lucide-react";
 import { getAllBlogPosts } from "@/lib/sanity/queries";
 import { LiveFeedCard } from "@/components/shared/LiveFeedCard";
-import ASCIIText from "@/components/ASCIIText";
+import { ASCIITextClient } from "@/components/not-found/NotFoundDynamic";
 
 const quickLinks = [
   {
@@ -35,7 +35,7 @@ export default async function NotFound() {
         <div className="mx-auto max-w-6xl px-6">
           {/* ASCII 404 hero */}
           <div className="relative h-56 w-full md:h-72">
-            <ASCIIText
+            <ASCIITextClient
               text="404"
               textFontSize={400}
               asciiFontSize={9}

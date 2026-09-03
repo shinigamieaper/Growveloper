@@ -25,6 +25,7 @@ import {
   getCaseStudyBySlug,
   getAllLabContent,
   getSiteSettings,
+  getAllLocalServicePages,
 } from "@/lib/sanity/queries";
 import type {
   ServicePageHeroData,
@@ -75,12 +76,35 @@ export default async function IndustryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [industry, allIndustries, labContent] = await Promise.all([
+  const [industry, allIndustries, labContent, trades] = await Promise.all([
     getIndustryBySlug(slug),
     getAllIndustries(),
     getAllLabContent(),
+    slug === "local-services" ? getAllLocalServicePages() : Promise.resolve([]),
   ]);
   if (!industry) notFound();
+
+  /* Trade pages hang off the local-services page only. Their card links
+     carry the parent segment because IndustriesGrid builds /industries/<slug>. */
+  const tradesData: IndustriesGridData | null =
+    trades.length > 0
+      ? {
+          headline: "Pick your trade",
+          highlightedWord: "trade",
+          description:
+            "Each page speaks your trade's language: the jobs, the enquiries, the numbers, and what to fix first.",
+          industries: trades.map((t) => ({
+            icon: t.icon,
+            name: t.name,
+            hookLine: t.hookLine,
+            slug: `local-services/${t.slug}`,
+            ctaLabel: "Learn more",
+          })),
+          ctaHeadline: "Not on the list?",
+          ctaLabel: "Tell us about your business",
+          ctaUrl: "/start",
+        }
+      : null;
 
   /* Resolve case studies from slugs */
   const caseStudies = (
@@ -243,6 +267,11 @@ export default async function IndustryPage({
       <GlassSection id="pain-points">
         <ServiceProblem data={problemData} />
       </GlassSection>
+
+      {/* 02b — Trade pages (local services only) */}
+      {tradesData && (
+        <IndustriesGrid id="trades" data={tradesData} />
+      )}
 
       {/* 03 — How We Help (StickyScroll 3 pillars) */}
       <ServicesAlternating data={howWeHelpData} />
