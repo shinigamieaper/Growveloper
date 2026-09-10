@@ -231,6 +231,71 @@ export default defineType({
             },
           },
         }),
+        defineArrayMember({
+          name: "simpleTable",
+          title: "Comparison Table",
+          type: "object",
+          description:
+            "A plain table with any number of columns. Used for comparisons (X vs Y) and checklists.",
+          fields: [
+            defineField({
+              name: "caption",
+              title: "Caption",
+              type: "string",
+            }),
+            defineField({
+              name: "columns",
+              title: "Column Headers",
+              type: "array",
+              of: [defineArrayMember({ type: "string" })],
+              validation: (rule) => rule.min(2),
+            }),
+            defineField({
+              name: "rows",
+              title: "Rows",
+              type: "array",
+              of: [
+                defineArrayMember({
+                  type: "object",
+                  name: "row",
+                  fields: [
+                    defineField({
+                      name: "cells",
+                      title: "Cells",
+                      type: "array",
+                      of: [defineArrayMember({ type: "string" })],
+                    }),
+                  ],
+                  preview: {
+                    select: { cells: "cells" },
+                    prepare({ cells }) {
+                      const list = Array.isArray(cells) ? cells : [];
+                      return { title: list[0] ?? "Row", subtitle: list.slice(1).join(" | ") };
+                    },
+                  },
+                }),
+              ],
+              validation: (rule) => rule.min(1),
+            }),
+            defineField({
+              name: "sourcesNote",
+              title: "Sources Note",
+              description: "Small caption rendered beneath the table.",
+              type: "text",
+              rows: 2,
+            }),
+          ],
+          preview: {
+            select: { title: "caption", rows: "rows" },
+            prepare({ title, rows }) {
+              const count = Array.isArray(rows) ? rows.length : 0;
+              return {
+                title: title ?? "Comparison Table",
+                subtitle: `${count} row${count === 1 ? "" : "s"}`,
+              };
+            },
+          },
+        }),
       ],
     }),
     defineField({

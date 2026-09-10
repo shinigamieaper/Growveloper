@@ -9,7 +9,8 @@ import {
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { PostCostTable } from "@/components/shared/PostCostTable";
-import type { PostCostTableBlock } from "@/lib/types";
+import { PostSimpleTable } from "@/components/shared/PostSimpleTable";
+import type { PostCostTableBlock, PostSimpleTableBlock } from "@/lib/types";
 
 interface PortableTextRendererProps extends React.ComponentPropsWithoutRef<"div"> {
   /** Sanity Portable Text value */
@@ -131,6 +132,9 @@ const components: PortableTextComponents = {
     ),
     costTable: ({ value }) => (
       <PostCostTable data={value as PostCostTableBlock} />
+    ),
+    simpleTable: ({ value }) => (
+      <PostSimpleTable data={value as PostSimpleTableBlock} />
     ),
   },
 

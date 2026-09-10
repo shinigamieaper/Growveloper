@@ -384,6 +384,18 @@ export interface PostCostTableBlock extends BlogPostBodyBlock {
   sourcesNote?: string;
 }
 
+export interface PostSimpleTableRow {
+  cells: string[];
+}
+
+export interface PostSimpleTableBlock extends BlogPostBodyBlock {
+  _type: "simpleTable";
+  caption?: string;
+  columns: string[];
+  rows: PostSimpleTableRow[];
+  sourcesNote?: string;
+}
+
 export interface BlogPostPageData extends BlogPostCardData {
   body?: BlogPostBodyBlock[];
   bodyParagraphs?: string[];

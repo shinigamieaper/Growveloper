@@ -26,6 +26,7 @@ export { LiveFeedBento } from "./shared/LiveFeedBento";
 export { GrowveloperCard } from "./shared/GrowveloperCard";
 export { PortableTextRenderer } from "./shared/PortableTextRenderer";
 export { PostCostTable } from "./shared/PostCostTable";
+export { PostSimpleTable } from "./shared/PostSimpleTable";
 export { ContentFilterBar } from "./shared/ContentFilterBar";
 export { ResourceCard } from "./shared/ResourceCard";
 export { FreeResourceBlock, PaidResourceBlock } from "./shared/ResourceActionBlock";
