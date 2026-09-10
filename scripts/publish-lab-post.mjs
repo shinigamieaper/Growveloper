@@ -157,8 +157,10 @@ function splitRow(line) {
 
 function tableBlock(lines) {
   const header = splitRow(lines[0]);
+  // The separator row (| --- | --- |) is optional; drafts often omit it.
+  const hasSeparator = /^\|?\s*:?-{2,}/.test(lines[1]?.trim() ?? "");
   const bodyRows = lines
-    .slice(2)
+    .slice(hasSeparator ? 2 : 1)
     .filter((l) => l.trim().startsWith("|"))
     .map(splitRow);
   const isCost = /^line item$/i.test(header[0] ?? "") && header.length === 4;
