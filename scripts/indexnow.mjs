@@ -22,7 +22,12 @@ if (inputs.length === 0) {
   process.exit(1);
 }
 
-const urlList = inputs.map((u) => (u.startsWith("http") ? u : `https://${HOST}${u.startsWith("/") ? "" : "/"}${u}`));
+// Git Bash on Windows rewrites a leading "/lab/x" into "C:/Program Files/Git/lab/x"
+// before Node sees it. Strip that prefix, then build the full URL.
+const urlList = inputs.map((raw) => {
+  const u = raw.replace(/^[A-Za-z]:[\/].*?[\/]Git[\/]/, "/");
+  return u.startsWith("http") ? u : `https://${HOST}${u.startsWith("/") ? "" : "/"}${u}`;
+});
 
 const res = await fetch(ENDPOINT, {
   method: "POST",
