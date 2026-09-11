@@ -90,7 +90,6 @@ export function PostSimpleTable({ data, className, ...props }: PostSimpleTablePr
             <th scope="col" className="pb-4 pr-6 align-bottom">
               <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">
                 {columns[0]}
-                {hasNote ? ` / ${columns[noteIndex]}` : ""}
               </span>
             </th>
             {compareIndexes.map((i) => (
