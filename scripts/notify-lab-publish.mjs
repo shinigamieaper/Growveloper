@@ -30,7 +30,11 @@ if (!process.env.RESEND_API_KEY) {
 }
 
 const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://growveloper.com").replace(/\/$/, "");
-const to = process.env.NOTIFICATION_EMAIL || "hello@growveloper.com";
+// NOTIFICATION_EMAIL may hold several addresses separated by commas.
+const to = (process.env.NOTIFICATION_EMAIL || "hello@growveloper.com")
+  .split(",")
+  .map((s) => s.trim().replace(/^["']|["']$/g, ""))
+  .filter(Boolean);
 const today = new Date().toISOString().slice(0, 10);
 
 const lines = slugs.map((s) => `${site}/lab/${s}`);
@@ -60,4 +64,4 @@ if (error) {
   console.error("send failed:", error.message || error);
   process.exit(1);
 }
-console.log(`notified ${to}, id ${data?.id}`);
+console.log(`notified ${to.join(", ")}, id ${data?.id}`);
