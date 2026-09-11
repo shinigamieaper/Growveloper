@@ -682,9 +682,24 @@ export async function getFeaturedTestimonials(): Promise<TestimonialData[]> {
 
 // ── Blog Posts ──
 
+/* Programme posts (the AI visibility articles) always list after editorial
+   posts, whatever their dates. Editorial is the weekly piece written for
+   people; it keeps the top of every list. */
+function laneRank(item: { lane?: string }): number {
+  return item.lane === "programme" ? 1 : 0;
+}
+
+export function sortByLaneThenDate<T extends { publishedAt: string; lane?: string }>(items: T[]): T[] {
+  return [...items].sort(
+    (a, b) =>
+      laneRank(a) - laneRank(b) ||
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  );
+}
+
 export async function getAllBlogPosts(): Promise<BlogPostCardData[]> {
   "use cache";
-  return client.fetch<BlogPostCardData[]>(
+  const posts = await client.fetch<BlogPostCardData[]>(
     `*[_type == "blogPost"] | order(publishedAt desc) {
       title,
       "slug": slug.current,
@@ -697,9 +712,11 @@ export async function getAllBlogPosts(): Promise<BlogPostCardData[]> {
       "readTime": readTime + " min read",
       "platform": "blog",
       "featuredToggle": featuredToggle,
+      lane,
       "updatedAt": _updatedAt
     }`
   );
+  return sortByLaneThenDate(posts);
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPostPageData | null> {
@@ -773,7 +790,8 @@ export async function getAllLabContent(): Promise<LabContentCard[]> {
       publishedAt,
       "readTime": readTime + " min read",
       "platform": "blog",
-      featuredToggle
+      featuredToggle,
+      lane
     }`
   );
   const videos = await client.fetch<VideoCardData[]>(
@@ -787,9 +805,7 @@ export async function getAllLabContent(): Promise<LabContentCard[]> {
       featuredToggle
     }`
   );
-  return [...blogs, ...videos].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  );
+  return sortByLaneThenDate([...blogs, ...videos]);
 }
 
 // ── Resources ──

@@ -16,7 +16,9 @@
  *   title, slug, category, tags, excerpt, tldr, pullQuote, metaTitle,
  *   metaDescription, readTime, publishedAt (ISO, defaults to now),
  *   heroAlt, hero (path to a PNG or JPG, relative to the draft, optional),
- *   featured (true/false), showCTA (true/false, default true)
+ *   featured (true/false), showCTA (true/false, default true),
+ *   lane (programme by default; "editorial" only for the weekly pieces),
+ *   author (defaults to Oyekola Obajuwon)
  *
  * Body markdown supported:
  *   ## and ### headings, paragraphs, **bold**, *italic*, `code`,
@@ -406,8 +408,10 @@ async function main() {
     ...(meta.tags ? { tags: meta.tags } : {}),
     publishedAt: meta.publishedAt || new Date().toISOString(),
     ...(meta.readTime ? { readTime: meta.readTime } : {}),
-    author: "Oyekola Obajuwon",
-    featuredToggle: meta.featured === true,
+    author: meta.author || "Oyekola Obajuwon",
+    // Programme posts list after every editorial post and are never featured.
+    lane: meta.lane === "editorial" ? "editorial" : "programme",
+    featuredToggle: meta.lane === "editorial" && meta.featured === true,
     showCTA: meta.showCTA !== false,
     ...(meta.metaTitle ? { metaTitle: meta.metaTitle } : {}),
     ...(meta.metaDescription ? { metaDescription: meta.metaDescription } : {}),

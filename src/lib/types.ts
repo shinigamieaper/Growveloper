@@ -341,6 +341,8 @@ export interface BlogPostCardData {
   readTime?: string;
   platform?: "blog";
   featuredToggle?: boolean;
+  /** "editorial" (weekly pieces, listed first) or "programme" (AI visibility articles, listed after). */
+  lane?: "editorial" | "programme";
 }
 
 /* --- Video (Lab) --- */

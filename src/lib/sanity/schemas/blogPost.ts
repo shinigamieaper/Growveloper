@@ -338,6 +338,22 @@ export default defineType({
       group: "content",
     }),
     defineField({
+      name: "lane",
+      title: "Lane",
+      description:
+        "Editorial posts are the weekly pieces written for people and always list first. Programme posts are the AI visibility articles; they list after every editorial post regardless of date and are never featured.",
+      type: "string",
+      group: "content",
+      options: {
+        list: [
+          { title: "Editorial (weekly, written for people)", value: "editorial" },
+          { title: "Programme (AI visibility articles)", value: "programme" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "editorial",
+    }),
+    defineField({
       name: "showCTA",
       title: "Show CTA",
       type: "boolean",
