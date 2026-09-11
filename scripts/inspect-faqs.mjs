@@ -1,5 +1,5 @@
 /**
- * Quick read-only inspection — checks copy on lab sections across pages.
+ * Audit copy on all known "lab/live feed" sections across pages.
  */
 import { createClient } from "@sanity/client";
 import dotenv from "dotenv";
@@ -17,11 +17,27 @@ const client = createClient({
 const home = await client.fetch(
   `*[_type == "homePage"][0]{ liveFeedHeadline, liveFeedHighlightedWord, liveFeedDescription, liveFeedSeeAllLabel }`
 );
-console.log("\n── homePage liveFeed copy ──");
+console.log("\n── homePage.liveFeed (homepage lab section) ──");
 console.log(home);
 
 const lab = await client.fetch(
-  `*[_type == "labPage"][0]{ heroHeadline, heroHighlightedWord, heroSubStatement, postInlineCtaHeadline, postNewsletterHeadline, postSectionCtaHeadline }`
+  `*[_type == "labPage"][0]{
+    heroHeadline, heroHighlightedWord, heroSubStatement,
+    feedHeadline, feedHighlightedWord, feedDescription,
+    postInlineCtaHeadline, postNewsletterHeadline, postSectionCtaHeadline
+  }`
 );
-console.log("\n── labPage hero + post-section copy ──");
+console.log("\n── labPage (the /lab feed page itself) ──");
 console.log(lab);
+
+const services = await client.fetch(
+  `*[_type == "servicePage"]{ pageId, liveFeedHeadline, liveFeedDescription }`
+);
+console.log("\n── servicePage liveFeed copy ──");
+console.log(services);
+
+const audit = await client.fetch(
+  `*[_type == "auditPage"][0]{ liveFeedHeadline, liveFeedDescription }`
+);
+console.log("\n── auditPage liveFeed copy ──");
+console.log(audit);
