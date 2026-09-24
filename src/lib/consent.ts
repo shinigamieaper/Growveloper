@@ -33,9 +33,25 @@ export function setConsent(state: ConsentState): void {
 /* ── Google Consent Mode v2 update ── */
 
 function gtag(...args: unknown[]): void {
-  const dl = (window as unknown as { dataLayer?: unknown[] }).dataLayer;
-  if (!dl) return;
-  dl.push(args);
+  const w = window as unknown as {
+    gtag?: (...a: unknown[]) => void;
+    dataLayer?: unknown[];
+  };
+  // Tag Manager only recognises a consent command when it is pushed as an
+  // `arguments` object, which is what the inline gtag() in layout.tsx does.
+  // Pushing a plain array (the previous code) was silently ignored, so every
+  // GA4 hit fired with analytics_storage still denied (gcs=G100) even after
+  // the visitor accepted cookies, and the property recorded nothing.
+  if (typeof w.gtag === "function") {
+    w.gtag(...args);
+    return;
+  }
+  w.dataLayer = w.dataLayer || [];
+  const dl = w.dataLayer;
+  (function () {
+    // eslint-disable-next-line prefer-rest-params
+    dl.push(arguments);
+  }).apply(null, args as []);
 }
 
 export function updateGoogleConsent(state: ConsentState): void {
