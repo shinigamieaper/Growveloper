@@ -52,6 +52,9 @@ export async function generateMetadata({
   const share = post.ogImage ?? post.heroImage ?? settings?.ogImage;
   return buildPageMetadata({
     title: post.metaTitle || post.title,
+    // Lab titles are the question the article answers. With the brand suffix
+    // they ran to 64 to 76 characters and Google trimmed the question itself.
+    absoluteTitle: true,
     description:
       post.metaDescription ||
       post.excerpt ||

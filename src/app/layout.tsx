@@ -13,6 +13,7 @@ import {
   getAllPopupConfigs,
   getSiteSettings,
   getAboutPage,
+  getAllLocalServicePages,
 } from "@/lib/sanity/queries";
 import { buildSiteGraph } from "@/lib/jsonld";
 import { SITE_URL, SITE_NAME, absoluteUrl, snippet } from "@/lib/seo";
@@ -158,16 +159,21 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [nav, footer, popupConfigs, settings, about] = await Promise.all([
+  const [nav, footer, popupConfigs, settings, about, trades] = await Promise.all([
     getNavigation(),
     getFooter(),
     getAllPopupConfigs(),
     getSiteSettings(),
     getAboutPage(),
+    getAllLocalServicePages(),
   ]);
 
   const navData: NavigationData = nav ?? PLACEHOLDER_NAV;
   const footerData: FooterData = footer ?? PLACEHOLDER_FOOTER;
+  const tradeLinks = (trades ?? []).map((t) => ({
+    label: t.name,
+    url: `/industries/local-services/${t.slug}`,
+  }));
 
   /* One entity graph for the whole site: WebSite, Organization, founder.
      Social profiles come from whichever CMS document holds them. */
@@ -207,7 +213,7 @@ export default async function RootLayout({
         </main>
 
         {/* Global footer */}
-        <Footer data={footerData} />
+        <Footer data={footerData} tradeLinks={tradeLinks} />
 
         {/* Floating scroll-to-top button */}
         <ScrollToTop />

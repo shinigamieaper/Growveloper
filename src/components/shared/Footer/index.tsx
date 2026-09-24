@@ -4,22 +4,27 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import type { FooterData } from "@/lib/types";
+import type { FooterData, NavLink } from "@/lib/types";
 import { MovingBorderButton } from "@/components/ui/moving-border";
 import { ScrollFadeUp } from "@/components/animations/ScrollFadeUp";
 
 interface FooterProps extends React.ComponentPropsWithoutRef<"footer"> {
   data: FooterData | null;
+  /** The local service trade pages, so every page links to them (they were only
+   *  reachable from the hub and from each other, and Google never crawled them). */
+  tradeLinks?: NavLink[];
 }
 
 const SOCIAL_LABELS: Record<string, string> = {
   linkedin: "LinkedIn",
+  "linkedin-company": "Growveloper on LinkedIn",
+  instagram: "Instagram",
   x: "X",
   youtube: "YouTube",
   tiktok: "TikTok",
 };
 
-export function Footer({ data, className, ...props }: FooterProps) {
+export function Footer({ data, tradeLinks = [], className, ...props }: FooterProps) {
   const [theme, setThemeState] = useState<string>("dark");
 
   useEffect(() => {
@@ -89,8 +94,8 @@ export function Footer({ data, className, ...props }: FooterProps) {
             )}
           </div>
 
-          {/* Right columns: Nav, Socials, Legal */}
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 md:gap-16">
+          {/* Right columns: Nav, Local services, Socials, Legal */}
+          <div className={cn("grid grid-cols-2 gap-10 md:gap-16", tradeLinks.length > 0 ? "sm:grid-cols-4" : "sm:grid-cols-3")}>
             {/* Pages / Navigation */}
             {data.navLinks.length > 0 && (
               <div>
@@ -99,6 +104,35 @@ export function Footer({ data, className, ...props }: FooterProps) {
                 </h3>
                 <ul className="flex flex-col gap-3">
                   {data.navLinks.map((link) => (
+                    <li key={link.url}>
+                      <Link
+                        href={link.url}
+                        className="text-sm text-text-primary transition-colors hover:text-brand-mid"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Local service trades */}
+            {tradeLinks.length > 0 && (
+              <div>
+                <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-secondary">
+                  Local services
+                </h3>
+                <ul className="flex flex-col gap-3">
+                  <li>
+                    <Link
+                      href="/industries/local-services"
+                      className="text-sm text-text-primary transition-colors hover:text-brand-mid"
+                    >
+                      All local service businesses
+                    </Link>
+                  </li>
+                  {tradeLinks.map((link) => (
                     <li key={link.url}>
                       <Link
                         href={link.url}
