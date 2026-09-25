@@ -149,7 +149,11 @@ async function sendNotificationEmail(lead: LeadPayload): Promise<void> {
     return;
   }
 
-  const notificationEmail = process.env.NOTIFICATION_EMAIL || "hello@growveloper.com";
+  // NOTIFICATION_EMAIL may hold several addresses separated by commas.
+  const notificationEmail = (process.env.NOTIFICATION_EMAIL || "hello@growveloper.com")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   const servicesFormatted = lead.servicesInterested.map(escapeHtml).join(", ");
 
   const responsesHtml = (lead.responses ?? [])
@@ -159,7 +163,8 @@ async function sendNotificationEmail(lead: LeadPayload): Promise<void> {
     )
     .join("");
 
-  await resend.emails.send({
+  // Resend returns { error } instead of throwing; throw so notificationSent stays false.
+  const { error } = await resend.emails.send({
     from: "Growveloper <hello@growveloper.com>",
     to: notificationEmail,
     subject: `New Lead: ${escapeHtml(lead.name)} — ${escapeHtml(lead.company)}`,
@@ -181,4 +186,5 @@ async function sendNotificationEmail(lead: LeadPayload): Promise<void> {
       <p style="margin-top:16px;font-size:12px;color:#666;">Submitted ${escapeHtml(lead.submittedAt)}</p>
     `,
   });
+  if (error) throw new Error(`Resend: ${error.name}: ${error.message}`);
 }
