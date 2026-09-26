@@ -212,7 +212,7 @@ export function AboutViewPanel({
                   {item.href ? (
                     <a
                       href={item.href}
-                      className={cn(rowClass, "group transition-colors hover:bg-[rgba(233,214,186,0.03)]")}
+                      className={cn(rowClass, "group transition-colors hover:bg-[rgba(174,238,238,0.03)]")}
                       {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                     >
                       {inner}

@@ -15,6 +15,8 @@ export interface AboutCinemaHeroProps extends React.ComponentPropsWithoutRef<"se
   /** Path prefix of the cut-out; files are `${portraitBase}-${width}.avif|webp`. */
   portraitBase: string;
   portraitWidths: number[];
+  /** Intrinsic size of the full cut-out, for the aspect ratio. */
+  portraitSize: { width: number; height: number };
   workHref: string;
   cv: AboutLink;
   links: AboutLink[];
@@ -27,8 +29,8 @@ function srcSet(base: string, widths: number[], ext: "avif" | "webp") {
 }
 
 /**
- * The /about first screen: name and identity at left, his cut-out standing
- * in one warm disc of light at right. Server-rendered and visible with no
+ * The /about first screen: name and identity at left, his cut-out in one
+ * teal disc of light at right. Server-rendered and visible with no
  * script; the portrait is preloaded as the page's largest paint.
  */
 export function AboutCinemaHero({
@@ -41,6 +43,7 @@ export function AboutCinemaHero({
   portraitAlt,
   portraitBase,
   portraitWidths,
+  portraitSize,
   workHref,
   cv,
   links,
@@ -74,7 +77,7 @@ export function AboutCinemaHero({
               <img
                 src={`${portraitBase}-${portraitWidths[1]}.webp`}
                 width={largest}
-                height={Math.round((largest * 2000) / 1441)}
+                height={Math.round((largest * portraitSize.height) / portraitSize.width)}
                 alt={portraitAlt}
                 fetchPriority="high"
                 decoding="async"

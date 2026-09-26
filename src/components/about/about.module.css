@@ -143,15 +143,11 @@
   user-select: none;
 }
 
+/* The cut-out fills the stage and sits on its floor. Its own alpha already
+   fades out below the hands, so the desktop needs no mask. */
 .figure {
   position: absolute;
-  left: 50%;
-  bottom: 0;
-  height: 100%;
-  transform: translateX(-50%);
-  aspect-ratio: 1441 / 2000;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 60%, rgba(0, 0, 0, 0.45) 72%, rgba(0, 0, 0, 0.1) 82%, transparent 90%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 60%, rgba(0, 0, 0, 0.45) 72%, rgba(0, 0, 0, 0.1) 82%, transparent 90%);
+  inset: 0;
 }
 
 .figure img {
@@ -178,12 +174,13 @@
     top: 36%;
     width: min(100cqw, 78svh);
   }
+  /* On a phone the ring lands across his face, so it goes. */
   .ring {
-    top: 36%;
-    width: min(84cqw, 66svh);
+    display: none;
   }
   .figure {
     left: -12%;
+    right: auto;
     width: 124%;
     height: 100%;
     aspect-ratio: auto;
@@ -436,35 +433,8 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background:
-    radial-gradient(55% 70% at 82% 100%, rgba(43, 117, 117, 0.3) 0%, rgba(10, 15, 15, 0) 70%),
-    var(--av-bg-sunk);
+  background: var(--av-bg-sunk);
   border-top: 1px solid var(--av-line);
-}
-
-.standing {
-  display: block;
-  position: relative;
-  width: 100%;
-  aspect-ratio: 742 / 1745;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 86%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 86%, transparent 100%);
-}
-.standing img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.floorLight {
-  position: absolute;
-  left: 50%;
-  bottom: 2%;
-  width: 150%;
-  height: 16%;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(90, 177, 177, 0.35), rgba(90, 177, 177, 0));
 }
 
 /* Deep links before hydration: the boot script marks <html> with the side

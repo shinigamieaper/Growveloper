@@ -37,7 +37,7 @@ export const ABOUT_HERO = {
   summary:
     "I build production web apps in Next.js and TypeScript, and I run the paid media that sends people to them. Four years of it, for clients in the US and Nigeria.",
   portraitAlt:
-    "Oyekola Obajuwon, called Juwon, in a black jacket with silver clasps and rimless glasses. Photo by Hotman Visuals.",
+    "Oyekola Obajuwon, called Juwon, smiling in a black jacket and rimless glasses. Photo by Hotman Visuals.",
 } as const;
 
 export const ABOUT_CV: AboutLink = {
@@ -106,7 +106,7 @@ const ALL: AboutViewData = {
   key: "all",
   statement: { lead: "I build the site, run the ads to it, and", accent: "prove it worked." },
   body:
-    "Most companies split that across a developer, a media buyer and an analyst who rarely talk. I do all three, so the page is built for the ad that sends people to it and the tracking is planned before launch. Pick a side below to see the proof for the job you're hiring for.",
+    "Most companies split that across a developer, a media buyer and an analyst who rarely talk. I do all three, so the page is built for the ad that sends people to it and the tracking is planned before launch. Pick a side below to see the proof for the part you care about.",
   howIWork:
     "I work US Eastern hours from Lagos, in writing, and I own a project end to end.",
   stats: [
@@ -213,21 +213,38 @@ const DEV: AboutViewData = {
       },
       links: [{ label: "Code", href: "https://github.com/shinigamieaper/career-ops-skill", external: true }],
     },
-  ],
-  more: [
     {
-      name: "VIP Creative Studio",
-      detail: "13-page agency site on Next.js and Sanity, 19 schema files, edited by a non-technical team",
-      href: "/work/vip-creative-studio",
+      id: "vip-dev",
+      client: "VIP Creative Studio",
+      period: "Aug 2025 to May 2026",
+      title: "An agency site the team edits without a developer",
+      summary:
+        "Thirteen pages on Next.js and Sanity, with 19 schema files and 100+ validated fields, so the team changes copy, images and calls to action on its own. One contact-form route sends the confirmation, alerts the admin and syncs Mailchimp, and a Mailchimp failure never loses a submission.",
+      visual: { kind: "caseStudy", slug: "vip-creative-studio", frame: "screen", contain: true, alt: "The VIP Creative Studio home page I built" },
+      links: [VIP_CASE, VIP_LIVE],
     },
     {
-      name: "Baye Business Solutions",
-      detail: "Broken PHP site rebuilt in Next.js and MongoDB, with a Tiptap editor and an admin dashboard",
-      href: "/work/baye-business-solutions",
+      id: "bbsl-dev",
+      client: "Baye Business Solutions",
+      period: "Apr to Oct 2025",
+      title: "A broken PHP site, rebuilt in Next.js",
+      summary:
+        "Next.js, TypeScript and MongoDB, with an admin dashboard, a Tiptap editor and three permission levels (admin, editor, user). Pages refresh every 30 minutes, search covers the full text, and the database connection is cached so serverless cold starts stay quick.",
+      visual: { kind: "caseStudy", slug: "baye-business-solutions", frame: "screen", alt: "The Baye Business Solutions home page I rebuilt" },
+      links: [BBSL_CASE, BBSL_LIVE],
     },
     {
-      name: "Dara, Nigerian Languages API",
-      detail: "Node, Express and PostgreSQL, dialect-aware data across Hausa, Igbo and Yoruba, OpenAPI docs",
+      id: "dara",
+      client: "Dara",
+      title: "An API for Nigerian languages",
+      summary:
+        "Node, Express and PostgreSQL, serving dialect-aware data across Hausa, Igbo and Yoruba, with OpenAPI docs, paginated endpoints and a pipeline that turns raw data into clean records.",
+      visual: {
+        kind: "type",
+        lines: ["GET /languages", "  hausa", "  igbo", "  yoruba"],
+        caption: "Three languages, one API",
+      },
+      links: [],
     },
   ],
   tools: [

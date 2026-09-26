@@ -9,16 +9,11 @@ export interface AboutContactBandProps extends React.ComponentPropsWithoutRef<"s
   booking: AboutLink;
   cv: AboutLink;
   links: AboutLink[];
-  portraitAlt: string;
-  /** Path prefix of the full-length cut-out; files are `${portraitBase}-${width}.avif|webp`. */
-  portraitBase: string;
-  portraitWidths: number[];
 }
 
 /**
  * The close of /about: one line, the booking link, and the same quiet
- * links as the hero. His full-length cut-out stands on a pool of warm
- * light at right (desktop only, so phones end on the call to action).
+ * links as the hero. Type only; the hero carries the one photo.
  */
 export function AboutContactBand({
   headline,
@@ -26,18 +21,12 @@ export function AboutContactBand({
   booking,
   cv,
   links,
-  portraitAlt,
-  portraitBase,
-  portraitWidths,
   className,
   ...props
 }: AboutContactBandProps) {
-  const set = (ext: string) => portraitWidths.map((w) => `${portraitBase}-${w}.${ext} ${w}w`).join(", ");
-  const largest = portraitWidths[portraitWidths.length - 1];
-
   return (
     <section className={cn(styles.contact, className)} aria-labelledby="about-contact" {...props}>
-      <div className="mx-auto grid w-full max-w-[1240px] grid-cols-1 items-end gap-x-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_200px] xl:grid-cols-[minmax(0,1fr)_220px]">
+      <div className="mx-auto grid w-full max-w-[1240px] grid-cols-1 px-4 sm:px-6">
         <div className="py-20 md:py-28">
           <p className={styles.kicker}>Hiring, or have a project</p>
           <h2
@@ -80,23 +69,6 @@ export function AboutContactBand({
               </li>
             ))}
           </ul>
-        </div>
-
-        <div className="relative hidden self-end pt-10 lg:block">
-          <div className={styles.floorLight} aria-hidden="true" />
-          <picture className={styles.standing}>
-            <source type="image/avif" srcSet={set("avif")} sizes="220px" />
-            <source type="image/webp" srcSet={set("webp")} sizes="220px" />
-            <img
-              src={`${portraitBase}-${portraitWidths[1]}.webp`}
-              alt={portraitAlt}
-              width={largest}
-              height={Math.round((largest * 1745) / 742)}
-              loading="lazy"
-              decoding="async"
-              className="relative"
-            />
-          </picture>
         </div>
       </div>
     </section>

@@ -49,7 +49,7 @@ function TracksSection({ caseStudyImages }: { caseStudyImages: Record<string, st
       tabs={ABOUT_TRACK_TABS}
       panels={panels}
       initialView="all"
-      prompt="Pick the side you're hiring for"
+      prompt="Pick the side that interests you"
       resetLabel="Show everything"
     />
   );
@@ -95,8 +95,9 @@ export default async function AboutPage() {
         summary={ABOUT_HERO.summary}
         backdropWord={ABOUT_HERO.backdropWord}
         portraitAlt={ABOUT_HERO.portraitAlt}
-        portraitBase="/images/about/juwon-hero"
+        portraitBase="/images/about/juwon-smiling"
         portraitWidths={[480, 720, 1080, 1440]}
+        portraitSize={{ width: 2880, height: 3024 }}
         workHref="#work"
         cv={ABOUT_CV}
         links={ABOUT_QUIET_LINKS}
@@ -113,14 +114,11 @@ export default async function AboutPage() {
 
       {/* 03 The close */}
       <AboutContactBand
-        headline={{ lead: "Let's talk about", accent: "the role." }}
-        body="Thirty minutes on a call, or an email if that's easier. Either way you're talking to the person who does the work."
+        headline={{ lead: "Let's talk about", accent: "the work." }}
+        body="Thirty minutes on a call, or an email if that's easier. Either way, you're talking to the person who would do it."
         booking={ABOUT_BOOKING}
         cv={ABOUT_CV}
         links={ABOUT_QUIET_LINKS}
-        portraitAlt="Juwon standing at night, adjusting his glasses. Photo by Hotman Visuals."
-        portraitBase="/images/about/juwon-standing"
-        portraitWidths={[360, 540, 742]}
       />
     </div>
   );
