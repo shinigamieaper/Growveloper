@@ -979,6 +979,116 @@ export interface AboutInterestsData {
   items: AboutInterestItem[];
 }
 
+/* --- About Page v2 (2026-09-26): combined view plus three sides --- */
+
+export type AboutTrackKey = "dev" | "marketing" | "growth";
+/** "all" is the combined view /about opens on. */
+export type AboutViewKey = AboutTrackKey | "all";
+
+export interface AboutLink {
+  label: string;
+  href: string;
+  external?: boolean;
+  /** Renders a download link (the CV PDF). */
+  download?: boolean;
+}
+
+export interface AboutProofStat {
+  value: string;
+  label: string;
+  /** Where the number comes from, shown under the label. */
+  source: string;
+}
+
+export type AboutProjectVisual =
+  | {
+      kind: "image";
+      src: string;
+      width: number;
+      height: number;
+      alt: string;
+      /** "screen" fills a wide frame; "phone" centres a tall mobile screenshot. */
+      frame: "screen" | "phone";
+    }
+  | {
+      /** The case study's own hero screenshot from Sanity, looked up by slug at render time. */
+      kind: "caseStudy";
+      slug: string;
+      alt: string;
+      frame: "screen" | "phone";
+      /** CSS object-position for wide screenshots, e.g. "left top". Defaults to "center top". */
+      focus?: string;
+      /** Show the whole screenshot inside the frame instead of cropping it (very wide images). */
+      contain?: boolean;
+    }
+  | {
+      kind: "type";
+      /** Short lines set in mono, e.g. an agent roster or an account summary. */
+      lines: string[];
+      caption: string;
+    };
+
+export interface AboutProject {
+  id: string;
+  /** Client or project name, set small above the title. */
+  client: string;
+  period?: string;
+  title: string;
+  summary: string;
+  visual: AboutProjectVisual;
+  links: AboutLink[];
+}
+
+export interface AboutMoreItem {
+  name: string;
+  detail: string;
+  href?: string;
+  external?: boolean;
+}
+
+export interface AboutToolGroup {
+  group: string;
+  items: string[];
+}
+
+export interface AboutViewData {
+  key: AboutViewKey;
+  /** Statement set large: lead + italic accent + optional tail. */
+  statement: { lead: string; accent: string; tail?: string };
+  body: string;
+  howIWork: string;
+  stats: AboutProofStat[];
+  projectsHeading: string;
+  projects: AboutProject[];
+  projectsLink?: AboutLink;
+  more?: AboutMoreItem[];
+  tools: AboutToolGroup[];
+}
+
+export interface AboutTrackTab {
+  key: AboutTrackKey;
+  label: string;
+}
+
+/** One named row with a line of detail (architecture layers, scheduled jobs). */
+export interface AboutNamedDetail {
+  name: string;
+  detail: string;
+}
+
+export interface ArchitectureLayersData {
+  headline: string;
+  intro?: string;
+  /** Shown above the layers as a single mono line, e.g. the portals that share the codebase. */
+  caption?: string;
+  /** Top to bottom; the last layer is drawn strongest. */
+  layers: AboutNamedDetail[];
+  annex?: {
+    headline: string;
+    items: AboutNamedDetail[];
+  };
+}
+
 /* --- Service Page (Sanity CMS raw shape) --- */
 export interface ServicePageCmsData {
   pageId: string;

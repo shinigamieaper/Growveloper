@@ -20,6 +20,8 @@ import {
 } from "@/lib/sanity/queries";
 import type { CTABannerData, TestimonialData, StatsBandItem } from "@/lib/types";
 import { JsonLd } from "@/components/shared/JsonLd";
+import { ArchitectureLayers } from "@/components/about/ArchitectureLayers";
+import { RIDEON_ARCHITECTURE } from "@/lib/data/aboutTracks";
 import { buildPageMetadata, absoluteUrl } from "@/lib/seo";
 import { buildBreadcrumbSchema, ORG_ID } from "@/lib/jsonld";
 
@@ -308,6 +310,17 @@ export default async function CaseStudyPage({
           )}
         </div>
       </section>
+
+      {/* 06b — Architecture (RideOn only, code-side until the case-study schema has a field for it) */}
+      {cs.slug === "rideon-nigeria" && (
+        <section id="architecture" className="scroll-mt-24 border-t border-glass-border py-16 md:py-24">
+          <div className="mx-auto max-w-6xl px-6">
+            <ScrollFadeUp>
+              <ArchitectureLayers data={RIDEON_ARCHITECTURE} headingAs="h2" />
+            </ScrollFadeUp>
+          </div>
+        </section>
+      )}
 
       {/* 07 — The Result (glass) */}
       <GlassSection>

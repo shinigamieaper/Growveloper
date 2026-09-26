@@ -22,7 +22,12 @@ const SOCIAL_LABELS: Record<string, string> = {
   x: "X",
   youtube: "YouTube",
   tiktok: "TikTok",
+  github: "GitHub",
 };
+
+/* Juwon's code lives here; hiring managers look for it in the footer. Added in
+   code (not Sanity) so it shows even if the footer document lacks it. */
+const GITHUB_LINK = { platform: "github", url: "https://github.com/shinigamieaper" };
 
 export function Footer({ data, tradeLinks = [], className, ...props }: FooterProps) {
   const [theme, setThemeState] = useState<string>("dark");
@@ -45,6 +50,10 @@ export function Footer({ data, tradeLinks = [], className, ...props }: FooterPro
   }, []);
 
   if (!data) return null;
+
+  const socialLinks = data.socialLinks.some((l) => l.url.includes("github.com"))
+    ? data.socialLinks
+    : [...data.socialLinks, GITHUB_LINK];
 
   const iconSrc =
     theme === "dark"
@@ -147,13 +156,13 @@ export function Footer({ data, tradeLinks = [], className, ...props }: FooterPro
             )}
 
             {/* Socials */}
-            {data.socialLinks.length > 0 && (
+            {socialLinks.length > 0 && (
               <div>
                 <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-secondary">
                   Socials
                 </h3>
                 <ul className="flex flex-col gap-3">
-                  {data.socialLinks.map((link) => (
+                  {socialLinks.map((link) => (
                     <li key={link.platform}>
                       <a
                         href={link.url}

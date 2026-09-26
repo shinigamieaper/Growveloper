@@ -53,6 +53,10 @@ export function Navigation({ data, className, suppressOnStudio, ...props }: Navi
 
   if (!data) return null;
 
+  /* /about is designed dark only and is the page job applications link to:
+     its logo shows from the first screen and there is no theme switch. */
+  const isAbout = pathname === "/about";
+
   const logoSrc =
     theme === "dark"
       ? (data.logoDark ?? "/images/logo/logo-wordmark-dark.png")
@@ -67,6 +71,7 @@ export function Navigation({ data, className, suppressOnStudio, ...props }: Navi
           <NavbarLogo
             darkSrc={data.logoDark ?? "/images/logo/logo-wordmark-dark.png"}
             lightSrc={data.logo ?? "/images/logo/logo-wordmark-light.png"}
+            alwaysVisible={isAbout}
           />
 
           {/* Nav links — always visible, flow naturally in the pill */}
@@ -91,7 +96,7 @@ export function Navigation({ data, className, suppressOnStudio, ...props }: Navi
             >
               {data.ctaLabel}
             </MovingBorderButton>
-            <ThemeToggle />
+            {!isAbout && <ThemeToggle />}
           </div>
         </NavBody>
 
@@ -114,7 +119,7 @@ export function Navigation({ data, className, suppressOnStudio, ...props }: Navi
               />
             </a>
             <div className="flex items-center gap-1">
-              <ThemeToggle />
+              {!isAbout && <ThemeToggle />}
               <MobileNavToggle
                 isOpen={isMobileMenuOpen}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

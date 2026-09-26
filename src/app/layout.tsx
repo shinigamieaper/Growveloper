@@ -150,6 +150,8 @@ const THEME_INIT_SCRIPT = `
 (function(){
   var t = localStorage.getItem('growveloper-theme') ||
     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  /* /about is designed dark only; the visitor's saved choice is left untouched. */
+  if (location.pathname === '/about') t = 'dark';
   document.documentElement.setAttribute('data-theme', t);
 })();
 `;
@@ -216,7 +218,9 @@ export default async function RootLayout({
         <Footer data={footerData} tradeLinks={tradeLinks} />
 
         {/* Floating scroll-to-top button */}
-        <ScrollToTop />
+        <Suspense fallback={null}>
+          <ScrollToTop />
+        </Suspense>
 
         {/* Client-side layout components (popup + analytics) deferred to avoid prerender blocking */}
         <LayoutClients popupConfigs={popupConfigs} />

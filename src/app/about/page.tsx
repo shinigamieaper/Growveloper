@@ -1,36 +1,25 @@
 import type { Metadata } from "next";
-import { AboutHero } from "@/components/about/AboutHero";
-import { AboutStatStrip } from "@/components/about/AboutStatStrip";
-import { AboutCompanies } from "@/components/about/AboutCompanies";
-import { AboutPrinciples } from "@/components/about/AboutPrinciples";
-import { AboutSkillsTools } from "@/components/about/AboutSkillsTools";
-import { AboutInterests } from "@/components/about/AboutInterests";
-import { CaseStudiesSection } from "@/components/home/CaseStudies";
-import { IndustriesGrid } from "@/components/home/IndustriesGrid";
-import {
-  GlassSection,
-  CTABanner,
-  FAQAccordion,
-  ScrollFadeUp,
-  LineReveal,
-  TextReveal,
-} from "@/components";
-import { getAboutPage, getAboutFAQ, getSiteSettings } from "@/lib/sanity/queries";
+import { AboutCinemaHero } from "@/components/about/AboutCinemaHero";
+import { AboutTrackSwitch } from "@/components/about/AboutTrackSwitch";
+import { AboutViewPanel } from "@/components/about/AboutViewPanel";
+import { AboutContactBand } from "@/components/about/AboutContactBand";
+import { AboutForceDark } from "@/components/about/AboutForceDark";
+import styles from "@/components/about/about.module.css";
+import { getAboutPage, getAllCaseStudies, getSiteSettings } from "@/lib/sanity/queries";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { buildPageMetadata, absoluteUrl } from "@/lib/seo";
 import { buildBreadcrumbSchema, PERSON_ID, WEBSITE_ID } from "@/lib/jsonld";
-import type {
-  AboutHeroData,
-  AboutShortVersionData,
-  AboutStoryData,
-  AboutStatItem,
-  AboutPastCompaniesData,
-  AboutHowIWorkData,
-  AboutSkillsToolsData,
-  AboutInterestsData,
-  IndustriesGridData,
-  CTABannerData,
-} from "@/lib/types";
+import {
+  ABOUT_BOOKING,
+  ABOUT_CV,
+  ABOUT_HEADLINE,
+  ABOUT_HERO,
+  ABOUT_QUIET_LINKS,
+  ABOUT_TRACK_TABS,
+  ABOUT_TRACK_PARAM_ALIASES,
+  ABOUT_VIEWS,
+} from "@/lib/data/aboutTracks";
+import type { AboutViewKey } from "@/lib/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [page, settings] = await Promise.all([getAboutPage(), getSiteSettings()]);
@@ -38,120 +27,49 @@ export async function generateMetadata(): Promise<Metadata> {
     title: page?.seoTitle ?? "About Juwon",
     description:
       page?.seoDescription ??
-      "Meet Juwon. The intersection of full-stack development and performance marketing.",
+      "Oyekola Obajuwon (Juwon): full-stack developer and paid media strategist in Lagos. Next.js and TypeScript builds, Meta and Google Ads, and the tracking in between.",
     path: "/about",
     image: page?.ogImage ?? settings?.ogImage,
   });
 }
 
-export default async function AboutPage() {
-  const [page, faq] = await Promise.all([getAboutPage(), getAboutFAQ()]);
+const VIEW_ORDER: AboutViewKey[] = ["all", "dev", "marketing", "growth"];
 
-  if (!page) return null;
-
-  /* ── Map flat Sanity fields to component interface shapes — CMS only, no static fallbacks ── */
-
-  const hero: AboutHeroData | null = page.heroName
-    ? {
-        name: page.heroName,
-        identity: page.heroIdentity ?? "",
-        portraitImage: page.portraitImage ?? "",
-        portraitAlt: page.portraitAlt ?? "",
-        scrollCueText: page.heroScrollCueText,
-        scrollCueTargetId: page.heroScrollCueTargetId ?? "short-version",
-        namePrefix: page.heroNamePrefix,
-      }
-    : null;
-
-  const shortVersion: AboutShortVersionData | null = page.shortVersionHeadline
-    ? {
-        headline: page.shortVersionHeadline,
-        highlightedWord: page.shortVersionHighlightedWord,
-        body: page.shortVersionBody ?? "",
-      }
-    : null;
-
-  const story: AboutStoryData | null = page.storyHeadline
-    ? {
-        headline: page.storyHeadline,
-        highlightedWord: page.storyHighlightedWord,
-        body: page.storyBody ?? [],
-      }
-    : null;
-
-  const stats: AboutStatItem[] = page.stats?.length ? page.stats : [];
-
-  const companies: AboutPastCompaniesData | null = page.companiesHeadline
-    ? {
-        headline: page.companiesHeadline,
-        highlightedWord: page.companiesHighlightedWord,
-        companies: (page.companies ?? []).map(
-          (c: { company: string; role: string; insight: string; logo?: string }) => ({
-            company: c.company,
-            role: c.role,
-            insight: c.insight,
-            logo: c.logo,
-          })
-        ),
-      }
-    : null;
-
-  const howIWork: AboutHowIWorkData | null = page.principlesHeadline
-    ? {
-        headline: page.principlesHeadline,
-        highlightedWord: page.principlesHighlightedWord,
-        principles: (page.principles ?? []).map(
-          (p: { icon?: string; title: string; description: string }) => ({
-            icon: p.icon,
-            title: p.title,
-            description: p.description,
-          })
-        ),
-      }
-    : null;
-
-  const skillsTools: AboutSkillsToolsData | null = page.skillsHeadline
-    ? {
-        headline: page.skillsHeadline,
-        highlightedWord: page.skillsHighlightedWord,
-        disciplines: (page.disciplines ?? []).map(
-          (d: { name: string; tools?: { name: string; logo?: string }[] }) => ({
-            name: d.name,
-            tools: (d.tools ?? []).map((t) => ({ name: t.name, logo: t.logo })),
-          })
-        ),
-      }
-    : null;
-
-  const interests: AboutInterestsData | null = page.interestsHeadline
-    ? {
-        headline: page.interestsHeadline,
-        highlightedWord: page.interestsHighlightedWord,
-        items: (page.interests ?? []).map(
-          (item: { icon?: string; interest: string; connection: string }) => ({
-            icon: item.icon,
-            interest: item.interest,
-            connection: item.connection,
-          })
-        ),
-      }
-    : null;
-
-  const industriesGrid: IndustriesGridData | null =
-    page.industriesHeadline && (page.industryCards?.length ?? 0) > 0
-      ? {
-          headline: page.industriesHeadline,
-          highlightedWord: page.industriesHighlightedWord,
-          description: page.industriesDescription,
-          industries: page.industryCards ?? [],
-          ctaHeadline: page.industriesCtaHeadline ?? "",
-          ctaLabel: page.industriesCtaLabel ?? "",
-          ctaUrl: page.industriesCtaUrl ?? "/start",
-        }
-      : null;
+/* The four views, all rendered into the static HTML (crawlers and AI readers
+   see every side). /about is fully static: `?track=` is applied in the
+   browser, first by the inline script below (before the switch paints, so a
+   deep link never flashes the combined view), then by the switch itself. */
+function TracksSection({ caseStudyImages }: { caseStudyImages: Record<string, string> }) {
+  const panels = Object.fromEntries(
+    VIEW_ORDER.map((key) => [key, <AboutViewPanel key={key} data={ABOUT_VIEWS[key]} caseStudyImages={caseStudyImages} />]),
+  ) as Record<AboutViewKey, React.ReactNode>;
 
   return (
-    <>
+    <AboutTrackSwitch
+      tabs={ABOUT_TRACK_TABS}
+      panels={panels}
+      initialView="all"
+      prompt="Pick the side you're hiring for"
+      resetLabel="Show everything"
+    />
+  );
+}
+
+/* Runs as the HTML parses: marks <html> with the side from ?track= so CSS can
+   show it before hydration. <html> carries suppressHydrationWarning. */
+const TRACK_BOOT_SCRIPT = `(function(){try{var a=${JSON.stringify(ABOUT_TRACK_PARAM_ALIASES)};var t=new URLSearchParams(location.search).get('track');var k=t&&a[t.toLowerCase()];if(k)document.documentElement.setAttribute('data-about-view',k);}catch(e){}})();`;
+
+export default async function AboutPage() {
+  const [page, caseStudies] = await Promise.all([getAboutPage(), getAllCaseStudies()]);
+
+  const caseStudyImages: Record<string, string> = Object.fromEntries(
+    caseStudies.filter((cs) => cs.heroImage).map((cs) => [cs.slug, cs.heroImage as string]),
+  );
+
+  return (
+    <div data-theme="dark" className={styles.page}>
+      <AboutForceDark />
+
       {/* The founder Person entity lives in the root graph; this page is its profile. */}
       <JsonLd
         schema={[
@@ -160,7 +78,7 @@ export default async function AboutPage() {
             "@type": "ProfilePage",
             "@id": absoluteUrl("/about"),
             url: absoluteUrl("/about"),
-            name: page.seoTitle ?? "About Juwon",
+            name: page?.seoTitle ?? "About Juwon",
             mainEntity: { "@id": PERSON_ID },
             isPartOf: { "@id": WEBSITE_ID },
           },
@@ -168,138 +86,42 @@ export default async function AboutPage() {
         ]}
       />
 
-      {/* 01 — Hero */}
-      {hero && <AboutHero data={hero} />}
+      {/* 01 Hero: the combined story, visible with no script */}
+      <AboutCinemaHero
+        kicker={ABOUT_HERO.kicker}
+        firstName={ABOUT_HERO.firstName}
+        accentName={ABOUT_HERO.accentName}
+        headline={ABOUT_HEADLINE}
+        summary={ABOUT_HERO.summary}
+        backdropWord={ABOUT_HERO.backdropWord}
+        portraitAlt={ABOUT_HERO.portraitAlt}
+        portraitBase="/images/about/juwon-hero"
+        portraitWidths={[480, 720, 1080, 1440]}
+        workHref="#work"
+        cv={ABOUT_CV}
+        links={ABOUT_QUIET_LINKS}
+      />
 
-      {/* 02 — The Short Version */}
-      {shortVersion && (
-        <section id="short-version" className="py-16 md:py-24">
-          <div className="mx-auto max-w-3xl px-6">
-            <TextReveal
-              as="h2"
-              className="heading-font text-3xl font-extrabold leading-snug text-text-primary sm:text-4xl md:text-5xl"
-              splitType="words"
-              highlightedWord={shortVersion.highlightedWord}
-            >
-              {shortVersion.headline}
-            </TextReveal>
-            <ScrollFadeUp delay={0.25}>
-              <p className="mt-6 text-base leading-relaxed text-text-secondary md:text-lg">
-                {shortVersion.body}
-              </p>
-            </ScrollFadeUp>
-          </div>
-        </section>
-      )}
+      <script dangerouslySetInnerHTML={{ __html: TRACK_BOOT_SCRIPT }} />
 
-      {shortVersion && <LineReveal />}
+      {/* 02 The switch and the chosen side */}
+      <section id="work" aria-label="Work" className="scroll-mt-20 border-t border-[var(--av-line)] pb-24 pt-12 md:pb-32 md:pt-16">
+        <div className="mx-auto w-full max-w-[1240px] px-4 sm:px-6">
+          <TracksSection caseStudyImages={caseStudyImages} />
+        </div>
+      </section>
 
-      {/* 03 — The Story (glass) */}
-      {story && (
-        <GlassSection id="the-story">
-          <div className="mx-auto max-w-3xl px-6 py-16 md:py-24">
-            <TextReveal
-              as="h2"
-              className="heading-font mb-10 max-w-2xl text-3xl font-bold text-text-primary md:text-4xl lg:text-5xl"
-              splitType="words"
-              highlightedWord={story.highlightedWord}
-            >
-              {story.headline}
-            </TextReveal>
-            <div className="flex gap-6">
-              <div className="w-0.5 shrink-0 rounded bg-gradient-to-b from-brand-mid to-transparent" />
-              <div className="space-y-5">
-                {story.body.map((para, i) => (
-                  <ScrollFadeUp key={i} delay={i * 0.1}>
-                    <p className="text-base leading-relaxed text-text-secondary md:text-lg">
-                      {para}
-                    </p>
-                  </ScrollFadeUp>
-                ))}
-              </div>
-            </div>
-          </div>
-        </GlassSection>
-      )}
-
-      {/* CTA A — Inline */}
-      {page.inlineCta?.headline && (
-        <CTABanner
-          data={page.inlineCta as CTABannerData}
-          presentationMode="inline"
-          colorScheme={page.inlineCta.colorScheme ?? "light-teal"}
-        />
-      )}
-
-      {/* 04 — Stat Strip */}
-      {stats.length > 0 && <AboutStatStrip items={stats} id="stats" />}
-
-      {stats.length > 0 && <LineReveal />}
-
-      {/* 05 — Past Companies (glass) */}
-      {companies && (
-        <GlassSection id="companies">
-          <AboutCompanies data={companies} />
-        </GlassSection>
-      )}
-
-      {/* 06 — How I Work */}
-      {howIWork && <AboutPrinciples data={howIWork} id="how-i-work" />}
-
-      {howIWork && <LineReveal />}
-
-      {/* 07 — Skills + Tools (glass) */}
-      {skillsTools && (
-        <GlassSection id="skills-tools">
-          <AboutSkillsTools data={skillsTools} />
-        </GlassSection>
-      )}
-
-      {/* 08 — Interests */}
-      {interests && <AboutInterests data={interests} id="interests" />}
-
-      {interests && <LineReveal />}
-
-      {/* 08.5 — Industries */}
-      {industriesGrid && (
-        <GlassSection id="industries">
-          <IndustriesGrid data={industriesGrid} />
-        </GlassSection>
-      )}
-
-      {/* 09 — Featured Work (glass) */}
-      {page.caseStudiesHeadline && (page.featuredCaseStudies?.length ?? 0) > 0 && (
-        <GlassSection id="featured-work">
-          <CaseStudiesSection
-            headline={page.caseStudiesHeadline}
-            highlightedWord={page.caseStudiesHighlightedWord}
-            items={page.featuredCaseStudies ?? []}
-          />
-        </GlassSection>
-      )}
-
-      {/* 10 — FAQ */}
-      {faq.length > 0 && (
-        <FAQAccordion
-          items={faq}
-          sectionHeadline={page.faqHeadline ?? "Frequently asked questions"}
-          highlightedWord={page.faqHighlightedWord ?? "questions"}
-          sectionDescription={page.faqDescription}
-          ctaHeadline={page.faqCtaHeadline}
-          ctaDescription={page.faqCtaDescription}
-          ctaLabel={page.faqCtaLabel}
-          ctaUrl={page.faqCtaUrl}
-        />
-      )}
-
-      {/* CTA C — Section */}
-      {page.finalCta?.headline && (
-        <CTABanner
-          data={page.finalCta as CTABannerData}
-          presentationMode="section"
-          colorScheme={page.finalCta.colorScheme ?? "teal-solid"}
-        />
-      )}
-    </>
+      {/* 03 The close */}
+      <AboutContactBand
+        headline={{ lead: "Let's talk about", accent: "the role." }}
+        body="Thirty minutes on a call, or an email if that's easier. Either way you're talking to the person who does the work."
+        booking={ABOUT_BOOKING}
+        cv={ABOUT_CV}
+        links={ABOUT_QUIET_LINKS}
+        portraitAlt="Juwon standing at night, adjusting his glasses. Photo by Hotman Visuals."
+        portraitBase="/images/about/juwon-standing"
+        portraitWidths={[360, 540, 742]}
+      />
+    </div>
   );
 }

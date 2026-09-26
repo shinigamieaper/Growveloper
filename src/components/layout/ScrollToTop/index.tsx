@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,8 +11,12 @@ import { cn } from "@/lib/utils";
  * Respects prefers-reduced-motion (instant scroll).
  * 44px minimum touch target per mobile rules.
  */
+/* /about promises zero overlapping elements: no floating button over its text. */
+const HIDE_ON_PATHS = ["/about"];
+
 export function ScrollToTop() {
   const [visible, setVisible] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 400);
@@ -25,6 +30,8 @@ export function ScrollToTop() {
     ).matches;
     window.scrollTo({ top: 0, behavior: prefersReduced ? "instant" : "smooth" });
   };
+
+  if (pathname && HIDE_ON_PATHS.includes(pathname)) return null;
 
   return (
     <button

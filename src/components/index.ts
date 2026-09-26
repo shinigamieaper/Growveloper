@@ -99,6 +99,12 @@ export { AboutCompanies } from "./about/AboutCompanies";
 export { AboutPrinciples } from "./about/AboutPrinciples";
 export { AboutSkillsTools } from "./about/AboutSkillsTools";
 export { AboutInterests } from "./about/AboutInterests";
+export { AboutCinemaHero } from "./about/AboutCinemaHero";
+export { AboutTrackSwitch } from "./about/AboutTrackSwitch";
+export { AboutViewPanel } from "./about/AboutViewPanel";
+export { AboutContactBand } from "./about/AboutContactBand";
+export { AboutForceDark } from "./about/AboutForceDark";
+export { ArchitectureLayers } from "./about/ArchitectureLayers";
 
 /* ─── Consent ─── */
 export { CookieConsent } from "./shared/CookieConsent";

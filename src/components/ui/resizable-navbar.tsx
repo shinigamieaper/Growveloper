@@ -63,6 +63,8 @@ interface NavbarLogoProps {
   darkSrc: string;
   lightSrc: string;
   className?: string;
+  /** Show the logo from the first paint instead of sliding it in on scroll. */
+  alwaysVisible?: boolean;
 }
 
 /* ─── Navbar Root ─── */
@@ -122,8 +124,9 @@ export const NavbarLogo = ({
   darkSrc,
   lightSrc,
   className,
+  alwaysVisible = false,
 }: NavbarLogoProps) => {
-  const visible = useNavbarVisible();
+  const visible = useNavbarVisible() || alwaysVisible;
   const [theme, setTheme] = useState("dark");
 
   React.useEffect(() => {
@@ -142,14 +145,17 @@ export const NavbarLogo = ({
     return () => observer.disconnect();
   }, []);
 
-  const src = theme === "dark" ? darkSrc : lightSrc;
+  const raw = theme === "dark" ? darkSrc : lightSrc;
+  /* Sanity serves the logo as a 1024px PNG (about 76 KB); it shows at 32px
+     high, so ask the CDN for a 2x-sized WebP/AVIF instead. */
+  const src = raw.includes("cdn.sanity.io") && !raw.includes("?") ? `${raw}?h=64&auto=format` : raw;
 
   return (
     <AnimatePresence>
       {visible && (
         <motion.a
           href="/"
-          initial={{ opacity: 0, x: 40, width: 0 }}
+          initial={alwaysVisible ? false : { opacity: 0, x: 40, width: 0 }}
           animate={{ opacity: 1, x: 0, width: "auto" }}
           exit={{ opacity: 0, x: 40, width: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 30 }}

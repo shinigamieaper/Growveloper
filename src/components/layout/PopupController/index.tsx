@@ -4,12 +4,20 @@ import { usePathname } from "next/navigation";
 import { Popup } from "@/components/shared/Popup";
 import type { PopupConfig } from "@/lib/types";
 
+/* Routes where no popup ever opens, whatever Sanity says. /about is the page
+   every job application links to; a lead-capture modal over the name is the
+   first thing a hiring manager would see. Same idiom as CONSENT_HIDE_PATHS
+   in LayoutClients. */
+const POPUP_HIDE_PATHS = ["/about"];
+
 interface PopupControllerProps {
   configs: PopupConfig[];
 }
 
 export function PopupController({ configs }: PopupControllerProps) {
   const pathname = usePathname();
+
+  if (POPUP_HIDE_PATHS.includes(pathname)) return null;
 
   // Map Sanity pageReference values to URL path prefixes.
   // pageReference is a short slug like "home", "services-marketing", "lab", etc.
