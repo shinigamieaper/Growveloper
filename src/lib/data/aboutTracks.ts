@@ -35,7 +35,7 @@ export const ABOUT_HERO = {
   /** The huge faded word behind the portrait: the name people call him. */
   backdropWord: "JUWON",
   summary:
-    "I build production web apps in Next.js and TypeScript, and I run the paid media that sends people to them. Four years of it, for clients in the US and Nigeria.",
+    "I build production web apps in Next.js and TypeScript, and I run the paid media that sends people to them. Four years of it, for businesses around the world.",
   portraitAlt:
     "Oyekola Obajuwon, called Juwon, smiling in a black jacket and rimless glasses. Photo by Hotman Visuals.",
 } as const;
