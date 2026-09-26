@@ -123,9 +123,13 @@ export function AboutViewPanel({
             key={stat.label}
             className={cn(
               "flex flex-col gap-3 py-7 lg:px-6 lg:py-9 lg:first:pl-0",
-              i > 0 && (data.stats.length === 3 ? "sm:border-l sm:border-[var(--av-line)] sm:pl-5 lg:pl-6" : "lg:border-l lg:border-[var(--av-line)]"),
+              data.stats.length === 3
+                ? i > 0 && "sm:border-l sm:border-[var(--av-line)] sm:pl-5 lg:pl-6"
+                : i % 4 === 0
+                  ? "lg:pl-0"
+                  : "lg:border-l lg:border-[var(--av-line)]",
               data.stats.length === 3 && i === 2 && "col-span-2 border-t border-[var(--av-line)] sm:col-span-1 sm:border-t-0",
-              data.stats.length === 4 && i >= 2 && "border-t border-[var(--av-line)] lg:border-t-0",
+              data.stats.length !== 3 && i >= 2 && cn("border-t border-[var(--av-line)]", i < 4 && "lg:border-t-0"),
             )}
           >
             <dt className="order-2 text-[0.95rem] leading-snug text-[var(--av-text-2)]">

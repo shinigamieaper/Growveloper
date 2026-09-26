@@ -6,8 +6,8 @@
    measured Lighthouse numbers in docs/DEV-SITE-METRICS-2026-09-25.md.
    Left out on purpose: the current paid-media client, the one current
    Growveloper client, "Founder of Growveloper" as an employer line,
-   the $150,000+ cumulative spend (the per-month figure is the one a
-   strict reader can check), n8n and Make as shipped work, Supabase.
+   client names Juwon has not cleared for the public page (the credit
+   unions stay unnamed), n8n and Make as shipped work, Supabase.
    ============================================================ */
 
 import type {
@@ -111,8 +111,8 @@ const ALL: AboutViewData = {
     "I work US Eastern hours from Lagos, in writing, and I own a project end to end.",
   stats: [
     { value: "4", label: "Portals on one codebase, built alone", source: "RideOn Nigeria" },
-    { value: "$16K+", label: "A month in Meta and Google ads managed", source: "VIP Creative Studio" },
-    { value: "250", label: "Credit-card applications in two months", source: "SPFCU campaigns" },
+    { value: "$150K+", label: "In ad spend managed", source: "Across ad accounts, cumulative" },
+    { value: "$10M+", label: "In managed growth", source: "A credit union's deposit push" },
     { value: "4 yrs", label: "Building for the web and running growth", source: "Since May 2022" },
   ],
   projectsHeading: "Three projects, one from each side",
@@ -128,8 +128,8 @@ const ALL: AboutViewData = {
       links: [RIDEON_CASE, RIDEON_LIVE],
     },
     {
-      id: "spfcu",
-      client: "VIP Creative Studio, for SPFCU",
+      id: "credit-union",
+      client: "VIP Creative Studio, for a US credit union",
       period: "Aug 2025 to May 2026",
       title: "A credit-union ad account, turned around",
       summary:
@@ -240,22 +240,26 @@ const DEV: AboutViewData = {
 
 const MARKETING: AboutViewData = {
   key: "marketing",
-  statement: { lead: "I run paid media that has to answer to", accent: "a finance team." },
+  statement: { lead: "I run paid media and judge it by", accent: "what it brings in." },
   body:
-    "At VIP Creative Studio I managed $16,000+ a month across Meta and Google for two US credit unions: financial products, NCUA advertising rules, and every ad reviewed before it ran. I also do the work around the ads, from GA4 and Tag Manager to SEO for search engines and AI answers.",
+    "I've managed $150,000+ in ad spend, including $16,000+ a month across Meta and Google for two US credit unions at VIP Creative Studio, where every ad was reviewed against financial advertising rules before it ran. I also do the work around the ads, from GA4 and Tag Manager to SEO for search engines and AI answers.",
   howIWork:
     "I judge a campaign by the applications it produces, not the clicks, and I report it in numbers a VP of Marketing can act on.",
   stats: [
-    { value: "$16K+", label: "A month across Meta and Google", source: "Two US credit unions" },
-    { value: "250", label: "Credit-card applications in two months", source: "SPFCU" },
-    { value: "28,800+", label: "Page views in the same two months", source: "SPFCU" },
+    { value: "$150K+", label: "In ad spend managed", source: "Across ad accounts, cumulative" },
+    { value: "$10M+", label: "In managed growth", source: "A credit union's deposit push" },
+    { value: "250", label: "Credit-card applications in one month", source: "A US credit union" },
+    { value: "28,800+", label: "Page views in two months", source: "Same campaigns" },
     { value: "99.9%", label: "Google Ads optimisation score", source: "After the turnaround" },
+    { value: "500+", label: "Negative keywords added", source: "Same account" },
+    { value: "5,700+", label: "Instagram followers", source: "RideOn Nigeria" },
+    { value: "4 yrs", label: "Running Google Ads", source: "Since 2022" },
   ],
   projectsHeading: "Selected campaigns and setups",
   projects: [
     {
-      id: "spfcu-mkt",
-      client: "VIP Creative Studio, for SPFCU",
+      id: "credit-union-mkt",
+      client: "VIP Creative Studio, for a US credit union",
       period: "Aug 2025 to May 2026",
       title: "The credit-union turnaround",
       summary:
@@ -304,9 +308,9 @@ const GROWTH: AboutViewData = {
   howIWork:
     "I build the campaign, build the landing page it points to, and wire the tracking that proves it worked.",
   stats: [
-    { value: "$10M+", label: "Deposit-growth initiative the ads contributed to", source: "SPFCU, via VIP" },
+    { value: "$10M+", label: "In managed growth", source: "A credit union's deposit push" },
     { value: "2", label: "Product launches, from positioning to landing page", source: "VIP Creative Studio" },
-    { value: "250", label: "Credit-card application events in two months, tracked end to end", source: "SPFCU campaigns" },
+    { value: "250", label: "Credit-card applications in one month, tracked end to end", source: "A US credit union" },
   ],
   projectsHeading: "Where I closed the loop",
   projects: [

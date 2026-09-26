@@ -1,22 +1,22 @@
 /* ============================================================
-   /about v2: "warm cinematic dark"
+   /about v2: "cinematic dark, teal light" (Juwon 2026-09-26: back to his brand teal)
    Tokens and the few effects Tailwind is clumsy at (the light disc,
    the ring, the backdrop word, grain). Scoped to .page so nothing
    leaks into the rest of the site. Teal is only for things you can
-   click; amber is the light.
+   click; teal is the light.
    ============================================================ */
 
 .page {
-  --av-bg: #0e0c0a;
-  --av-bg-raised: #15120f;
-  --av-bg-sunk: #0a0907;
-  --av-line: rgba(233, 214, 186, 0.1);
-  --av-line-strong: rgba(233, 214, 186, 0.18);
-  --av-text: #f2ebe1;
-  --av-text-2: #c2b8aa;
-  --av-text-3: #9a8f81;
-  --av-amber: #c89b5a;
-  --av-amber-deep: #8a6a3f;
+  --av-bg: #0a0f0f;
+  --av-bg-raised: #101818;
+  --av-bg-sunk: #070b0b;
+  --av-line: rgba(174, 238, 238, 0.1);
+  --av-line-strong: rgba(174, 238, 238, 0.18);
+  --av-text: #eef6f6;
+  --av-text-2: #b4c6c6;
+  --av-text-3: #88a0a0;
+  --av-amber: #aeeeee;
+  --av-amber-deep: #2b7575;
   --av-aqua: #5ab1b1;
   --av-aqua-hi: #aeeeee;
   --av-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -33,7 +33,7 @@
 }
 
 .page ::selection {
-  background: rgba(200, 155, 90, 0.35);
+  background: rgba(90, 177, 177, 0.35);
   color: var(--av-text);
 }
 
@@ -67,7 +67,7 @@
   isolation: isolate;
   padding-top: calc(var(--navbar-height) + 1.5rem);
   background:
-    radial-gradient(120% 70% at 78% 32%, rgba(138, 106, 63, 0.16) 0%, rgba(14, 12, 10, 0) 60%),
+    radial-gradient(120% 70% at 78% 32%, rgba(43, 117, 117, 0.16) 0%, rgba(10, 15, 15, 0) 60%),
     var(--av-bg);
 }
 
@@ -90,7 +90,7 @@
   aspect-ratio: 5 / 6;
 }
 
-/* The light: one warm disc behind the head, falling off to black. */
+/* The light: one teal disc behind the head, falling off to black. */
 .disc {
   position: absolute;
   left: 50%;
@@ -101,12 +101,12 @@
   border-radius: 50%;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(226, 178, 110, 0.9) 0%,
-    rgba(214, 164, 96, 0.82) 30%,
-    rgba(190, 142, 80, 0.62) 46%,
-    rgba(150, 112, 64, 0.3) 58%,
-    rgba(110, 83, 48, 0.1) 66%,
-    rgba(14, 12, 10, 0) 71%
+    rgba(174, 238, 238, 0.85) 0%,
+    rgba(120, 205, 205, 0.78) 30%,
+    rgba(90, 177, 177, 0.6) 46%,
+    rgba(43, 117, 117, 0.32) 58%,
+    rgba(30, 80, 80, 0.12) 66%,
+    rgba(10, 15, 15, 0) 71%
   );
 }
 
@@ -119,10 +119,10 @@
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 1px solid rgba(222, 184, 128, 0.42);
+  border: 1px solid rgba(174, 238, 238, 0.42);
   box-shadow:
-    0 0 24px rgba(200, 155, 90, 0.18),
-    inset 0 0 24px rgba(200, 155, 90, 0.1);
+    0 0 24px rgba(90, 177, 177, 0.18),
+    inset 0 0 24px rgba(90, 177, 177, 0.1);
 }
 
 /* The name people call him, huge and faded, at the base of the stage.
@@ -139,7 +139,7 @@
   line-height: 0.8;
   letter-spacing: -0.035em;
   white-space: nowrap;
-  color: rgba(200, 155, 90, 0.2);
+  color: rgba(90, 177, 177, 0.2);
   user-select: none;
 }
 
@@ -363,7 +363,7 @@
   aspect-ratio: 16 / 11;
   border-radius: 14px;
   background:
-    radial-gradient(90% 80% at 50% 0%, rgba(200, 155, 90, 0.14) 0%, rgba(21, 18, 15, 0) 70%),
+    radial-gradient(90% 80% at 50% 0%, rgba(90, 177, 177, 0.14) 0%, rgba(16, 24, 24, 0) 70%),
     var(--av-bg-raised);
   box-shadow: inset 0 0 0 1px var(--av-line);
 }
@@ -398,8 +398,8 @@
   border-radius: 18px;
   overflow: hidden;
   box-shadow:
-    0 0 0 5px #0b0a09,
-    0 0 0 6px rgba(233, 214, 186, 0.16),
+    0 0 0 5px #080c0c,
+    0 0 0 6px rgba(174, 238, 238, 0.16),
     0 30px 60px -20px rgba(0, 0, 0, 0.7);
   transition: transform 0.9s var(--av-ease);
 }
@@ -437,7 +437,7 @@
   isolation: isolate;
   overflow: hidden;
   background:
-    radial-gradient(55% 70% at 82% 100%, rgba(138, 106, 63, 0.3) 0%, rgba(14, 12, 10, 0) 70%),
+    radial-gradient(55% 70% at 82% 100%, rgba(43, 117, 117, 0.3) 0%, rgba(10, 15, 15, 0) 70%),
     var(--av-bg-sunk);
   border-top: 1px solid var(--av-line);
 }
@@ -464,7 +464,7 @@
   height: 16%;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(200, 155, 90, 0.35), rgba(200, 155, 90, 0));
+  background: radial-gradient(closest-side, rgba(90, 177, 177, 0.35), rgba(90, 177, 177, 0));
 }
 
 /* Deep links before hydration: the boot script marks <html> with the side
