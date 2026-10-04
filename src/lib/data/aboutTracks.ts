@@ -201,19 +201,6 @@ const DEV: AboutViewData = {
       links: [GV_CODE, { label: "Live site", href: "/" }],
     },
     {
-      id: "career-ops",
-      client: "career-ops",
-      title: "A multi-agent system on Claude",
-      summary:
-        "An orchestrator and five specialist agents, each with its own memory, tool limits and safety hooks, with a 30-case evaluation for its screening agent. The public skill edition is on GitHub.",
-      visual: {
-        kind: "type",
-        lines: ["orchestrator", "  scout", "  builder", "  applicator", "  correspondent", "  retro"],
-        caption: "The agent roster",
-      },
-      links: [{ label: "Code", href: "https://github.com/shinigamieaper/career-ops-skill", external: true }],
-    },
-    {
       id: "vip-dev",
       client: "VIP Creative Studio",
       period: "Aug 2025 to May 2026",
