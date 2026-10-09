@@ -29,6 +29,21 @@ interface VideoItem {
 }
 
 const DESIGNS: DesignItem[] = [
+  { src: "/creative-portfolio/gv-w2-g3-nothing-after-six.png", company: "Growveloper" },
+  { src: "/creative-portfolio/gv-w3-g1-v6c-take-you-out.png", company: "Growveloper" },
+  { src: "/creative-portfolio/gv-w4-g5-alive.png", company: "Growveloper" },
+  { src: "/creative-portfolio/gv-w3-g2-three-numbers.png", company: "Growveloper" },
+  { src: "/social/2026-08/w2-g2-one-hour-7x-cutout.png", company: "Growveloper" },
+  { src: "/social/2026-08/g2-88-percent-connected.png", company: "Growveloper" },
+  { src: "/social/2026-08/w2-g1-nobody-was-slow.png", company: "Growveloper" },
+  { src: "/social/2026-08/g3-23-percent-never-reply.png", company: "Growveloper" },
+  { src: "/social/2026-08/g1-form-is-a-person.png", company: "Growveloper" },
+  { src: "/social/2026-08/g4-gtm-engineering-hero.png", company: "Growveloper" },
+  { src: "/social/2026-08/g5-42-hour-gap.png", company: "Growveloper" },
+  { src: "/creative-portfolio/bbsl-cloud-setup.png", company: "Baye Business Solutions" },
+  { src: "/creative-portfolio/bbsl-cyber-attack.png", company: "Baye Business Solutions" },
+  { src: "/creative-portfolio/fitnessfair-goals-gains.png", company: "Fitness Fair" },
+  { src: "/creative-portfolio/fitnessfair-fit-together.png", company: "Fitness Fair" },
   { src: "/creative-portfolio/coded-graphics.png", company: "The Coded Sensation" },
   { src: "/creative-portfolio/unique-style-hub.png", company: "Unique Style Hub" },
   { src: "/creative-portfolio/sqwadsgraphics.png", company: "Sqwads" },
@@ -36,6 +51,11 @@ const DESIGNS: DesignItem[] = [
 ];
 
 const VIDEOS: VideoItem[] = [
+  {
+    src: "/creative-portfolio/gv-42-hour-gap.mp4",
+    poster: "/creative-portfolio/gv-42-hour-gap-poster.png",
+    company: "Growveloper",
+  },
   {
     src: "/creative-portfolio/onlinefrenchedu.mp4",
     poster: "/creative-portfolio/onlinefrenchedu-poster.jpg",
@@ -86,7 +106,7 @@ export default function CreativePortfolioPage() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {DESIGNS.map((d) => (
               <figure key={d.src}>
-                <div className="relative aspect-square overflow-hidden rounded-xl bg-white/5">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-white/5">
                   <Image
                     src={d.src}
                     alt={`Social media graphic for ${d.company}`}
