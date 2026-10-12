@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata({
     title: "Nothing After Six: one thing you can build this week",
     description:
-      "A newsletter for the owner doing everything. Every other week, one thing you can build, specific enough to finish in a sitting, with no tool you do not already own.",
+      "A newsletter for the owner doing everything. Every week, one thing you can build, specific enough to finish in a sitting, with no tool you do not already own.",
     path: "/nothing-after-six",
     image: settings?.ogImage,
   });
@@ -59,7 +59,7 @@ export default async function NothingAfterSixPage() {
               Nothing After Six
             </h1>
             <p className="mb-8 text-lg leading-relaxed text-text-primary" style={SERIF}>
-              Every other week, one thing you can build. Not five tips. Not a
+              Every week, one thing you can build. Not five tips. Not a
               roundup of links. One thing, specific enough to finish in a
               sitting, with no tool you do not already own.
             </p>
@@ -82,8 +82,8 @@ export default async function NothingAfterSixPage() {
               <li className="flex gap-3">
                 <span className="font-mono text-brand-mid">03</span>
                 <span>
-                  Every other week, on purpose. Promising weekly while running a
-                  business is how newsletters die at issue four.
+                  Every week, one fix. Small enough to keep up with while you run
+                  the business.
                 </span>
               </li>
             </ul>
@@ -95,7 +95,7 @@ export default async function NothingAfterSixPage() {
       <NewsletterCapture
         headline="Get the next one."
         highlightedWord="next"
-        subCopy="One thing you can build, every other week. Unsubscribe whenever, no hard feelings."
+        subCopy="One thing you can build, every week. Unsubscribe whenever, no hard feelings."
         ctaLabel="Send it to me"
         successHeadline={settings?.newsletterSuccessHeadline}
         successSubCopy={settings?.newsletterSuccessSubCopy}
