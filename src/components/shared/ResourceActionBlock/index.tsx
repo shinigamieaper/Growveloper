@@ -112,7 +112,7 @@ export function FreeResourceBlock({
               <span className="text-sm font-semibold">Check your inbox. The file is on its way.</span>
             </div>
             <p className="text-sm text-text-secondary">
-              If it has not arrived in five minutes, look in spam or promotions.
+              Not there in two minutes? Check your Promotions tab, and drag it to your main inbox so the next one lands there.
             </p>
           </motion.div>
         ) : (
