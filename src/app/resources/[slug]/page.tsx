@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Check } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import {
   GlassSection,
   CTABanner,
@@ -106,23 +105,17 @@ export default async function ResourcePage({
       <section className="pt-32 pb-12 md:pt-40 md:pb-16">
         <div className="mx-auto max-w-3xl px-6">
           <ScrollFadeUp>
-            <div className="mb-5 flex flex-wrap items-center gap-2">
-              <Badge className="rounded-full bg-bg-tertiary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-secondary border-glass-border">
-                {resource.resourceType}
-              </Badge>
-              <Badge className="rounded-full bg-bg-tertiary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-secondary border-glass-border">
-                {resource.category}
-              </Badge>
-              {resource.accessType === "free" ? (
-                <Badge className="rounded-full bg-brand-dark px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-base-white border-transparent">
-                  Free
-                </Badge>
-              ) : (
-                <Badge className="rounded-full bg-bg-tertiary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-text-primary border-glass-border">
-                  {resource.priceUSD ? `$${resource.priceUSD}` : "Paid"}
-                </Badge>
-              )}
-            </div>
+            {/* A plain kicker line, as on the other pages (no pills). */}
+            <span className="mb-4 inline-block font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-mid">
+              {[
+                resource.accessType === "free"
+                  ? `Free ${resource.resourceType}`
+                  : `${resource.resourceType} · ${resource.priceUSD ? `$${resource.priceUSD}` : "Paid"}`,
+                resource.category,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
             <h1 className="heading-font text-3xl font-bold tracking-tight text-text-primary md:text-4xl lg:text-5xl">
               {resource.title}
             </h1>
@@ -231,7 +224,7 @@ export default async function ResourcePage({
             description={null}
           />
           {resource.accessType === "free" ? (
-            <FreeResourceBlock fileUrl={resource.fileUrl ?? "#"} />
+            <FreeResourceBlock resourceSlug={resource.slug} />
           ) : (
             <PaidResourceBlock
               resourceSlug={resource.slug}

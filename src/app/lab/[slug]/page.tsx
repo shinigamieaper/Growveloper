@@ -282,18 +282,11 @@ export default async function LabPostPage({
               )}
             </div>
 
-            {/* Tags */}
+            {/* Tags: one plain line, no pills */}
             {post.tags && post.tags.length > 0 && (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-glass-border bg-bg-secondary px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-text-tertiary"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              <p className="mt-6 font-mono text-[11px] font-medium uppercase tracking-wider text-text-tertiary">
+                {post.tags.join(" · ")}
+              </p>
             )}
           </div>
         </section>

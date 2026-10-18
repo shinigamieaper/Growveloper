@@ -23,6 +23,9 @@
  * Body markdown supported:
  *   ## and ### headings, paragraphs, **bold**, *italic*, `code`,
  *   [text](url) links, - bullets, 1. numbered items, > quotes,
+ *   ![alt](path) on its own line, which uploads the image (path relative to the
+ *   draft) and becomes an image block with that alt text; an *italic* line right
+ *   after it becomes the caption,
  *   pipe tables (| a | b |) which become simpleTable blocks, and a final
  *   "## Questions people ask" section whose ### questions and following
  *   paragraphs become faq documents (they are removed from the body because
@@ -262,6 +265,21 @@ function markdownToPortableText(md) {
       continue;
     }
 
+    const img = trimmed.match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/);
+    if (img && !inFaq) {
+      flushParagraph();
+      const image = { _type: "image", _key: k(), alt: img[1].trim(), src: img[2] };
+      const next = lines[i + 1]?.trim();
+      const cap = next?.match(/^\*([^*].*)\*$/);
+      if (cap) {
+        image.caption = cap[1].trim();
+        i++;
+      }
+      body.push(image);
+      i++;
+      continue;
+    }
+
     if (trimmed.startsWith("|")) {
       flushParagraph();
       const tableLines = [];
@@ -357,6 +375,30 @@ async function uploadHero(file) {
   return asset._id;
 }
 
+/* ─── Inline images ─── */
+
+// Replaces each image block's local `src` with an uploaded asset reference.
+async function uploadInlineImages(body, baseDir) {
+  for (const b of body) {
+    if (b._type !== "image" || !b.src) continue;
+    const file = path.resolve(baseDir, b.src);
+    if (!fs.existsSync(file)) throw new Error(`inline image not found: ${file}`);
+    if (dryRun) {
+      b.asset = { _type: "reference", _ref: `dry-run:${path.basename(file)}` };
+    } else {
+      const ext = path.extname(file).toLowerCase();
+      const contentType = ext === ".jpg" || ext === ".jpeg" ? "image/jpeg" : "image/png";
+      const asset = await client.assets.upload("image", fs.readFileSync(file), {
+        filename: path.basename(file),
+        contentType,
+      });
+      console.log(`  uploaded inline image ${path.basename(file)} as ${asset._id}`);
+      b.asset = { _type: "reference", _ref: asset._id };
+    }
+    delete b.src;
+  }
+}
+
 /* ─── Run ─── */
 
 async function main() {
@@ -373,6 +415,7 @@ async function main() {
 
   const { body, faqs } = markdownToPortableText(md);
   if (body.length === 0) throw new Error("Body converted to zero blocks; check the markdown.");
+  await uploadInlineImages(body, path.dirname(draftPath));
 
   const slug = meta.slug;
   const idPrefix = asDraft ? "drafts." : "";
@@ -424,7 +467,8 @@ async function main() {
       _type: "faq",
       question: f.question,
       answer: f.answer,
-      page: { _type: "reference", _ref: `blogPost-${slug}` },
+      // A draft post has no published document yet, so its faqs point at it weakly until it is published.
+      page: { _type: "reference", _ref: `blogPost-${slug}`, ...(asDraft ? { _weak: true, _strengthenOnPublish: { type: "blogPost" } } : {}) },
       order: i + 1,
     }));
 

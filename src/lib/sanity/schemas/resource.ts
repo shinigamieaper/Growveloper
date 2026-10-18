@@ -113,6 +113,18 @@ export default defineType({
       type: "url",
     }),
     defineField({
+      name: "helperFile",
+      title: "Helper file (sent with the main file)",
+      description: "Optional second file in the delivery email, such as the AI helper.",
+      type: "file",
+    }),
+    defineField({
+      name: "deliveryEmailLine",
+      title: "Delivery email line",
+      description: "One sentence in the email that sends a free file: what it does and how long to give it.",
+      type: "string",
+    }),
+    defineField({
       name: "featuredToggle",
       title: "Featured",
       type: "boolean",

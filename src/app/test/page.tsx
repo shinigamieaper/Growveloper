@@ -807,9 +807,9 @@ export default function TestPage() {
             <div>
               <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-text-tertiary">Free Resource</p>
               <FreeResourceBlock
-                fileUrl="/guides/nextjs-performance-playbook.pdf"
+                resourceSlug="nextjs-performance-playbook"
                 headline="Get the Performance Playbook"
-                subCopy="Drop your email and download instantly. You'll also get weekly growth insights."
+                subCopy="Drop your email and the file comes to your inbox."
               />
             </div>
             <div>

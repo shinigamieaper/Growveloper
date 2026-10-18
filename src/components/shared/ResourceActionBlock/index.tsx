@@ -1,18 +1,12 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Check, Download, Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-/* ─── Shared schema ─── */
-const emailSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-});
-type EmailFormData = z.infer<typeof emailSchema>;
 
 /* ─── Reduced motion helper ─── */
 function usePrefersReduced(): boolean {
@@ -25,23 +19,29 @@ function usePrefersReduced(): boolean {
    ════════════════════════════════════════════════════════════ */
 
 interface FreeResourceBlockProps extends React.ComponentPropsWithoutRef<"div"> {
-  /** URL to the downloadable file from Sanity fileAsset */
-  fileUrl: string;
+  /** Resource slug; the server looks the file up and emails it, so the file link never reaches the browser */
+  resourceSlug: string;
   /** Optional headline override */
   headline?: string;
   /** Optional sub-copy override */
   subCopy?: string;
 }
 
+const freeResourceSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  newsletterOptIn: z.boolean().default(false),
+  trap: z.string().optional(),
+});
+type FreeResourceFormData = z.input<typeof freeResourceSchema>;
+
 export function FreeResourceBlock({
-  fileUrl,
-  headline = "This is free. Drop your email and it\u2019s yours.",
+  resourceSlug,
+  headline = "This is free. Drop your email and it’s yours.",
   subCopy,
   className,
   ...props
 }: FreeResourceBlockProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState("");
   const reduced = usePrefersReduced();
 
   const {
@@ -49,48 +49,39 @@ export function FreeResourceBlock({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<EmailFormData>({
-    resolver: zodResolver(emailSchema),
+  } = useForm<FreeResourceFormData>({
+    resolver: zodResolver(freeResourceSchema),
+    defaultValues: { newsletterOptIn: false, trap: "" },
   });
 
-  const onSubmit = async (data: EmailFormData) => {
+  const onSubmit = async (data: FreeResourceFormData) => {
     setStatus("loading");
-    setErrorMessage("");
 
     try {
-      const res = await fetch("/api/newsletter", {
+      const res = await fetch("/api/resource-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email }),
+        body: JSON.stringify({
+          email: data.email,
+          slug: resourceSlug,
+          newsletterOptIn: data.newsletterOptIn === true,
+          trap: data.trap ?? "",
+        }),
       });
 
-      if (!res.ok) {
-        const json = await res.json().catch(() => ({}));
-        throw new Error(json.error || "Something went wrong");
-      }
+      if (!res.ok) throw new Error("send failed");
 
       setStatus("success");
       reset();
-      localStorage.setItem("growveloper-newsletter-subscribed", "true");
-      window.dispatchEvent(new CustomEvent("newsletter:subscribed"));
-    } catch (err) {
+      // Only a ticked box counts as a newsletter sign-up.
+      if (data.newsletterOptIn === true) {
+        localStorage.setItem("growveloper-newsletter-subscribed", "true");
+        window.dispatchEvent(new CustomEvent("newsletter:subscribed"));
+      }
+    } catch {
       setStatus("error");
-      setErrorMessage(err instanceof Error ? err.message : "Something went wrong");
     }
   };
-
-  const triggerDownload = useCallback(() => {
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = "";
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, [fileUrl]);
-
-  if (!fileUrl) return null;
 
   return (
     <div
@@ -114,19 +105,15 @@ export function FreeResourceBlock({
             initial={reduced ? { opacity: 1 } : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: -10 }}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-2"
           >
             <div className="flex items-center gap-2 text-brand-mid">
               <Check className="h-5 w-5" strokeWidth={2.5} />
-              <span className="text-sm font-semibold">Unlocked!</span>
+              <span className="text-sm font-semibold">Check your inbox. The file is on its way.</span>
             </div>
-            <button
-              onClick={triggerDownload}
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-brand-dark px-6 py-3 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105"
-            >
-              <Download className="h-4 w-4" />
-              Download Now
-            </button>
+            <p className="text-sm text-text-secondary">
+              If it has not arrived in five minutes, look in spam or promotions.
+            </p>
           </motion.div>
         ) : (
           <motion.form
@@ -135,43 +122,65 @@ export function FreeResourceBlock({
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: -10 }}
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-3 sm:flex-row sm:items-start"
+            className="flex flex-col gap-3"
           >
-            <div className="flex-1">
-              <label htmlFor="free-resource-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="free-resource-email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                placeholder="your@email.com"
-                disabled={status === "loading"}
-                className={cn(
-                  "min-h-[44px] w-full rounded-full border bg-bg-primary px-5 py-3 text-sm text-text-primary outline-none transition-colors focus:border-brand-mid",
-                  errors.email ? "border-red-500" : "border-glass-border",
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+              <div className="flex-1">
+                <label htmlFor="free-resource-email" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="free-resource-email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="your@email.com"
+                  disabled={status === "loading"}
+                  className={cn(
+                    "min-h-[44px] w-full rounded-full border bg-bg-primary px-5 py-3 text-sm text-text-primary outline-none transition-colors focus:border-brand-mid",
+                    errors.email ? "border-red-500" : "border-glass-border",
+                  )}
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>
                 )}
-                {...register("email")}
-              />
-              {errors.email && (
-                <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>
-              )}
-              {status === "error" && errorMessage && (
-                <p className="mt-1.5 text-xs text-red-500">{errorMessage}</p>
-              )}
+              </div>
+              <button
+                type="submit"
+                disabled={status === "loading"}
+                className="min-h-[44px] rounded-full bg-brand-dark px-6 py-3 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105 disabled:opacity-60 disabled:hover:scale-100"
+              >
+                {status === "loading" ? (
+                  <Loader2 className="mx-auto h-5 w-5 animate-spin" />
+                ) : (
+                  "Email it to me"
+                )}
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={status === "loading"}
-              className="min-h-[44px] rounded-full bg-brand-dark px-6 py-3 text-sm font-semibold text-base-white transition-all hover:bg-brand-mid hover:scale-105 disabled:opacity-60 disabled:hover:scale-100"
-            >
-              {status === "loading" ? (
-                <Loader2 className="mx-auto h-5 w-5 animate-spin" />
-              ) : (
-                "Get it Free"
-              )}
-            </button>
+            {/* Spam trap: people never see or fill this field. */}
+            <input
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="absolute left-[-9999px] h-0 w-0 opacity-0"
+              {...register("trap")}
+            />
+            <label className="flex items-start gap-3 text-sm text-text-secondary">
+              <input type="checkbox" className="mt-1 h-4 w-4" {...register("newsletterOptIn")} />
+              <span>
+                Also send me Nothing After Six, one fix a week. I can unsubscribe at any time.
+              </span>
+            </label>
+            <p className="text-xs text-text-tertiary">
+              We will email the file to this address. <a href="/privacy" className="underline">Privacy policy</a>.
+            </p>
+            {status === "error" && (
+              <p className="text-xs text-red-500">
+                We could not send the email. Try again, or write to hello@growveloper.com.
+              </p>
+            )}
           </motion.form>
         )}
       </AnimatePresence>

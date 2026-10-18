@@ -40,6 +40,8 @@ export default async function ResourceConfirmedPage({
   const { slug } = await params;
   const resource = await getResourceBySlug(slug);
   if (!resource) notFound();
+  // Free files go out by email only; this page must never hand one over.
+  if (resource.accessType !== "paid") notFound();
 
   return (
     <>
