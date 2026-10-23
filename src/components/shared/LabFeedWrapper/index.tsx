@@ -104,7 +104,8 @@ export function LabFeedWrapper({
     return items.filter((item) => activeFilters.includes(getContentType(item)));
   }, [items, activeFilters]);
 
-  const visibleItems = filteredItems.slice(0, visibleCount);
+  /* Every card stays in the HTML so crawlers reach every post (they never click
+     Load More); cards past visibleCount are hidden until Load More reveals them. */
   const hasMore = visibleCount < filteredItems.length;
 
   const handleFilterChange = (values: string[]) => {
@@ -125,7 +126,8 @@ export function LabFeedWrapper({
 
       {/* BentoGrid — cards size to image (aspect-video) + content; no fixed row height */}
       <BentoGrid className="mt-8">
-        {visibleItems.map((data, i) => {
+        {filteredItems.map((data, i) => {
+          const hidden = i >= visibleCount ? "hidden" : undefined;
           const blog = isBlogPost(data) ? data : null;
           const video = isVideo(data) ? data : null;
           const contentType: "blog" | "youtube" | "tiktok" = blog
@@ -219,7 +221,7 @@ export function LabFeedWrapper({
 
           if (blog) {
             return (
-              <div key={blog.slug} className="md:col-span-1">
+              <div key={blog.slug} className={cn("md:col-span-1", hidden)}>
                 <Link href={`/lab/${blog.slug}`} className="block h-full">
                   {cardInner}
                 </Link>
@@ -228,7 +230,7 @@ export function LabFeedWrapper({
           }
 
           return (
-            <div key={`${video?.platform}-${i}`} className="md:col-span-1">
+            <div key={`${video?.platform}-${i}`} className={cn("md:col-span-1", hidden)}>
               {cardInner}
             </div>
           );
