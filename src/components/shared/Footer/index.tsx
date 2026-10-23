@@ -29,6 +29,10 @@ const SOCIAL_LABELS: Record<string, string> = {
    code (not Sanity) so it shows even if the footer document lacks it. */
 const GITHUB_LINK = { platform: "github", url: "https://github.com/shinigamieaper" };
 
+/* /automations was linked from no page, so crawlers never reached it. Added in
+   code after the service links, unless the footer document already lists it. */
+const AUTOMATIONS_LINK: NavLink = { label: "Automations", url: "/automations" };
+
 export function Footer({ data, tradeLinks = [], className, ...props }: FooterProps) {
   const [theme, setThemeState] = useState<string>("dark");
 
@@ -54,6 +58,16 @@ export function Footer({ data, tradeLinks = [], className, ...props }: FooterPro
   const socialLinks = data.socialLinks.some((l) => l.url.includes("github.com"))
     ? data.socialLinks
     : [...data.socialLinks, GITHUB_LINK];
+
+  const afterServices =
+    data.navLinks.findLastIndex((l) => l.url.startsWith("/services")) + 1;
+  const navLinks = data.navLinks.some((l) => l.url === AUTOMATIONS_LINK.url)
+    ? data.navLinks
+    : [
+        ...data.navLinks.slice(0, afterServices),
+        AUTOMATIONS_LINK,
+        ...data.navLinks.slice(afterServices),
+      ];
 
   const iconSrc =
     theme === "dark"
@@ -106,13 +120,13 @@ export function Footer({ data, tradeLinks = [], className, ...props }: FooterPro
           {/* Right columns: Nav, Local services, Socials, Legal */}
           <div className={cn("grid grid-cols-2 gap-10 md:gap-16", tradeLinks.length > 0 ? "sm:grid-cols-4" : "sm:grid-cols-3")}>
             {/* Pages / Navigation */}
-            {data.navLinks.length > 0 && (
+            {navLinks.length > 0 && (
               <div>
                 <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-secondary">
                   Pages
                 </h3>
                 <ul className="flex flex-col gap-3">
-                  {data.navLinks.map((link) => (
+                  {navLinks.map((link) => (
                     <li key={link.url}>
                       <Link
                         href={link.url}

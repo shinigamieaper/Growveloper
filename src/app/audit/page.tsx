@@ -37,7 +37,7 @@ import type {
 export async function generateMetadata(): Promise<Metadata> {
   const [audit, settings] = await Promise.all([getAuditPage(), getSiteSettings()]);
   return buildPageMetadata({
-    title: audit?.seoTitle ?? "Growth Audit",
+    title: audit?.seoTitle ?? "Growth Audit: A Paid Site Diagnostic",
     description:
       audit?.seoDescription ??
       "A comprehensive audit of your development, marketing, and AI infrastructure, with a clear roadmap to fix it.",

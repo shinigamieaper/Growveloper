@@ -24,7 +24,7 @@ import type { AboutViewKey } from "@/lib/types";
 export async function generateMetadata(): Promise<Metadata> {
   const [page, settings] = await Promise.all([getAboutPage(), getSiteSettings()]);
   return buildPageMetadata({
-    title: page?.seoTitle ?? "About Juwon",
+    title: page?.seoTitle ?? "About Juwon: Growth Engineer and Developer",
     description:
       page?.seoDescription ??
       "Oyekola Obajuwon (Juwon): full-stack developer and paid media strategist in Lagos. Next.js and TypeScript builds, Meta and Google Ads, and the tracking in between.",

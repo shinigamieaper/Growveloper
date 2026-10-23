@@ -11,7 +11,7 @@ const RESOURCES_DESCRIPTION =
 export async function generateMetadata(): Promise<Metadata> {
   const [res, settings] = await Promise.all([getResourcesPage(), getSiteSettings()]);
   return buildPageMetadata({
-    title: res?.seoTitle ?? "Resources",
+    title: res?.seoTitle ?? "Resources: Guides and Templates for Founders",
     description: res?.seoDescription ?? RESOURCES_DESCRIPTION,
     path: "/resources",
     image: res?.ogImage ?? settings?.ogImage,

@@ -11,7 +11,7 @@ const LAB_DESCRIPTION =
 export async function generateMetadata(): Promise<Metadata> {
   const [lab, settings] = await Promise.all([getLabPage(), getSiteSettings()]);
   return buildPageMetadata({
-    title: lab?.seoTitle ?? "The Lab",
+    title: lab?.seoTitle ?? "The Lab: Growth, SEO and AI Marketing Notes",
     description: lab?.seoDescription ?? LAB_DESCRIPTION,
     path: "/lab",
     image: lab?.ogImage ?? settings?.ogImage,
