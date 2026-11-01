@@ -11,6 +11,7 @@ import {
   VideoModal,
 } from "@/components";
 import type { CTABannerData, LabContentCard } from "@/lib/types";
+import { pickFeatured } from "@/lib/lab/feed";
 
 interface LabPageClientProps {
   items: LabContentCard[];
@@ -60,10 +61,7 @@ export function LabPageClient({
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoPlatform, setVideoPlatform] = useState<"youtube" | "tiktok" | null>(null);
 
-  const featured =
-    items.find((item) => "featuredToggle" in item && item.featuredToggle) ??
-    items[0] ??
-    null;
+  const featured = pickFeatured(items);
 
   const inlineCta: CTABannerData | null =
     inlineCtaHeadline && inlineCtaLabel

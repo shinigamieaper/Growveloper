@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --experimental-strip-types --no-warnings --test src/lib/lab/feed.test.ts"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.2.8",
