@@ -9,6 +9,7 @@ import { ContentFilterBar } from "@/components/shared/ContentFilterBar";
 import { LoadMore } from "@/components/shared/LoadMore";
 import { cn } from "@/lib/utils";
 import type { LabContentCard, BlogPostCardData, VideoCardData } from "@/lib/types";
+import { labelFor } from "@/lib/lab/feed";
 
 /* ─── Type guards ─── */
 function isBlogPost(data: LabContentCard): data is BlogPostCardData {
@@ -135,13 +136,12 @@ export function LabFeedWrapper({
             : video?.platform === "youtube"
               ? "youtube"
               : "tiktok";
-          const thumbnail = blog?.heroImage ?? video?.thumbnail ?? "";
+          const thumbnail = blog?.heroImage || blog?.ogImage || video?.thumbnail || "";
           const hotspot = blog?.heroImageHotspot;
           const objectPosition = hotspot
             ? `${Math.round(hotspot.x * 100)}% ${Math.round(hotspot.y * 100)}%`
             : undefined;
           const variant = accentVariants[i % accentVariants.length];
-          const labels = { blog: "Blog", youtube: "YouTube", tiktok: "TikTok" };
 
           const cardInner = (
             <SpotlightCard spotlightColor="rgba(90, 177, 177, 0.12)" className="h-full">
@@ -174,11 +174,6 @@ export function LabFeedWrapper({
                     </div>
                   )}
 
-                  {/* Tag pill */}
-                  <span className={cn("absolute left-3 top-3 z-10 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm", variant.pill)}>
-                    {labels[contentType]}
-                  </span>
-
                   {/* Play overlay for video */}
                   {(contentType === "youtube" || contentType === "tiktok") && (
                     <button
@@ -200,13 +195,16 @@ export function LabFeedWrapper({
                   )}
                 </div>
 
-                {/* Bottom — icon + title + meta */}
+                {/* Bottom — title, then one meta row: label · date · read time */}
                 <div className="transition duration-200 group-hover/bento:translate-x-2">
-                  <ContentIcon type={contentType} className={cn("h-4 w-4", variant.textSecondary)} />
-                  <h3 className={cn("heading-font mt-2 mb-1 line-clamp-2 font-bold", variant.text)}>
+                  <h3 className={cn("heading-font mb-1 line-clamp-2 font-bold", variant.text)}>
                     {data.title}
                   </h3>
-                  <div className={cn("flex items-center gap-3 text-xs font-normal", variant.textSecondary)}>
+                  <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-normal", variant.textSecondary)}>
+                    <span className="inline-flex items-center gap-1.5 font-semibold">
+                      <ContentIcon type={contentType} className="h-3.5 w-3.5" />
+                      {labelFor(data)}
+                    </span>
                     {data.publishedAt && (
                       <time dateTime={data.publishedAt}>
                         {new Date(data.publishedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}

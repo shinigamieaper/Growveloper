@@ -111,7 +111,7 @@ export function LabPageClient({
       {/* 03–05 — Filter Bar + Content Feed + Load More */}
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-6">
-          <LabFeedWrapper items={items} onVideoClick={handleVideoClick} emptyStateFiltered={emptyStateFiltered} />
+          <LabFeedWrapper items={featured ? items.filter((item) => item !== featured) : items} onVideoClick={handleVideoClick} emptyStateFiltered={emptyStateFiltered} />
         </div>
       </section>
 

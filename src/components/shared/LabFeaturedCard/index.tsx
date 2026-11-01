@@ -7,6 +7,7 @@ import { ArrowUpRight, CalendarDays } from "lucide-react";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { cn } from "@/lib/utils";
 import type { LabContentCard, BlogPostCardData, VideoCardData } from "@/lib/types";
+import { labelFor } from "@/lib/lab/feed";
 
 /* ─── Accent variants — same system as LiveFeedBento ─── */
 const accentVariants = [
@@ -86,7 +87,7 @@ export function LabFeaturedCard({
   const variant = accentVariants[colorIndex % accentVariants.length];
   const blog = isBlogPost(item);
   const video = isVideo(item);
-  const thumbnail = blog ? item.heroImage : item.thumbnail;
+  const thumbnail = blog ? item.heroImage || item.ogImage : item.thumbnail;
   const hasMedia = Boolean(thumbnail);
   const hotspot = blog ? item.heroImageHotspot : undefined;
   const objectPosition = hotspot
@@ -98,7 +99,6 @@ export function LabFeaturedCard({
     : item.platform === "youtube"
       ? "youtube"
       : "tiktok";
-  const contentTypeLabel = contentType === "blog" ? "Blog" : contentType === "youtube" ? "YouTube" : "TikTok";
 
   const handleVideoClick = () => {
     if (isVideo(item) && onVideoClick) onVideoClick(item.videoUrl, item.platform);
@@ -131,27 +131,6 @@ export function LabFeaturedCard({
           </div>
         )}
 
-        {/* Content type pill */}
-        <span
-          className={cn(
-            "absolute left-4 top-4 z-10 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md",
-            variant.pill,
-          )}
-        >
-          {contentTypeLabel}
-        </span>
-
-        {/* Arrow affordance — top right */}
-        <div
-          className={cn(
-            "absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-base-black/30 backdrop-blur-md transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5",
-            variant.heading,
-          )}
-          aria-hidden="true"
-        >
-          <ArrowUpRight className="h-4 w-4" />
-        </div>
-
         {/* Play overlay for video */}
         {video && (
           <button
@@ -175,21 +154,35 @@ export function LabFeaturedCard({
 
       {/* ── Content slot — slides on hover, mirrors LiveFeedBento ── */}
       <div className="px-3 pt-5 pb-3 md:px-4 md:pt-6 md:pb-4 transition duration-200 group-hover:translate-x-1.5">
-        <ContentIcon type={contentType} className={cn("h-5 w-5", variant.icon)} />
-        <h2
-          className={cn(
-            "heading-font mt-3 mb-3 text-xl font-bold leading-tight tracking-tight md:text-2xl lg:text-3xl",
-            variant.heading,
-          )}
-        >
-          {item.title}
-        </h2>
+        <div className="flex items-start justify-between gap-4">
+          <h2
+            className={cn(
+              "heading-font mb-3 text-xl font-bold leading-tight tracking-tight md:text-2xl lg:text-3xl",
+              variant.heading,
+            )}
+          >
+            {item.title}
+          </h2>
+          <span
+            className={cn(
+              "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current/20 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5",
+              variant.heading,
+            )}
+            aria-hidden="true"
+          >
+            <ArrowUpRight className="h-4 w-4" />
+          </span>
+        </div>
         {excerpt && (
           <p className={cn("mb-4 max-w-2xl text-sm leading-relaxed md:text-base", variant.body)}>
             {excerpt}
           </p>
         )}
         <div className={cn("flex flex-wrap items-center gap-4 text-xs font-medium", variant.meta)}>
+          <span className="inline-flex items-center gap-1.5 font-semibold">
+            <ContentIcon type={contentType} className="h-3.5 w-3.5" />
+            {labelFor(item)}
+          </span>
           {item.publishedAt && (
             <span className="flex items-center gap-1.5">
               <CalendarDays className="h-3.5 w-3.5" aria-hidden />

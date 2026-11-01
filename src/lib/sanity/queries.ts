@@ -785,6 +785,7 @@ export async function getAllLabContent(): Promise<LabContentCard[]> {
       excerpt,
       "heroImage": heroImage.asset->url,
       "heroImageHotspot": heroImage.hotspot{ x, y },
+      "ogImage": ogImage.asset->url,
       category,
       tags,
       publishedAt,

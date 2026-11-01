@@ -16,14 +16,13 @@ const NEWSLETTER_TAG = "nothing after six";
 
 const time = (item: FeedItem) => new Date(item.publishedAt).getTime() || 0;
 
-/** Answer articles are written for AI search, so they are never featured. A pinned item wins (newest pin if
- * several); otherwise the newest human piece leads. */
+/** The newest human piece leads. Answer articles are written for AI search, so they are never featured.
+ * `featuredToggle` is ignored here: five old posts still carry it from before, so honouring it kept an
+ * August post on the banner. */
 export function pickFeatured<T extends FeedItem>(items: T[]): T | null {
   const candidates = items.filter((item) => item.lane !== "programme");
   if (candidates.length === 0) return null;
-  const pinned = candidates.filter((item) => item.featuredToggle);
-  const pool = pinned.length > 0 ? pinned : candidates;
-  return pool.reduce((best, item) => (time(item) > time(best) ? item : best));
+  return candidates.reduce((best, item) => (time(item) > time(best) ? item : best));
 }
 
 export function labelFor(item: FeedItem): LabLabel {

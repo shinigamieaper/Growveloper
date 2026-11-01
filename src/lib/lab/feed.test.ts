@@ -15,18 +15,13 @@ test("pickFeatured returns the newest editorial post when none is pinned", () =>
   assert.equal(pickFeatured(items)?.slug, "new");
 });
 
-test("pickFeatured returns the pinned post even when it is older", () => {
-  const items = [post("new", "2026-10-18T09:00:00Z"), post("pinned", "2026-08-27T09:00:00Z", { featuredToggle: true })];
-  assert.equal(pickFeatured(items)?.slug, "pinned");
-});
-
-test("pickFeatured returns the newer of two pinned posts", () => {
+test("pickFeatured ignores old featured flags: the newest human piece leads", () => {
   const items = [
     post("pinA", "2026-08-10T09:00:00Z", { featuredToggle: true }),
     post("pinB", "2026-08-27T09:00:00Z", { featuredToggle: true }),
     post("new", "2026-10-18T09:00:00Z"),
   ];
-  assert.equal(pickFeatured(items)?.slug, "pinB");
+  assert.equal(pickFeatured(items)?.slug, "new");
 });
 
 test("pickFeatured never returns an answer article, even if newest or pinned", () => {
