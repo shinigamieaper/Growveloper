@@ -26,6 +26,7 @@ export function NewsletterInline({ source, className, ...props }: NewsletterInli
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const emailId = useId();
+  const errorId = useId();
 
   const {
     register,
@@ -75,12 +76,17 @@ export function NewsletterInline({ source, className, ...props }: NewsletterInli
         <p className="text-sm text-text-secondary">The Nothing After Six newsletter. Unsubscribe any time.</p>
       </div>
 
-      {status === "success" ? (
-        <p className="flex items-center gap-2 text-sm font-medium text-brand-mid" role="status">
-          <Check className="h-4 w-4" aria-hidden />
-          You&apos;re in. The next fix lands in your inbox.
-        </p>
-      ) : (
+      {/* Always present so screen readers announce the success message when it appears. */}
+      <div role="status" aria-live="polite" className={status === "success" ? undefined : "sr-only"}>
+        {status === "success" && (
+          <p className="flex items-center gap-2 text-sm font-medium text-text-primary">
+            <Check className="h-4 w-4 text-brand-mid" aria-hidden />
+            You&apos;re in. The next fix lands in your inbox.
+          </p>
+        )}
+      </div>
+
+      {status !== "success" && (
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="w-full min-w-0 md:max-w-md">
           <div className="flex flex-col gap-2 sm:flex-row">
             <label htmlFor={emailId} className="sr-only">
@@ -92,6 +98,7 @@ export function NewsletterInline({ source, className, ...props }: NewsletterInli
               autoComplete="email"
               placeholder="your@email.com"
               aria-invalid={Boolean(fieldError) || status === "error"}
+              aria-describedby={fieldError || status === "error" ? errorId : undefined}
               className="min-w-0 flex-1 rounded-full border border-glass-border bg-bg-secondary px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-brand-mid focus:outline-none"
               {...register("email")}
             />
@@ -105,7 +112,7 @@ export function NewsletterInline({ source, className, ...props }: NewsletterInli
             </button>
           </div>
           {(fieldError || status === "error") && (
-            <p className="mt-2 text-xs text-red-500" role="alert">
+            <p id={errorId} className="mt-2 text-xs text-red-500" role="alert">
               {fieldError || errorMessage}
             </p>
           )}
