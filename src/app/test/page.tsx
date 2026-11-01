@@ -537,7 +537,7 @@ export default function TestPage() {
             <LabFeedWrapper
               items={[
                 { title: "How We Took a SaaS Landing Page from 34 to 100 on Lighthouse", slug: "saas-lighthouse-100", excerpt: "A deep-dive into image pipelines, font loading, code splitting, and edge caching.", heroImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop", category: "Performance", publishedAt: "2026-03-15", readTime: "8 min read", platform: "blog" as const },
-                { title: "I Rebuilt My Client’s Entire Funnel with AI", platform: "youtube" as const, videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=400&fit=crop", description: "AI-powered automation stack walkthrough.", duration: "4:26", publishedAt: "2026-03-10" },
+                { title: "I Rebuilt My Client’s Entire Funnel with AI", platform: "youtube" as const, videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=400&fit=crop", description: "AI-powered automation stack walkthrough.", publishedAt: "2026-03-10" },
                 { title: "3 TikTok Hooks That Actually Convert", platform: "tiktok" as const, videoUrl: "https://www.tiktok.com/@user/video/1234567890", thumbnail: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&h=400&fit=crop", description: "Short-form hooks that drive real traffic.", publishedAt: "2026-03-08" },
                 { title: "Why Your CMS Choice Matters More Than Your Framework", slug: "cms-choice-matters", excerpt: "Framework debates miss the point — your CMS is the real bottleneck.", heroImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop", category: "Strategy", publishedAt: "2026-03-05", readTime: "6 min read", platform: "blog" as const },
                 { title: "The Growth Stack I Use for Every Client", platform: "youtube" as const, videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop", description: "Next.js + Sanity + Vercel + Stripe breakdown.", publishedAt: "2026-03-02" },
@@ -655,11 +655,6 @@ export default function TestPage() {
             <PortableTextRenderer
               value={[
                 { _type: "block", _key: "h1", style: "h1", children: [{ _type: "span", _key: "h1s", text: "Building a Growth Engine" }] },
-                // Video blocks, one of each kind (sandbox fixtures only).
-                { _type: "videoEmbed", _key: "v1", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", caption: "YouTube embed" },
-                { _type: "videoEmbed", _key: "v2", url: "https://www.tiktok.com/@scout2015/video/6718335390845095173", caption: "TikTok embed" },
-                { _type: "videoEmbed", _key: "v3", url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", caption: "Video file" },
-                { _type: "videoEmbed", _key: "v4", url: "https://vimeo.com/76979871", caption: "Unsupported link" },
                 { _type: "block", _key: "p1", style: "normal", children: [{ _type: "span", _key: "p1s", text: "Every successful digital product starts with a foundation of clean architecture and measurable performance. This guide walks through the exact process we use to transform underperforming sites into conversion machines." }] },
                 { _type: "block", _key: "h2", style: "h2", children: [{ _type: "span", _key: "h2s", text: "The Technical Foundation" }] },
                 { _type: "block", _key: "p2", style: "normal", children: [
