@@ -131,24 +131,19 @@ export function LabFeaturedCard({
           </div>
         )}
 
-        {/* Play overlay for video */}
+        {/* Play overlay for video. Decorative only: the whole card is already the play button (see below), and a
+            button inside a button is invalid HTML that breaks hydration. */}
         {video && (
-          <button
-            type="button"
-            aria-label={`Play ${item.title}`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleVideoClick();
-            }}
+          <span
+            aria-hidden="true"
             className="absolute inset-0 z-20 flex items-center justify-center bg-base-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           >
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-base-black/70 backdrop-blur-sm transition-transform duration-300 hover:scale-110">
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-base-black/70 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
               <svg className="ml-1 h-7 w-7 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M8 5v14l11-7z" />
               </svg>
-            </div>
-          </button>
+            </span>
+          </span>
         )}
       </div>
 
@@ -196,6 +191,7 @@ export function LabFeaturedCard({
             </span>
           )}
           {blog && item.readTime && <span>{item.readTime}</span>}
+          {video && item.duration && <span>{item.duration}</span>}
         </div>
       </div>
     </article>

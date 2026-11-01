@@ -352,6 +352,8 @@ export interface VideoCardData {
   videoUrl: string;
   thumbnail: string;
   description?: string;
+  /** Length as shown on the card, e.g. "4:26". */
+  duration?: string;
   publishedAt: string;
   featuredToggle?: boolean;
 }

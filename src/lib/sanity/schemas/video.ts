@@ -36,6 +36,13 @@ export default defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: "duration",
+      title: "Length",
+      type: "string",
+      description: "As shown on the card, e.g. 4:26",
+      validation: (rule) => rule.regex(/^\d{1,2}(:\d{2}){1,2}$/, { name: "m:ss or h:mm:ss" }),
+    }),
+    defineField({
       name: "description",
       title: "Description",
       type: "text",

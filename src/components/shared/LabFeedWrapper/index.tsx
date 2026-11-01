@@ -168,7 +168,29 @@ export function LabFeedWrapper({
               >
                 {/* Thumbnail — aspect-video so 16:9 hero compositions render uncropped */}
                 <div className="relative w-full aspect-video overflow-hidden rounded-xl">
-                  {thumbnail ? (
+                  {thumbnail && contentType === "tiktok" ? (
+                    /* TikTok is upright: the 9:16 frame sits in the middle of the 16:9 slot, with a blurred copy
+                       of the same thumbnail filling the sides, so rows of cards stay even. */
+                    <>
+                      <Image
+                        src={thumbnail}
+                        alt=""
+                        aria-hidden
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="scale-110 object-cover opacity-60 blur-xl"
+                      />
+                      <div className="absolute inset-y-0 left-1/2 aspect-[9/16] -translate-x-1/2 overflow-hidden">
+                        <Image
+                          src={thumbnail}
+                          alt={data.title}
+                          fill
+                          sizes="(max-width: 768px) 60vw, 15vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    </>
+                  ) : thumbnail ? (
                     <Image
                       src={thumbnail}
                       alt={data.title}
@@ -220,6 +242,7 @@ export function LabFeedWrapper({
                       </time>
                     )}
                     {blog?.readTime && <span>{blog.readTime}</span>}
+                    {video?.duration && <span>{video.duration}</span>}
                   </div>
                 </div>
               </div>
