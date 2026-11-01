@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,6 +43,8 @@ export function FreeResourceBlock({
 }: FreeResourceBlockProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const reduced = usePrefersReduced();
+  // The block can appear twice on a resource page (hero and bottom), so each copy needs its own input id.
+  const emailId = useId();
 
   const {
     register,
@@ -126,11 +128,11 @@ export function FreeResourceBlock({
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
               <div className="flex-1">
-                <label htmlFor="free-resource-email" className="sr-only">
+                <label htmlFor={emailId} className="sr-only">
                   Email address
                 </label>
                 <input
-                  id="free-resource-email"
+                  id={emailId}
                   type="email"
                   inputMode="email"
                   autoComplete="email"

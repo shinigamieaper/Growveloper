@@ -101,47 +101,53 @@ export default async function ResourcePage({
           buildBreadcrumbSchema([{ name: "Resources", path: "/resources" }, { name: resource.title }]),
         ]}
       />
-      {/* 01 — Header */}
-      <section className="pt-32 pb-12 md:pt-40 md:pb-16">
-        <div className="mx-auto max-w-3xl px-6">
-          <ScrollFadeUp>
-            {/* A plain kicker line, as on the other pages (no pills). */}
-            <span className="mb-4 inline-block font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-mid">
-              {[
-                resource.accessType === "free"
-                  ? `Free ${resource.resourceType}`
-                  : `${resource.resourceType} · ${resource.priceUSD ? `$${resource.priceUSD}` : "Paid"}`,
-                resource.category,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
+      {/* 01 — Hero: title, cover and the sign-up together, so the resource is one step away on any screen.
+          Phone: title, cover, form. Desktop: cover left, title and form right. */}
+      <section className="pt-24 pb-12 md:pt-36 md:pb-16">
+        <div className="mx-auto grid max-w-6xl items-center gap-6 px-6 md:grid-cols-2 md:gap-x-12 md:gap-y-6">
+          <div className="min-w-0 md:col-start-2 md:row-start-1">
+            {/* One plain kicker line: type and price, said once. */}
+            <span className="mb-3 inline-block font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-mid">
+              {resource.accessType === "free"
+                ? `Free ${resource.resourceType}`
+                : `${resource.resourceType} · ${resource.priceUSD ? `$${resource.priceUSD}` : "Paid"}`}
             </span>
             <h1 className="heading-font text-3xl font-bold tracking-tight text-text-primary md:text-4xl lg:text-5xl">
               {resource.title}
             </h1>
-          </ScrollFadeUp>
+            {resource.description && (
+              <p className="mt-3 line-clamp-2 text-base leading-relaxed text-text-secondary md:line-clamp-none">{resource.description}</p>
+            )}
+          </div>
+
+          {resource.coverImage && (
+            <div className="relative aspect-video min-w-0 overflow-hidden rounded-2xl border border-glass-border md:col-start-1 md:row-span-2 md:row-start-1">
+              <Image
+                src={resource.coverImage}
+                alt={resource.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          )}
+
+          <div id="get-it" className="min-w-0 md:col-start-2 md:row-start-2">
+            {resource.accessType === "free" ? (
+              <FreeResourceBlock resourceSlug={resource.slug} />
+            ) : (
+              <PaidResourceBlock
+                resourceSlug={resource.slug}
+                resourceTitle={resource.title}
+                priceUSD={resource.priceUSD}
+                priceGBP={resource.priceGBP}
+                priceNGN={resource.priceNGN}
+              />
+            )}
+          </div>
         </div>
       </section>
-
-      {/* 02 — Cover Image */}
-      {resource.coverImage && (
-        <section className="pb-12 md:pb-16">
-          <div className="mx-auto max-w-3xl px-6">
-            <ScrollFadeUp delay={0.1}>
-              <div className="relative aspect-video overflow-hidden rounded-2xl border border-glass-border">
-                <Image
-                  src={resource.coverImage}
-                  alt={resource.title}
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 768px"
-                />
-              </div>
-            </ScrollFadeUp>
-          </div>
-        </section>
-      )}
 
       {/* 03 — What It Is */}
       {resource.whatItIs && (

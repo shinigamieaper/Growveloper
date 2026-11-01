@@ -31,7 +31,6 @@ export function ResourceCard({
   headline,
   subCopy,
   image,
-  tag,
   resourceType,
   accessType,
   price,
@@ -82,7 +81,8 @@ export function ResourceCard({
           )}
         >
           {/* ─── Image zone ─── */}
-          <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-brand-dark/40 to-bg-secondary">
+          {/* 16:9, the covers' own shape, so nothing is cropped off the sides. */}
+          <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-brand-dark/40 to-bg-secondary">
             {image ? (
               <Image
                 src={image}
@@ -96,31 +96,14 @@ export function ResourceCard({
                 <TypeIcon className="h-12 w-12 text-brand-mid/30" strokeWidth={1.5} aria-hidden />
               </div>
             )}
-
-            {/* Resource type badge — top left */}
-            <span className="absolute left-3 top-3 rounded-full bg-bg-primary/80 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-brand-mid backdrop-blur-sm">
-              {resourceType}
-            </span>
-
-            {/* Access badge — top right */}
-            {accessType === "free" ? (
-              <span className="absolute right-3 top-3 rounded-full bg-brand-dark px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-base-white">
-                Free
-              </span>
-            ) : (
-              <span className="absolute right-3 top-3 rounded-full bg-bg-primary/80 px-3 py-1 font-mono text-[10px] font-bold tracking-wider text-text-primary backdrop-blur-sm">
-                {price ? `$${price}` : "Paid"}
-              </span>
-            )}
           </div>
 
           {/* ─── Content zone ─── */}
           <div className="flex flex-1 flex-col gap-3 p-5">
-            {tag && (
-              <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-mid">
-                {tag}
-              </span>
-            )}
+            {/* One label, said once: type and price together ("Free guide", "Template · $29"). */}
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-mid">
+              {accessType === "free" ? `Free ${resourceType}` : `${resourceType} · ${price ? `$${price}` : "Paid"}`}
+            </span>
 
             <h3 className="heading-font text-lg font-bold tracking-tight text-text-primary">
               {headline}

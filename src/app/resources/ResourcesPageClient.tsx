@@ -92,7 +92,8 @@ export function ResourcesPageClient({
       )}
 
       {/* 02 — Filter Bar */}
-      {filterOptions.length > 0 && (
+      {/* Filter and category headings only help once there is more than one category. */}
+      {filterOptions.length > 1 && (
         <section className="pb-8">
           <div className="mx-auto max-w-6xl px-6">
             <ContentFilterBar
@@ -111,11 +112,13 @@ export function ResourcesPageClient({
             if (items.length === 0) return null;
             return (
               <div key={name}>
-                <ScrollFadeUp>
+                {categories.length > 1 && (
+                  <ScrollFadeUp>
                   <h2 className="heading-font mb-8 text-2xl font-bold text-text-primary md:text-3xl">
                     {name}
                   </h2>
                 </ScrollFadeUp>
+                )}
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {items.map((resource, i) => (
                     <ScrollFadeUp key={resource.slug} delay={i * 0.07}>
@@ -123,7 +126,6 @@ export function ResourcesPageClient({
                         headline={resource.title}
                         subCopy={resource.description}
                         image={resource.coverImage}
-                        tag={resource.category}
                         resourceType={resource.resourceType}
                         accessType={resource.accessType}
                         price={resource.priceUSD}
