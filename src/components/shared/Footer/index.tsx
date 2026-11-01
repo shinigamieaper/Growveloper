@@ -32,6 +32,16 @@ const GITHUB_LINK = { platform: "github", url: "https://github.com/shinigamieape
 /* /automations was linked from no page, so crawlers never reached it. Added in
    code after the service links, unless the footer document already lists it. */
 const AUTOMATIONS_LINK: NavLink = { label: "Automations", url: "/automations" };
+const CONTENT_LINKS: NavLink[] = [
+  { label: "The Lab", url: "/lab" },
+  { label: "Nothing After Six (newsletter)", url: "/nothing-after-six" },
+];
+const INDUSTRY_LINKS: NavLink[] = [
+  { label: "SaaS", url: "/industries/saas" },
+  { label: "B2B services", url: "/industries/b2b" },
+  { label: "AI and tech", url: "/industries/ai-tech" },
+  { label: "Fintech", url: "/industries/fintech" },
+];
 
 export function Footer({ data, tradeLinks = [], className, ...props }: FooterProps) {
   const [theme, setThemeState] = useState<string>("dark");
@@ -61,13 +71,18 @@ export function Footer({ data, tradeLinks = [], className, ...props }: FooterPro
 
   const afterServices =
     data.navLinks.findLastIndex((l) => l.url.startsWith("/services")) + 1;
-  const navLinks = data.navLinks.some((l) => l.url === AUTOMATIONS_LINK.url)
+  const withAutomations = data.navLinks.some((l) => l.url === AUTOMATIONS_LINK.url)
     ? data.navLinks
     : [
         ...data.navLinks.slice(0, afterServices),
         AUTOMATIONS_LINK,
         ...data.navLinks.slice(afterServices),
       ];
+  // The Lab and the newsletter sit beside Resources; added in code so they never go missing from the CMS list.
+  const navLinks = [
+    ...withAutomations,
+    ...CONTENT_LINKS.filter((link) => !withAutomations.some((l) => l.url === link.url)),
+  ];
 
   const iconSrc =
     theme === "dark"
@@ -118,7 +133,7 @@ export function Footer({ data, tradeLinks = [], className, ...props }: FooterPro
           </div>
 
           {/* Right columns: Nav, Local services, Socials, Legal */}
-          <div className={cn("grid grid-cols-2 gap-10 md:gap-16", tradeLinks.length > 0 ? "sm:grid-cols-4" : "sm:grid-cols-3")}>
+          <div className={cn("grid grid-cols-2 gap-10 md:gap-12", tradeLinks.length > 0 ? "sm:grid-cols-3 lg:grid-cols-5" : "sm:grid-cols-4")}>
             {/* Pages / Navigation */}
             {navLinks.length > 0 && (
               <div>
@@ -139,6 +154,25 @@ export function Footer({ data, tradeLinks = [], className, ...props }: FooterPro
                 </ul>
               </div>
             )}
+
+            {/* Industries */}
+            <div>
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-text-secondary">
+                Industries
+              </h3>
+              <ul className="flex flex-col gap-3">
+                {INDUSTRY_LINKS.map((link) => (
+                  <li key={link.url}>
+                    <Link
+                      href={link.url}
+                      className="text-sm text-text-primary transition-colors hover:text-brand-mid"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             {/* Local service trades */}
             {tradeLinks.length > 0 && (
