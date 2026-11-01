@@ -152,6 +152,8 @@ const THEME_INIT_SCRIPT = `
     (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   /* /about is designed dark only; the visitor's saved choice is left untouched. */
   if (location.pathname === '/about') t = 'dark';
+  /* /links carries the banner's warm-paper palette, so it is light only. */
+  if (location.pathname === '/links') t = 'light';
   document.documentElement.setAttribute('data-theme', t);
 })();
 `;
