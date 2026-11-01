@@ -169,10 +169,22 @@ export function FreeResourceBlock({
               className="absolute left-[-9999px] h-0 w-0 opacity-0"
               {...register("trap")}
             />
-            <label className="flex items-start gap-3 text-sm text-text-secondary">
-              <input type="checkbox" className="mt-1 h-4 w-4" {...register("newsletterOptIn")} />
+            <label className="flex cursor-pointer items-start gap-3 text-sm text-text-secondary">
+              {/* Styled to match the form: same rounded corners and teal as the email field and button. */}
+              <span className="relative mt-0.5 flex h-[18px] w-[18px] shrink-0">
+                <input
+                  type="checkbox"
+                  className="peer h-full w-full cursor-pointer appearance-none rounded-[5px] border border-glass-border bg-bg-secondary transition-colors checked:border-brand-mid checked:bg-brand-mid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-mid"
+                  {...register("newsletterOptIn")}
+                />
+                <Check
+                  className="pointer-events-none absolute inset-0 m-auto h-3 w-3 text-base-white opacity-0 transition-opacity peer-checked:opacity-100"
+                  strokeWidth={3.5}
+                  aria-hidden
+                />
+              </span>
               <span>
-                Also send me Nothing After Six, one fix a week. I can unsubscribe at any time.
+                Also send me one practical growth fix each week (the Nothing After Six newsletter). I can unsubscribe at any time.
               </span>
             </label>
             <p className="text-xs text-text-tertiary">
