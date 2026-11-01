@@ -655,6 +655,11 @@ export default function TestPage() {
             <PortableTextRenderer
               value={[
                 { _type: "block", _key: "h1", style: "h1", children: [{ _type: "span", _key: "h1s", text: "Building a Growth Engine" }] },
+                // Video blocks, one of each kind (sandbox fixtures only).
+                { _type: "videoEmbed", _key: "v1", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", caption: "YouTube embed" },
+                { _type: "videoEmbed", _key: "v2", url: "https://www.tiktok.com/@scout2015/video/6718335390845095173", caption: "TikTok embed" },
+                { _type: "videoEmbed", _key: "v3", url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", caption: "Video file" },
+                { _type: "videoEmbed", _key: "v4", url: "https://vimeo.com/76979871", caption: "Unsupported link" },
                 { _type: "block", _key: "p1", style: "normal", children: [{ _type: "span", _key: "p1s", text: "Every successful digital product starts with a foundation of clean architecture and measurable performance. This guide walks through the exact process we use to transform underperforming sites into conversion machines." }] },
                 { _type: "block", _key: "h2", style: "h2", children: [{ _type: "span", _key: "h2s", text: "The Technical Foundation" }] },
                 { _type: "block", _key: "p2", style: "normal", children: [

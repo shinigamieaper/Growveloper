@@ -232,6 +232,26 @@ export default defineType({
           },
         }),
         defineArrayMember({
+          name: "videoEmbed",
+          title: "Video",
+          type: "object",
+          description:
+            "A YouTube or TikTok link, or a link to an .mp4/.webm file. Anything else shows as a plain link.",
+          fields: [
+            defineField({
+              name: "url",
+              title: "Video link",
+              type: "url",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({ name: "caption", title: "Caption", type: "string" }),
+          ],
+          preview: {
+            select: { title: "caption", subtitle: "url" },
+            prepare: ({ title, subtitle }) => ({ title: title || "Video", subtitle }),
+          },
+        }),
+        defineArrayMember({
           name: "simpleTable",
           title: "Comparison Table",
           type: "object",
