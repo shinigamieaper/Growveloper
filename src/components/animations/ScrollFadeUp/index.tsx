@@ -39,7 +39,8 @@ export function ScrollFadeUp({
 
       gsap.from(ref.current, {
         y: isMobile ? 20 : y,
-        opacity: 0,
+        // Readable from the first frame: never start content invisible (a blank first second looks broken).
+        opacity: 0.85,
         duration: isMobile ? duration * 0.75 : duration,
         delay,
         ease: EASE.smooth,

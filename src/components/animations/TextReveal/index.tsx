@@ -78,7 +78,8 @@ export function TextReveal({
         }
       }
 
-      gsap.set(targets, { opacity: 0, y: isMobile ? 20 : y });
+      // Readable from the first frame: words rise into place instead of appearing from nothing.
+      gsap.set(targets, { opacity: 0.85, y: isMobile ? 20 : y });
 
       gsap.to(targets, {
         opacity: 1,
