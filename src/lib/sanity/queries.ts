@@ -17,6 +17,7 @@ import type {
   BlogPostCardData,
   BlogPostPageData,
   VideoCardData,
+  VideoPageData,
   AuditHeroData,
   AuditQualifierData,
   AuditScopeData,
@@ -766,6 +767,7 @@ export async function getAllVideos(): Promise<VideoCardData[]> {
     `*[_type == "video"] | order(publishedAt desc) {
       title,
       platform,
+      "slug": slug.current,
       videoUrl,
       duration,
       "thumbnail": thumbnail.asset->url,
@@ -773,6 +775,25 @@ export async function getAllVideos(): Promise<VideoCardData[]> {
       publishedAt,
       featuredToggle
     }`
+  );
+}
+
+export async function getVideoBySlug(slug: string): Promise<VideoPageData | null> {
+  "use cache";
+  return client.fetch<VideoPageData | null>(
+    `*[_type == "video" && slug.current == $slug][0]{
+      title,
+      platform,
+      "slug": slug.current,
+      videoUrl,
+      duration,
+      "thumbnail": thumbnail.asset->url,
+      description,
+      links[]{ label, url },
+      publishedAt,
+      "updatedAt": _updatedAt
+    }`,
+    { slug },
   );
 }
 
@@ -801,6 +822,7 @@ export async function getAllLabContent(): Promise<LabContentCard[]> {
     `*[_type == "video"] | order(publishedAt desc) {
       title,
       platform,
+      "slug": slug.current,
       videoUrl,
       duration,
       "thumbnail": thumbnail.asset->url,

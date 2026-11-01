@@ -6,6 +6,7 @@ import {
   getAllAutomations,
   getAllResources,
   getAllLocalServicePages,
+  getAllVideos,
 } from "@/lib/sanity/queries";
 import { SITE_URL } from "@/lib/seo";
 
@@ -40,7 +41,7 @@ function when(...candidates: (string | undefined | null)[]): Date | undefined {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [caseStudies, blogPosts, industries, automations, resources, trades] =
+  const [caseStudies, blogPosts, industries, automations, resources, trades, videos] =
     await Promise.all([
       getAllCaseStudies(),
       getAllBlogPosts(),
@@ -48,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       getAllAutomations(),
       getAllResources(),
       getAllLocalServicePages(),
+      getAllVideos(),
     ]);
 
   const industryRoutes: MetadataRoute.Sitemap = industries.map((industry) => ({
@@ -70,6 +72,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "monthly",
     priority: 0.7,
   }));
+
+  const videoRoutes: MetadataRoute.Sitemap = videos
+    .filter((v) => v.slug)
+    .map((v) => ({
+      url: `${SITE_URL}/lab/videos/${v.slug}`,
+      lastModified: when(v.publishedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
 
   const blogRoutes: MetadataRoute.Sitemap = blogPosts.map((post) => ({
     url: `${SITE_URL}/lab/${post.slug}`,
@@ -98,6 +109,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...tradeRoutes,
     ...caseStudyRoutes,
     ...blogRoutes,
+    ...videoRoutes,
     ...automationRoutes,
     ...resourceRoutes,
   ];

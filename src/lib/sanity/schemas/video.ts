@@ -12,6 +12,13 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "slug",
+      title: "Page address",
+      type: "slug",
+      description: "Gives the video its own page at /lab/videos/<this>. Click Generate.",
+      options: { source: "title", maxLength: 96 },
+    }),
+    defineField({
       name: "platform",
       title: "Platform",
       type: "string",
@@ -46,6 +53,22 @@ export default defineType({
       name: "description",
       title: "Description",
       type: "text",
+    }),
+    defineField({
+      name: "links",
+      title: "Links shown under the video",
+      type: "array",
+      description: "Tools, posts or resources mentioned in the video.",
+      of: [
+        {
+          type: "object",
+          name: "videoLink",
+          fields: [
+            defineField({ name: "label", title: "Label", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "url", title: "Link", type: "url", validation: (r) => r.required() }),
+          ],
+        },
+      ],
     }),
     defineField({
       name: "publishedAt",

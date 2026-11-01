@@ -151,6 +151,9 @@ export function LabFeedWrapper({
             ? `${Math.round(hotspot.x * 100)}% ${Math.round(hotspot.y * 100)}%`
             : undefined;
           const variant = accentVariants[i % accentVariants.length];
+          /* A video with its own page links there; one without opens the pop-up player as before. */
+          const videoPage = video?.slug ? `/lab/videos/${video.slug}` : null;
+          const modalVideo = video && !videoPage ? video : null;
 
           const cardInner = (
             <SpotlightCard spotlightColor="rgba(90, 177, 177, 0.12)" className="h-full">
@@ -161,10 +164,10 @@ export function LabFeedWrapper({
                   variant.border,
                   video && "cursor-pointer",
                 )}
-                role={video ? "button" : undefined}
-                tabIndex={video ? 0 : undefined}
-                onClick={video ? () => onVideoClick?.(video.videoUrl, video.platform) : undefined}
-                onKeyDown={video ? (e) => { if (e.key === "Enter" || e.key === " ") onVideoClick?.(video.videoUrl, video.platform); } : undefined}
+                role={modalVideo ? "button" : undefined}
+                tabIndex={modalVideo ? 0 : undefined}
+                onClick={modalVideo ? () => onVideoClick?.(modalVideo.videoUrl, modalVideo.platform) : undefined}
+                onKeyDown={modalVideo ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onVideoClick?.(modalVideo.videoUrl, modalVideo.platform); } } : undefined}
               >
                 {/* Thumbnail — aspect-video so 16:9 hero compositions render uncropped */}
                 <div className="relative w-full aspect-video overflow-hidden rounded-xl">
@@ -206,23 +209,18 @@ export function LabFeedWrapper({
                   )}
 
                   {/* Play overlay for video */}
+                  {/* Play icon is decorative: the whole card is already the link or the play button. */}
                   {(contentType === "youtube" || contentType === "tiktok") && (
-                    <button
-                      type="button"
-                      aria-label={`Play ${data.title}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (onVideoClick && video) onVideoClick(video.videoUrl, video.platform);
-                      }}
+                    <span
+                      aria-hidden="true"
                       className="absolute inset-0 z-10 flex items-center justify-center bg-base-black/10 opacity-0 transition-opacity duration-300 group-hover/bento:opacity-100"
                     >
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-base-black/70 backdrop-blur-sm transition-transform duration-300 hover:scale-110">
+                      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-base-black/70 backdrop-blur-sm transition-transform duration-300 group-hover/bento:scale-110">
                         <svg className="ml-1 h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                           <path d="M8 5v14l11-7z" />
                         </svg>
-                      </div>
-                    </button>
+                      </span>
+                    </span>
                   )}
                 </div>
 
@@ -253,6 +251,16 @@ export function LabFeedWrapper({
             return (
               <div key={blog.slug} className={cn("md:col-span-1", hidden)}>
                 <Link href={`/lab/${blog.slug}`} className="block h-full">
+                  {cardInner}
+                </Link>
+              </div>
+            );
+          }
+
+          if (videoPage) {
+            return (
+              <div key={videoPage} className={cn("md:col-span-1", hidden)}>
+                <Link href={videoPage} className="block h-full">
                   {cardInner}
                 </Link>
               </div>

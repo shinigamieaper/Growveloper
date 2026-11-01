@@ -354,8 +354,16 @@ export interface VideoCardData {
   description?: string;
   /** Length as shown on the card, e.g. "4:26". */
   duration?: string;
+  /** Present when the video has its own page at /lab/videos/<slug>. */
+  slug?: string;
   publishedAt: string;
   featuredToggle?: boolean;
+}
+
+/* --- Video page --- */
+export interface VideoPageData extends VideoCardData {
+  links?: { label: string; url: string }[];
+  updatedAt?: string;
 }
 
 /* --- Lab Content (union of blog + video) --- */

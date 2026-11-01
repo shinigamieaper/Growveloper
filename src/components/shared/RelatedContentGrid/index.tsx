@@ -7,6 +7,7 @@ import { BentoGrid } from "@/components/ui/bento-grid";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { cn } from "@/lib/utils";
 import type { LabContentCard, BlogPostCardData, VideoCardData, ResourceCardData } from "@/lib/types";
+import { labelFor } from "@/lib/lab/feed";
 
 type RelatedItem = LabContentCard | ResourceCardData;
 
@@ -71,7 +72,7 @@ export function RelatedContentGrid({
         {label}
       </h2>
 
-      <BentoGrid className="md:auto-rows-[20rem]">
+      <BentoGrid>
         {items.map((item, i) => {
           const variant = accentVariants[i % accentVariants.length];
 
@@ -85,7 +86,7 @@ export function RelatedContentGrid({
                       variant.card, variant.border,
                     )}>
                       {/* Cover image */}
-                      <div className="relative w-full flex-1 min-h-[6rem] overflow-hidden rounded-xl">
+                      <div className="relative aspect-video w-full overflow-hidden rounded-xl">
                         {item.coverImage ? (
                           <Image src={item.coverImage} alt={item.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover/bento:scale-[1.03]" />
                         ) : (
@@ -93,13 +94,11 @@ export function RelatedContentGrid({
                             <span className={cn("text-3xl font-bold opacity-20", variant.text)} aria-hidden="true">{item.resourceType[0]}</span>
                           </div>
                         )}
-                        <span className={cn("absolute left-3 top-3 z-10 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm", variant.pill)}>
-                          {item.resourceType}
-                        </span>
                       </div>
                       {/* Bottom */}
                       <div className="transition duration-200 group-hover/bento:translate-x-2">
-                        <h3 className={cn("heading-font mt-2 mb-1 line-clamp-2 font-bold", variant.text)}>{item.title}</h3>
+                        <h3 className={cn("heading-font mb-1 line-clamp-2 font-bold", variant.text)}>{item.title}</h3>
+                        <p className={cn("mb-1 text-xs font-semibold", variant.textSecondary)}>{item.accessType === "free" ? `Free ${item.resourceType}` : item.resourceType}</p>
                         <p className={cn("line-clamp-2 text-xs font-normal", variant.textSecondary)}>{item.description}</p>
                       </div>
                     </div>
@@ -112,8 +111,11 @@ export function RelatedContentGrid({
           /* Lab content — blog or video */
           const blog = isBlogPost(item) ? item : null;
           const video = isVideo(item) ? item : null;
-          const thumbnail = blog?.heroImage ?? video?.thumbnail ?? "";
-          const typeLabel = blog ? "Blog" : video?.platform === "youtube" ? "YouTube" : "TikTok";
+          const thumbnail = blog?.heroImage || blog?.ogImage || video?.thumbnail || "";
+          const typeLabel = labelFor(item as LabContentCard);
+          /* A video with its own page links there; one without opens the pop-up player. */
+          const videoPage = video?.slug ? `/lab/videos/${video.slug}` : null;
+          const modalVideo = video && !videoPage ? video : null;
 
           const cardInner = (
             <SpotlightCard spotlightColor="rgba(90, 177, 177, 0.12)" className="h-full">
@@ -123,12 +125,12 @@ export function RelatedContentGrid({
                   variant.card, variant.border,
                   video && "cursor-pointer",
                 )}
-                role={video ? "button" : undefined}
-                tabIndex={video ? 0 : undefined}
-                onClick={video ? () => onVideoClick?.(video.videoUrl, video.platform) : undefined}
-                onKeyDown={video ? (e) => { if (e.key === "Enter" || e.key === " ") onVideoClick?.(video.videoUrl, video.platform); } : undefined}
+                role={modalVideo ? "button" : undefined}
+                tabIndex={modalVideo ? 0 : undefined}
+                onClick={modalVideo ? () => onVideoClick?.(modalVideo.videoUrl, modalVideo.platform) : undefined}
+                onKeyDown={modalVideo ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onVideoClick?.(modalVideo.videoUrl, modalVideo.platform); } } : undefined}
               >
-                <div className="relative w-full flex-1 min-h-[6rem] overflow-hidden rounded-xl">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl">
                   {thumbnail ? (
                     <Image src={thumbnail} alt={item.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-500 group-hover/bento:scale-[1.03]" />
                   ) : (
@@ -136,19 +138,18 @@ export function RelatedContentGrid({
                       <span className={cn("text-3xl font-bold opacity-20", variant.text)} aria-hidden="true">{typeLabel[0]}</span>
                     </div>
                   )}
-                  <span className={cn("absolute left-3 top-3 z-10 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm", variant.pill)}>
-                    {typeLabel}
-                  </span>
                 </div>
                 <div className="transition duration-200 group-hover/bento:translate-x-2">
-                  <h3 className={cn("heading-font mt-2 mb-1 line-clamp-2 font-bold", variant.text)}>{item.title}</h3>
-                  <div className={cn("flex items-center gap-3 text-xs font-normal", variant.textSecondary)}>
+                  <h3 className={cn("heading-font mb-1 line-clamp-2 font-bold", variant.text)}>{item.title}</h3>
+                  <div className={cn("flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-normal", variant.textSecondary)}>
+                    <span className="font-semibold">{typeLabel}</span>
                     {(blog?.publishedAt ?? video?.publishedAt) && (
                       <time dateTime={blog?.publishedAt ?? video?.publishedAt ?? ""}>
                         {new Date(blog?.publishedAt ?? video?.publishedAt ?? "").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                       </time>
                     )}
                     {blog?.readTime && <span>{blog.readTime}</span>}
+                    {video?.duration && <span>{video.duration}</span>}
                   </div>
                 </div>
               </div>
@@ -159,6 +160,14 @@ export function RelatedContentGrid({
             return (
               <div key={blog.slug} className="md:col-span-1">
                 <Link href={`/lab/${blog.slug}`} className="block h-full">{cardInner}</Link>
+              </div>
+            );
+          }
+
+          if (videoPage) {
+            return (
+              <div key={videoPage} className="md:col-span-1">
+                <Link href={videoPage} className="block h-full">{cardInner}</Link>
               </div>
             );
           }

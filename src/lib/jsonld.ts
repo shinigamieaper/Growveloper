@@ -316,3 +316,38 @@ export function buildArticleSchema(opts: {
     keywords: opts.keywords?.length ? opts.keywords.join(", ") : undefined,
   });
 }
+
+/** A Lab video page: lets Google show the video with its thumbnail, date and length. */
+export function buildVideoSchema(opts: {
+  name: string;
+  description?: string;
+  path: string;
+  thumbnailUrl?: string | null;
+  uploadDate?: string;
+  /** "4:26" or "1:02:03", converted to ISO 8601 (PT4M26S). */
+  duration?: string;
+  embedUrl?: string;
+  contentUrl?: string;
+}) {
+  const parts = opts.duration?.split(":").map(Number);
+  const iso =
+    parts && parts.every((n) => Number.isFinite(n))
+      ? parts.length === 3
+        ? `PT${parts[0]}H${parts[1]}M${parts[2]}S`
+        : parts.length === 2
+          ? `PT${parts[0]}M${parts[1]}S`
+          : undefined
+      : undefined;
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: opts.name,
+    description: opts.description || opts.name,
+    url: absoluteUrl(opts.path),
+    thumbnailUrl: opts.thumbnailUrl ?? undefined,
+    uploadDate: opts.uploadDate,
+    duration: iso,
+    embedUrl: opts.embedUrl,
+    contentUrl: opts.contentUrl,
+  });
+}
