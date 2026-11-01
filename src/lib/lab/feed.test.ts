@@ -24,6 +24,17 @@ test("pickFeatured ignores old featured flags: the newest human piece leads", ()
   assert.equal(pickFeatured(items)?.slug, "new");
 });
 
+test("pickFeatured honours a pin only when exactly one human piece is pinned", () => {
+  const items = [post("new", "2026-10-18T09:00:00Z"), post("pinned", "2026-08-27T09:00:00Z", { featuredToggle: true })];
+  assert.equal(pickFeatured(items)?.slug, "pinned");
+});
+
+test("pickFeatured breaks exact-time ties by slug so the order never depends on the CMS", () => {
+  const items = [post("b-post", "2026-10-18T09:00:00Z"), post("a-post", "2026-10-18T09:00:00Z")];
+  assert.equal(pickFeatured(items)?.slug, "a-post");
+  assert.equal(pickFeatured([...items].reverse())?.slug, "a-post");
+});
+
 test("pickFeatured never returns an answer article, even if newest or pinned", () => {
   const items = [
     post("answer", "2026-10-30T12:30:00Z", { lane: "programme", featuredToggle: true }),

@@ -221,6 +221,8 @@ export function PaidResourceBlock({
   const [currency, setCurrency] = useState<Currency>("USD");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  // Appears twice on a resource page (hero and bottom), so each copy needs its own input id.
+  const emailId = useId();
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const reduced = usePrefersReduced();
@@ -326,11 +328,11 @@ export function PaidResourceBlock({
           className="flex flex-col gap-3 sm:flex-row sm:items-start"
         >
           <div className="flex-1">
-            <label htmlFor="paid-resource-email" className="sr-only">
+            <label htmlFor={emailId} className="sr-only">
               Email address
             </label>
             <input
-              id="paid-resource-email"
+              id={emailId}
               type="email"
               inputMode="email"
               autoComplete="email"

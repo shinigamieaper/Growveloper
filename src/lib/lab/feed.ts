@@ -17,12 +17,19 @@ const NEWSLETTER_TAG = "nothing after six";
 const time = (item: FeedItem) => new Date(item.publishedAt).getTime() || 0;
 
 /** The newest human piece leads. Answer articles are written for AI search, so they are never featured.
- * `featuredToggle` is ignored here: five old posts still carry it from before, so honouring it kept an
- * August post on the banner. */
-export function pickFeatured<T extends FeedItem>(items: T[]): T | null {
+ * A pin (`featuredToggle`) counts only when exactly one piece carries it: five old posts still carry the
+ * flag from before, and honouring all of them kept an August post on the banner. Exact-time ties go to
+ * the slug that sorts first, so the result never depends on the order the CMS returns. */
+export function pickFeatured<T extends FeedItem & { slug?: string }>(items: T[]): T | null {
   const candidates = items.filter((item) => item.lane !== "programme");
   if (candidates.length === 0) return null;
-  return candidates.reduce((best, item) => (time(item) > time(best) ? item : best));
+  const pinned = candidates.filter((item) => item.featuredToggle);
+  if (pinned.length === 1) return pinned[0];
+  return candidates.reduce((best, item) => {
+    const diff = time(item) - time(best);
+    if (diff !== 0) return diff > 0 ? item : best;
+    return (item.slug ?? "").localeCompare(best.slug ?? "") < 0 ? item : best;
+  });
 }
 
 export function labelFor(item: FeedItem): LabLabel {

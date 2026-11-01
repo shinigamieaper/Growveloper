@@ -104,8 +104,8 @@ export default async function ResourcePage({
       {/* 01 — Hero: title, cover and the sign-up together, so the resource is one step away on any screen.
           Phone: title, cover, form. Desktop: cover left, title and form right. */}
       <section className="pt-24 pb-12 md:pt-36 md:pb-16">
-        <div className="mx-auto grid max-w-6xl items-center gap-6 px-6 md:grid-cols-2 md:gap-x-12 md:gap-y-6">
-          <div className="min-w-0 md:col-start-2 md:row-start-1">
+        <div className={resource.coverImage ? "mx-auto grid max-w-6xl items-center gap-6 px-6 md:grid-cols-2 md:gap-x-12 md:gap-y-6" : "mx-auto grid max-w-2xl gap-6 px-6"}>
+          <div className={resource.coverImage ? "min-w-0 md:col-start-2 md:row-start-1" : "min-w-0"}>
             {/* One plain kicker line: type and price, said once. */}
             <span className="mb-3 inline-block font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-mid">
               {resource.accessType === "free"
@@ -133,7 +133,7 @@ export default async function ResourcePage({
             </div>
           )}
 
-          <div id="get-it" className="min-w-0 md:col-start-2 md:row-start-2">
+          <div id="get-it" className={resource.coverImage ? "min-w-0 md:col-start-2 md:row-start-2" : "min-w-0"}>
             {resource.accessType === "free" ? (
               <FreeResourceBlock resourceSlug={resource.slug} />
             ) : (

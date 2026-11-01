@@ -77,7 +77,7 @@ function ContentIcon({ type, className }: { type: "blog" | "youtube" | "tiktok";
 
 /* ─── Filter options (static) ─── */
 const FILTER_OPTIONS = [
-  { label: "Blog", value: "blog" },
+  { label: "Writing", value: "blog" },
   { label: "YouTube", value: "youtube" },
   { label: "TikTok", value: "tiktok" },
 ];
@@ -98,6 +98,13 @@ export function LabFeedWrapper({
   ...props
 }: LabFeedWrapperProps) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  // Show a filter only when it has something behind it (no empty YouTube or TikTok tabs), and only when
+  // there is more than one kind to choose between.
+  const availableFilters = useMemo(() => {
+    const present = new Set(items.map(getContentType));
+    const options = FILTER_OPTIONS.filter((option) => present.has(option.value));
+    return options.length > 1 ? options : [];
+  }, [items]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const filteredItems = useMemo(() => {
@@ -119,11 +126,13 @@ export function LabFeedWrapper({
   return (
     <div className={cn("w-full", className)} {...props}>
       {/* Filter bar */}
-      <ContentFilterBar
-        filters={FILTER_OPTIONS}
-        activeFilters={activeFilters}
-        onFilterChange={handleFilterChange}
-      />
+      {availableFilters.length > 0 && (
+        <ContentFilterBar
+          filters={availableFilters}
+          activeFilters={activeFilters}
+          onFilterChange={handleFilterChange}
+        />
+      )}
 
       {/* BentoGrid — cards size to image (aspect-video) + content; no fixed row height */}
       <BentoGrid className="mt-8">
