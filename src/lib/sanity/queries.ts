@@ -773,6 +773,7 @@ export async function getAllVideos(): Promise<VideoCardData[]> {
       "thumbnail": thumbnail.asset->url,
       description,
       publishedAt,
+      "updatedAt": _updatedAt,
       featuredToggle
     }`
   );

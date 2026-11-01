@@ -72,7 +72,7 @@ export function RelatedContentGrid({
         {label}
       </h2>
 
-      <BentoGrid>
+      <BentoGrid className="md:auto-rows-auto">
         {items.map((item, i) => {
           const variant = accentVariants[i % accentVariants.length];
 
@@ -123,7 +123,7 @@ export function RelatedContentGrid({
                 className={cn(
                   "group/bento row-span-1 flex h-full flex-col justify-between space-y-4 rounded-xl border p-4 shadow-sm transition duration-200 hover:shadow-xl",
                   variant.card, variant.border,
-                  video && "cursor-pointer",
+                  modalVideo && "cursor-pointer",
                 )}
                 role={modalVideo ? "button" : undefined}
                 tabIndex={modalVideo ? 0 : undefined}

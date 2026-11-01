@@ -162,7 +162,7 @@ export function LabFeedWrapper({
                   "group/bento row-span-1 flex h-full flex-col gap-4 rounded-xl border p-4 shadow-sm transition duration-200 hover:shadow-xl",
                   variant.card,
                   variant.border,
-                  video && "cursor-pointer",
+                  modalVideo && "cursor-pointer",
                 )}
                 role={modalVideo ? "button" : undefined}
                 tabIndex={modalVideo ? 0 : undefined}

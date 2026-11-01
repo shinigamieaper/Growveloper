@@ -24,7 +24,7 @@ export function VideoPageView({ video, slug, allContent }: { video: VideoPageDat
 
   /* More from the Lab: the newest human pieces (answer articles are written for AI search). */
   const related = allContent
-    .filter((item) => !("lane" in item && item.lane === "programme") && item.title !== video.title)
+    .filter((item) => !("lane" in item && item.lane === "programme") && !("slug" in item && item.slug === slug))
     .slice(0, 3);
 
   return (
@@ -41,7 +41,7 @@ export function VideoPageView({ video, slug, allContent }: { video: VideoPageDat
             embedUrl,
           }),
           buildBreadcrumbSchema([{ name: "The Lab", path: "/lab" }, { name: video.title }]),
-        ]}
+        ].filter((entry) => entry !== null)}
       />
 
       <article className="pt-28 pb-12 md:pt-36 md:pb-16">
@@ -76,7 +76,7 @@ export function VideoPageView({ video, slug, allContent }: { video: VideoPageDat
             )}
           </div>
 
-          <VideoPlayer url={video.videoUrl} caption={undefined} />
+          <VideoPlayer url={video.videoUrl} />
 
           {video.description && (
             <p className="whitespace-pre-line text-base leading-relaxed text-text-secondary md:text-lg">

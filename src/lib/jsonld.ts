@@ -317,7 +317,8 @@ export function buildArticleSchema(opts: {
   });
 }
 
-/** A Lab video page: lets Google show the video with its thumbnail, date and length. */
+/** A Lab video page: lets Google show the video with its thumbnail, date and length. Returns null when a field
+ *  Google requires (thumbnail, upload date) is missing, so no half-filled VideoObject reaches Search Console. */
 export function buildVideoSchema(opts: {
   name: string;
   description?: string;
@@ -329,6 +330,7 @@ export function buildVideoSchema(opts: {
   embedUrl?: string;
   contentUrl?: string;
 }) {
+  if (!opts.name || !opts.thumbnailUrl || !opts.uploadDate) return null;
   const parts = opts.duration?.split(":").map(Number);
   const iso =
     parts && parts.every((n) => Number.isFinite(n))

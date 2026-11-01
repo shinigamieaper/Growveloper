@@ -77,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((v) => v.slug)
     .map((v) => ({
       url: `${SITE_URL}/lab/videos/${v.slug}`,
-      lastModified: when(v.publishedAt),
+      lastModified: when((v as { updatedAt?: string }).updatedAt, v.publishedAt),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     }));
