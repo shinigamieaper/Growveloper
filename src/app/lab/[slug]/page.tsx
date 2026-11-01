@@ -6,6 +6,7 @@ import {
   GlassSection,
   CTABanner,
   NewsletterCapture,
+  NewsletterInline,
   ScrollFadeUp,
   PortableTextRenderer,
   FAQAccordion,
@@ -227,6 +228,15 @@ export default async function LabPostPage({
                 </p>
               </div>
             </ScrollFadeUp>
+          </div>
+        </section>
+      )}
+
+      {/* 03b — Newsletter, early, for human readers (answer articles are written for AI search) */}
+      {post.lane !== "programme" && (
+        <section className="pb-8 md:pb-10">
+          <div className="mx-auto max-w-3xl px-6">
+            <NewsletterInline source="article" />
           </div>
         </section>
       )}

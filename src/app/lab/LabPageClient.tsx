@@ -8,6 +8,7 @@ import {
   LabFeaturedCard,
   LabFeedWrapper,
   NewsletterCapture,
+  NewsletterInline,
   VideoModal,
 } from "@/components";
 import type { CTABannerData, LabContentCard } from "@/lib/types";
@@ -104,6 +105,7 @@ export function LabPageClient({
         <GlassSection>
           <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
             <LabFeaturedCard item={featured} onVideoClick={handleVideoClick} />
+            <NewsletterInline source="lab-top" className="mt-6" />
           </div>
         </GlassSection>
       )}

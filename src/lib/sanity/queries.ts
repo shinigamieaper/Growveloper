@@ -727,6 +727,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostPageData 
       "slug": slug.current,
       excerpt,
       tldr,
+      lane,
       pullQuote,
       author,
       metaTitle,

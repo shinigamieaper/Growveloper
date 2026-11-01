@@ -7,6 +7,7 @@ export { SoundLikeYouCard } from "./shared/SoundLikeYouCard";
 export { CaseStudyCard } from "./shared/CaseStudyCard";
 export { TestimonialsSection } from "./shared/TestimonialsSection";
 export { NewsletterCapture } from "./shared/NewsletterCapture";
+export { NewsletterInline } from "./shared/NewsletterInline";
 export { Popup } from "./shared/Popup";
 export { VideoModal } from "./shared/VideoModal";
 export { SectionLabel } from "./shared/SectionLabel";
